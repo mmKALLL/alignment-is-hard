@@ -1,0 +1,71 @@
+Alignment is Hard notes
+
+There's several main resources
+
+- Alignment acceptance - Public view of alignment. Influences what rate of org breakthroughs lead to alignment improvements, or e.g. how likely a new researcher is to join an alignment team vs a capabilities team
+- Trust - start at 100, gain or lose depending on how your fund/contract money is handled. If you have high trust you'll get better contracts and retention
+- Money - needed to hire researchers, engineers, and staff. No loans.
+- Researchers / engineers / staff - your human resources which can be allocated to tasks to generate points in three general areas: capabilities, alignment, fieldbuilding
+- RP / EP - research / engineering points. Used to fulfill contracts or unlock upgrades.
+- SP - staff points - used to get better contracts/funds, hire more people, and develop the field (= increase global alignment acceptance or influence individual orgs to change focuses)
+
+Win/loss conditions
+
+- The goal is to ensure that when a superintelligent AI is created, it will be aligned to human needs and values. There are multiple win conditions:
+  1) Achieve 100% alignment acceptance
+  2) Finish x alignment funding contracts (20?)
+  3) Have an org achieve max level in all alignment-releated research directions
+- You lose if the research to align superintelligent AI becomes hopeless. There are also multiple loss conditions:
+  1) End up with 0% alignmnt acceptance
+  2) Run out of funds and can't take any new contracts
+  3) Have an org achieve max level in all capabilities-related research directions
+- Each year a new org spawns, with greater funding and more bias towards capabilities research over time (although affected by alignment acceptance)
+- Each finished capabilities direction also decreases alignment acceptance, whereas alignment achievements get no such benefit
+- Should make it high-risk high-reward in the sense that if the player pursues only a single goal, they will take extra risk on the other two areas
+  - There could even be some kind of anti-synergies; e.g. focusing only on alignment acceptance leaves you more open to running out of funds than focusing on org manipulation would
+
+Gameplay notes:
+
+- Game is started with 1 RP/EP/SP each
+- You can assign humans to generate more, with 100 "progress points" needed per point
+  - However, each day a human is assigned to a project it uses 1k of money; start with 200k or so, allowing one point to be gained before bankruptcy?
+  - Every day they are unassigned, humans still use 0.1k / day
+- You need to take "contracts" to make more money, they pay up front and expect a certain amount of RP/EP in return within a limited timeframe
+  - Contracts are categorized into three difficulty groups (blue, yellow, red?) depending on how many points they eat, how urgent they are, and level of rewards.
+  - They can be profitable capabilities projects, or funding from alignment orgs. Depending on which ones you take affects trust / aligment acceptance
+  - Money is the main reason to take contracts, but additional rewards may include trust, alignment acceptance, new researchers, or extra upgrades
+  - 1 SP can be used to either add a new contract slot or refresh all contracts (with higher chance for more lenient ones)
+  - Contracts also get reset automatically every 180 days (makes it more interesting to finish them just before refresh)
+  - In the midgame more difficult contracts become more common.
+  - Should take care to ensure that at least one of the contracts in the pool is lenient w.r.t. timeline
+  - You may take as many contracts as you want, but can you deliver on them?
+  - Contracts are essentially a way to take focus from research; players will want research but need contracts to survive
+- Each upgrade path repeats three steps: common / uncommon / rare upgrade. Although specializing is very powerful, costs go up gradually to account for faster progress and incentivize diversity: 1-1-2-2-2-3-3-3-4
+  - At each upgrade taken, randomly choose two unselected upgrades of that category and present the player with a choice (like Monster Train relics).
+
+- Try to make a "decision-making roguelike" where the only decisions are which upgrade to take, but that's very interesting and difficult
+- There is only one attempt to clear the game, similar to how there is only one attempt to align an AGI
+
+
+
+/*
+  Old ideas, but they only have bad stuff
+
+  - agency (can take actions in the real world),
+  - world model (can model how the world works),
+  - goal creation (can formulate goals and steps),
+  - deception (can hide its capabilities),
+  - power seeking behavior (can try to kill all humans), => combination of others
+  - self replication (can resist being shut down), => combination of others
+  - automated research (can improve itself to superhuman levels in x turns),
+*/
+
+enum FeatureName {
+  Agency
+  Strategy
+  Deception
+  Automation
+  Interpretability
+  Predictability
+  Boundedness
+  Alignment
