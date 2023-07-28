@@ -124,10 +124,7 @@ class ListenableEvent {
 effectListToString(List<ActionEffect> effects) => effects.map((e) => e.toString()).join(', ');
 
 reduceActionEffects(GameState gs, List<ActionEffect> effects) {
-  int timeUsed = 0;
-
   if (effects[0].paramEffected == Param.resetGame) {
-    gs.currentScreen = Screen.ingame;
     gs = GameState();
     return;
   }
@@ -186,29 +183,29 @@ reduceActionEffects(GameState gs, List<ActionEffect> effects) {
 
       // Upgrades, contracts, etc
       case Param.contractAccept:
+        final contract = gs.contracts[effect.value];
         gs.contracts[effect.value].started = true;
         gs.contracts[effect.value].daysSinceStarting = 0;
         reduceActionEffects(gs, gs.contracts[effect.value].onAccept);
         break;
       case Param.contractSuccess:
         gs.contracts[effect.value].succeeded = true;
-        gs = reduceActionEffects(gs, gs.contracts[effect.value].onSuccess);
-        gs.contracts[effect.value] = getRandomContract(gs);
         break;
       case Param.contractFailure:
-        gs.contracts[effect.value].succeeded = true;
-        gs = reduceActionEffects(gs, gs.contracts[effect.value].onFailure);
-        gs.contracts[effect.value] = getRandomContract(gs);
+        gs.contracts[effect.value].failed = true;
         break;
       case Param.contractRefresh:
         gs.contracts = List.generate(2, (index) => getRandomContract(gs));
         break;
-    }
-  }
 
-  // Turn taken
-  if (timeUsed > 0) {
-    return reduceTimeStep(gs, timeUsed);
+      case Param.contractClaimed:
+        final contract = gs.contracts[effect.value];
+        if (!(contract.succeeded || contract.failed)) break;
+        final action = contract.succeeded ? contract.onSuccess : contract.onFailure;
+        gs = reduceActionEffects(gs, action);
+        gs.contracts[effect.value] = getRandomContract(gs);
+        break;
+    }
   }
 
   if (gs.isGameOver()) {
@@ -225,6 +222,24 @@ reduceActionEffects(GameState gs, List<ActionEffect> effects) {
 }
 
 validateActionResourceSufficiency(GameState gs, ActionEffect effect) {
+// First check things that don't target a specific resource
+  final value = effect.value;
+  switch (effect.paramEffected) {
+    case Param.contractAccept:
+      return gs.contracts[value].started == false;
+    case Param.contractSuccess:
+      return gs.contracts[value].started == true && gs.contracts[value].succeeded == false;
+    case Param.contractFailure:
+      return gs.contracts[value].started == true && gs.contracts[value].failed == false;
+    case Param.contractRefresh:
+      gs.contracts.map((c) => c.started ? c : getRandomContract(gs));
+      break;
+    case Param.contractClaimed:
+      return gs.contracts[value].started == true && (gs.contracts[value].succeeded || gs.contracts[value].failed);
+    default:
+      break;
+  }
+
   // All resources can always be added to. Negative amounts are validated
   if (effect.value >= 0) {
     switch (effect.paramEffected) {
@@ -243,9 +258,7 @@ validateActionResourceSufficiency(GameState gs, ActionEffect effect) {
     case Param.currentScreen:
       return gs.currentScreen >= amount;
     case Param.resetGame:
-      return true;
     case Param.upgradeSelection:
-      return true;
     case Param.gameSpeed:
       return true;
 
@@ -274,14 +287,12 @@ validateActionResourceSufficiency(GameState gs, ActionEffect effect) {
       return gs.freeHumans >= amount;
 
     case Param.contractAccept:
-      return gs.contracts[amount].started == false;
     case Param.contractSuccess:
-      return gs.contracts[amount].started == true && gs.contracts[amount].succeeded == false;
     case Param.contractFailure:
-      return gs.contracts[amount].started == true && gs.contracts[amount].succeeded == false;
     case Param.contractRefresh:
-      gs.contracts.map((c) => c.started ? c : getRandomContract(gs));
-      break;
+    case Param.contractClaimed:
+      return true;
+
     // No default switch case acts as an assertNever; you get warnings if a case is not handled. Handling all of them causes the below return to be unreachable.
   }
   return true;

@@ -219,7 +219,7 @@ class _MainComponentState extends State<MainComponent> {
                 runAlignment: WrapAlignment.center,
                 crossAxisAlignment: WrapCrossAlignment.center,
 
-                children: [Text('arst'), Text('Game speed: ${gs.gameSpeed}x')], // TODO: Add icons and numbers to main app bar
+                children: [const Text('arst'), Text('Game speed: ${gs.gameSpeed}x')], // TODO: Add icons and numbers to main app bar
               ))),
       body: Center(
         // Center is a layout widget. It takes a single child and positions it

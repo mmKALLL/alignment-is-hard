@@ -1,7 +1,5 @@
-import 'dart:async';
 import 'dart:math';
 
-import 'package:alignment_is_hard/logic/actions.dart';
 import 'package:alignment_is_hard/logic/contract.dart';
 import 'package:flutter/material.dart' hide Action, Actions;
 
@@ -24,7 +22,8 @@ enum Param {
   contractAccept,
   contractSuccess,
   contractFailure,
-  contractRefresh
+  contractRefresh,
+  contractClaimed,
 }
 
 // Utility used to show human-readable versions of the parameters
