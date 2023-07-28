@@ -7,6 +7,14 @@ class Actions {
   Actions(this.gs);
   final GameState gs;
 
+  Action hireHuman() => Action(
+        'Hire a new human',
+        [
+          ActionEffect(Param.freeHumans, 1),
+          ActionEffect(Param.sp, -gs.getTotalHumans()),
+        ],
+        Event('hireHuman'),
+      );
   final Action addHumanToRp = Action(
     'Add human to RP',
     [

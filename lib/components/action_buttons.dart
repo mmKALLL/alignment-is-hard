@@ -3,26 +3,25 @@ import 'package:alignment_is_hard/logic/game_state.dart';
 import 'package:flutter/material.dart' hide Action, Actions;
 
 class ActionButton extends StatelessWidget {
-  const ActionButton(this.gs, this.handleAction, this.actionData, [this.iconData, key]) : super(key: key);
+  const ActionButton(this.gs, this.handleAction, this.action, [this.iconData, key]) : super(key: key);
 
   final GameState gs;
   final Function handleAction;
-  final Action actionData;
+  final Action action;
   final IconData? iconData;
 
   @override
   Widget build(BuildContext context) {
-    final effectText = [Param.currentScreen, Param.resetGame].contains(actionData.effects[0].paramEffected)
-        ? null
-        : '(${effectListToString(actionData.effects)})';
-    final labelText = Text(actionData.name.replaceAll('-', ' '));
+    final effectText =
+        [Param.currentScreen, Param.resetGame].contains(action.effects[0].paramEffected) ? null : '(${effectListToString(action.effects)})';
+    final labelText = Text(action.name.replaceAll('-', ' '));
     const buttonColor = GameColors.actionButtonColor;
     return ListTile(
-      enabled: actionData.effects.every((effect) => validateActionResourceSufficiency(gs, effect)),
+      enabled: action.effects.every((effect) => validateActionResourceSufficiency(gs, effect)),
       minVerticalPadding: effectText == null ? 22 : 1,
       title: labelText,
       onTap: () {
-        handleAction(actionData);
+        handleAction(action);
       },
       leading: CircleAvatar(
         maxRadius: 20,
@@ -123,7 +122,10 @@ class GameScreenActionButtons extends StatelessWidget {
         gameScreenDivider,
         ActionButton(gs, handleAction, actions.gotoScreen(Screen.contracts, 'contracts'), Icons.trending_up_sharp),
         gameScreenDivider,
+        ActionButton(gs, handleAction, actions.hireHuman(), Icons.currency_exchange_sharp),
+        gameScreenDivider,
         ActionButton(gs, handleAction, actions.gotoGameOver, Icons.currency_exchange_sharp),
+        gameScreenDivider,
         ActionButton(gs, handleAction, actions.gotoGameWin, Icons.currency_exchange_sharp),
       ],
     );
