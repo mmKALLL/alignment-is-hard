@@ -44,7 +44,7 @@ class Contract {
 
 Contract getRandomContract(GameState gs) {
   // Setup the base parameters that control complexity
-  int difficulty = Random().nextInt(gs.getYear() * 50 + 25) + 50;
+  int difficulty = Random().nextInt(gs.getYear() * 50 + 75) + 50;
   bool isAlignmentContract = Random().nextBool();
   int deadline = 5 + Random().nextInt(200) + max(200 - difficulty, 0);
   difficulty += max((100 - deadline), 0);
@@ -58,7 +58,7 @@ Contract getRandomContract(GameState gs) {
   // Generate action effects
   final List<ActionEffect> onAccept = getAcceptEffects(difficulty, acceptEffects, isAlignmentContract, gs.trust);
   final List<ActionEffect> onSuccess = [
-    ActionEffect(Param.trust, max(isAlignmentContract ? 2 : 1, (2 * difficulty / 100)).round()),
+    ActionEffect(Param.trust, ((isAlignmentContract ? 2 : 1) * (2 * difficulty / 100)).round()),
     ...getSuccessEffects(difficulty, successEffects, isAlignmentContract, gs.trust)
   ];
   final List<ActionEffect> onFailure = [

@@ -32,11 +32,11 @@ paramToLabel(Param param) {
     case Param.rp:
       return 'RP';
     default:
-      return param;
+      return param.toString().split('.').last;
   }
 }
 
-const DEBUG = true;
+const debug = true;
 
 class GameState {
   GameState() {
@@ -58,16 +58,16 @@ class GameState {
   // The various turn-based actions have an passive and active component - passive is gained each turn, active when a turn is used to take that action
   int influence = 100;
 
-  int money = DEBUG ? 500000 : 5000; // 1 = 100 USD. Needed to hire researchers, engineers, and staff. No loans.
+  int money = debug ? 500000 : 5000; // 1 = 100 USD. Needed to hire researchers, engineers, and staff. No loans.
   int passiveMoneyGain = 0;
 
   // Your human resources. Allocate to tasks to generate points in three general areas: capabilities, alignment, fieldbuilding
-  int freeHumans = DEBUG ? 10 : 2; // Each human uses one money / turn.
+  int freeHumans = debug ? 10 : 2; // Each human uses one money / turn.
   double getTeamPerformance() => (30 / (25 + freeHumans)); // Unused. Effectiveness of each person. Having more decreases their efficiency.
 
-  int rp = DEBUG ? 10 : 1; // current research points. Used to improve facets of your AI or unlock upgrades
-  int ep = DEBUG ? 10 : 1; // current engineering points. Used to fulfill contracts
-  int sp = DEBUG ? 10 : 1; // current staff points. Used to get better contracts/funds, develop the field, or hire more people
+  int rp = debug ? 10 : 1; // current research points. Used to improve facets of your AI or unlock upgrades
+  int ep = debug ? 10 : 1; // current engineering points. Used to fulfill contracts
+  int sp = debug ? 10 : 1; // current staff points. Used to get better contracts/funds, develop the field, or hire more people
 
   int rpWorkers = 1; // Number of people working on RP
   int epWorkers = 1; // Number of people working on EP

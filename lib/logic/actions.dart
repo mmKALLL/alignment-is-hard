@@ -80,6 +80,7 @@ class Actions {
   contractAccept(index) => Action('Accept contract', [ActionEffect(Param.contractAccept, index)], Event('contractAccept'));
   contractSuccess(index) => Action('Contract success', [ActionEffect(Param.contractSuccess, index)], Event('contractSuccess'));
   contractFailure(index) => Action('Contract failure', [ActionEffect(Param.contractFailure, index)], Event('contractFailure'));
+  contractClaimed(index) => Action('Claim contract', [ActionEffect(Param.contractClaimed, index)], Event('contractClaimed'));
 
   final refreshContracts = Action('Refresh contracts', [ActionEffect(Param.refreshContracts, 1), ActionEffect(Param.sp, -1)]);
 
@@ -124,11 +125,6 @@ class ListenableEvent {
 effectListToString(List<ActionEffect> effects) => effects.map((e) => e.toString()).join(', ');
 
 reduceActionEffects(GameState gs, List<ActionEffect> effects) {
-  if (effects[0].paramEffected == Param.resetGame) {
-    gs = GameState();
-    return;
-  }
-
   for (var effect in effects) {
     switch (effect.paramEffected) {
       case Param.currentScreen:
@@ -185,6 +181,7 @@ reduceActionEffects(GameState gs, List<ActionEffect> effects) {
       case Param.contractAccept:
         gs.contracts[effect.value].started = true;
         gs.contracts[effect.value].daysSinceStarting = 0;
+        gs.contracts = mapContractStatus(gs, 0);
         reduceActionEffects(gs, gs.contracts[effect.value].onAccept);
         break;
       case Param.contractSuccess:
@@ -200,9 +197,11 @@ reduceActionEffects(GameState gs, List<ActionEffect> effects) {
       case Param.contractClaimed:
         final contract = gs.contracts[effect.value];
         if (!(contract.succeeded || contract.failed)) break;
+        if (contract.succeeded) reduceActionEffects(gs, contract.requirements);
         final action = contract.succeeded ? contract.onSuccess : contract.onFailure;
-        gs = reduceActionEffects(gs, action);
+        reduceActionEffects(gs, action);
         gs.contracts[effect.value] = getRandomContract(gs);
+        gs.contracts = mapContractStatus(gs, 0);
         break;
     }
   }
@@ -322,9 +321,22 @@ reduceTimeStep(GameState gs, int timeUsed) {
     gs.totalSp += 1;
   }
 
-  // gs.contracts.map((e) => {
-  //   if (e.started && !e.completed) {e.daysSinceStarting += timeUsed}
-  //   e.failed = true;
-  //  return e
-  //  });
+  gs.contracts = mapContractStatus(gs, timeUsed);
+}
+
+List<Contract> mapContractStatus(GameState gs, int timeUsed) {
+  return gs.contracts.map((c) {
+    if (c.started) {
+      if (!(c.succeeded || c.failed)) c.daysSinceStarting += timeUsed;
+      if (c.daysSinceStarting >= c.deadline) c.failed = true;
+
+      // Mark contracts as successful (= ready for collection) if their requirements are met. Even if a contract is successful at one point, its status may change after changes in the game state
+      if (!c.failed && c.requirements.every((e) => validateActionResourceSufficiency(gs, e))) {
+        c.succeeded = true;
+      } else {
+        c.succeeded = false;
+      }
+    }
+    return c;
+  }).toList();
 }

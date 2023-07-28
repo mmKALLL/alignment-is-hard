@@ -75,8 +75,12 @@ class _MainComponentState extends State<MainComponent> {
 
   void handleAction(Action action) {
     setState(() {
+      if (action.effects[0].paramEffected == Param.resetGame) {
+        gs = GameState();
+        return;
+      }
       reduceActionEffects(gs, action.effects);
-      // TODO: Do something to handle the events of the action
+      // TODO: Do something to handle any events of the action
     });
   }
 

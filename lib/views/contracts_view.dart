@@ -52,21 +52,23 @@ class ContractWidget extends StatelessWidget {
             // unless you need it.
             clipBehavior: Clip.hardEdge,
             color: contract.failed
-                ? Colors.red
+                ? Colors.red.shade200
                 : contract.succeeded
-                    ? Colors.green
+                    ? Colors.green.shade200
                     : contract.started
                         ? Colors.blue.shade200
                         : Colors.grey.shade300,
             child: InkWell(
                 splashColor: Colors.blue.withAlpha(30),
                 onTap: () {
+                  if (contract.succeeded || contract.failed) handleAction(actions.contractClaimed(index));
                   if (!contract.started) handleAction(actions.contractAccept(index));
                 },
                 child: Container(
                     padding: const EdgeInsets.all(8),
                     child: Column(children: [
-                      Text('${contract.name} (${contract.isAlignmentContract ? 'A' : 'C'}, ${contract.deadline} days)'),
+                      Text(
+                          '${contract.name} (${contract.isAlignmentContract ? 'A' : 'C'}, ${contract.deadline - contract.daysSinceStarting} days)'),
                       Text('Req: ${contract.requirementDescription}'),
                       paddedGameScreenDivider,
                       Text('On accept: ${contract.acceptDescription}'),
