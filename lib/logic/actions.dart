@@ -320,7 +320,7 @@ reduceTimeStep(GameState gs, int timeUsed) {
   gs.turn += timeUsed;
 
   gs.money += gs.passiveMoneyGain;
-  gs.money -= gs.getTotalWorkers() * 10 + gs.freeHumans;
+  gs.money -= gs.getTotalWorkers() + gs.freeHumans / 10;
 
   gs.rpProgress += gs.rpWorkers;
   gs.epProgress += gs.epWorkers;

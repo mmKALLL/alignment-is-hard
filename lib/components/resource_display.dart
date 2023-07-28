@@ -1,4 +1,4 @@
-import 'package:intl/intl.dart';
+import 'package:alignment_is_hard/components/top_bar.dart';
 import 'package:alignment_is_hard/logic/game_state.dart';
 import 'package:flutter/material.dart' hide Action, Actions;
 
@@ -22,7 +22,7 @@ class ResourceDisplay extends StatelessWidget {
           height: 8,
         ),
         Wrap(spacing: 20, runSpacing: 8, children: [
-          NumericDisplay(name: 'money', value: gs.money, isPercentage: false),
+          getMoneyDisplay(gs),
           NumericDisplay(name: 'alignment acceptance', value: gs.alignmentAcceptance, isPercentage: true),
           NumericDisplay(name: 'trust', value: gs.trust, isPercentage: true),
           NumericDisplay(name: 'influence', value: gs.influence, isPercentage: true),
@@ -48,15 +48,7 @@ class NumericDisplay extends StatelessWidget {
             : value <= 4 || (name == 'money' && value <= 50)
                 ? TextStyle(backgroundColor: Colors.yellow.withOpacity(0.6))
                 : null;
-    switch (name) {
-      case 'money':
-        return Text(
-          'Money: \$${NumberFormat.decimalPattern().format(value * 100).toString()}',
-          style: textStyle,
-        );
-      default:
-        return Text('${capitalize(name)}: ${value.round()}${isPercentage ? '%' : ''}', style: textStyle);
-    }
+    return Text('${capitalize(name)}: ${value.round()}${isPercentage ? '%' : ''}', style: textStyle);
   }
 }
 

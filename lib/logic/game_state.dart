@@ -58,7 +58,7 @@ class GameState {
   // The various turn-based actions have an passive and active component - passive is gained each turn, active when a turn is used to take that action
   int influence = 100;
 
-  int money = debug ? 500000 : 5000; // 1 = 100 USD. Needed to hire researchers, engineers, and staff. No loans.
+  double money = debug ? 500000 : 500; // 1 = 1k USD. Needed to hire researchers, engineers, and staff. No loans.
   int passiveMoneyGain = 0;
 
   // Your human resources. Allocate to tasks to generate points in three general areas: capabilities, alignment, fieldbuilding
