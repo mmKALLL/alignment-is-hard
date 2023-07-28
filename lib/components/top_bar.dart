@@ -2,7 +2,7 @@ import 'package:alignment_is_hard/components/resource_display.dart';
 import 'package:alignment_is_hard/logic/game_state.dart';
 import 'package:flutter/material.dart' hide Action, Actions;
 
-buildTopBar(BuildContext context, GameState gs) {
+PreferredSize buildTopBar(BuildContext context, GameState gs) {
   final appbarSize = Size(MediaQuery.of(context).size.width, 48);
   return PreferredSize(
       preferredSize: appbarSize,

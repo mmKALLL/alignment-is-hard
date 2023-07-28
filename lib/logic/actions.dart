@@ -183,7 +183,6 @@ reduceActionEffects(GameState gs, List<ActionEffect> effects) {
 
       // Upgrades, contracts, etc
       case Param.contractAccept:
-        final contract = gs.contracts[effect.value];
         gs.contracts[effect.value].started = true;
         gs.contracts[effect.value].daysSinceStarting = 0;
         reduceActionEffects(gs, gs.contracts[effect.value].onAccept);
@@ -195,7 +194,7 @@ reduceActionEffects(GameState gs, List<ActionEffect> effects) {
         gs.contracts[effect.value].failed = true;
         break;
       case Param.refreshContracts:
-        gs.contracts = List.generate(2, (index) => gs.contracts[index].started ? gs.contracts[index] : getRandomContract(gs));
+        gs.contracts = gs.contracts.map((Contract c) => c.started ? c : getRandomContract(gs)).toList();
         break;
 
       case Param.contractClaimed:
@@ -232,8 +231,7 @@ validateActionResourceSufficiency(GameState gs, ActionEffect effect) {
     case Param.contractFailure:
       return gs.contracts[value].started == true && gs.contracts[value].failed == false;
     case Param.refreshContracts:
-      gs.contracts.map((c) => c.started ? c : getRandomContract(gs));
-      break;
+      return gs.contracts.any((c) => !c.started);
     case Param.contractClaimed:
       return gs.contracts[value].started == true && (gs.contracts[value].succeeded || gs.contracts[value].failed);
     default:

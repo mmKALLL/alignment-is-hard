@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:alignment_is_hard/logic/actions.dart';
 import 'package:alignment_is_hard/logic/game_state.dart';
 import 'package:flutter/material.dart' hide Action, Actions;
@@ -68,7 +66,6 @@ class IconActionButton extends StatelessWidget {
     final buttonColor = color ?? GameColors.actionButtonColor;
     const iconColor = GameColors.actionButtonIconColor;
     final enabled = actionData.effects.every((effect) => validateActionResourceSufficiency(gs, effect));
-    log(filled.toString());
     return FilledButton(
         onPressed: enabled
             ? () {

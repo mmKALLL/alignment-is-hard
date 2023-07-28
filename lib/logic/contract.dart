@@ -42,7 +42,7 @@ class Contract {
   bool succeeded = false;
 }
 
-getRandomContract(GameState gs) {
+Contract getRandomContract(GameState gs) {
   // Setup the base parameters that control complexity
   int difficulty = Random().nextInt(gs.getYear() * 50 + 25) + 50;
   bool isAlignmentContract = Random().nextBool();
