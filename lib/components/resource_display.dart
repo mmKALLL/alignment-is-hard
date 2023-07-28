@@ -97,6 +97,6 @@ class TimeDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text('Day $day, year ${year + 2022}');
+    return Text('Day ${day % 360}, year ${year + 2022}');
   }
 }
