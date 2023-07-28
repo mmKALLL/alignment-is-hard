@@ -181,8 +181,8 @@ class _MainComponentState extends State<MainComponent> {
                         gs,
                         handleAction,
                         Action(
-                          'Continue playing!',
-                          [ActionEffect(Param.currentScreen, Screen.ingame)],
+                          'Try again!',
+                          [ActionEffect(Param.resetGame, 0)],
                         ),
                         Icons.arrow_back_sharp)
                   ])
