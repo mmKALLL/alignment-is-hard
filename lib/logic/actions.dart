@@ -81,7 +81,7 @@ class Actions {
   contractSuccess(index) => Action('Contract success', [ActionEffect(Param.contractSuccess, index)], Event('contractSuccess'));
   contractFailure(index) => Action('Contract failure', [ActionEffect(Param.contractFailure, index)], Event('contractFailure'));
 
-  final refreshContracts = Action('Refresh contracts', [ActionEffect(Param.contractRefresh, 1), ActionEffect(Param.sp, -1)]);
+  final refreshContracts = Action('Refresh contracts', [ActionEffect(Param.refreshContracts, 1), ActionEffect(Param.sp, -1)]);
 
   // UPGRADE ACTIONS
 
@@ -194,8 +194,8 @@ reduceActionEffects(GameState gs, List<ActionEffect> effects) {
       case Param.contractFailure:
         gs.contracts[effect.value].failed = true;
         break;
-      case Param.contractRefresh:
-        gs.contracts = List.generate(2, (index) => getRandomContract(gs));
+      case Param.refreshContracts:
+        gs.contracts = List.generate(2, (index) => gs.contracts[index].started ? gs.contracts[index] : getRandomContract(gs));
         break;
 
       case Param.contractClaimed:
@@ -231,7 +231,7 @@ validateActionResourceSufficiency(GameState gs, ActionEffect effect) {
       return gs.contracts[value].started == true && gs.contracts[value].succeeded == false;
     case Param.contractFailure:
       return gs.contracts[value].started == true && gs.contracts[value].failed == false;
-    case Param.contractRefresh:
+    case Param.refreshContracts:
       gs.contracts.map((c) => c.started ? c : getRandomContract(gs));
       break;
     case Param.contractClaimed:
@@ -289,7 +289,7 @@ validateActionResourceSufficiency(GameState gs, ActionEffect effect) {
     case Param.contractAccept:
     case Param.contractSuccess:
     case Param.contractFailure:
-    case Param.contractRefresh:
+    case Param.refreshContracts:
     case Param.contractClaimed:
       return true;
 

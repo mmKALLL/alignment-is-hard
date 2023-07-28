@@ -22,7 +22,7 @@ enum Param {
   contractAccept,
   contractSuccess,
   contractFailure,
-  contractRefresh,
+  refreshContracts,
   contractClaimed,
 }
 
