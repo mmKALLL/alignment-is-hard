@@ -7,6 +7,15 @@ class Actions {
   Actions(this.gs);
   final GameState gs;
 
+  Action influenceAlignmentAcceptance() => Action(
+        'Influence public opinion of alignment',
+        [
+          ActionEffect(Param.alignmentAcceptance, (gs.influence / 10).round()),
+          ActionEffect(Param.sp, -10),
+        ],
+        Event('influenceAlignmentAcceptance'),
+      );
+
   Action hireHuman() => Action(
         'Hire a new human',
         [
