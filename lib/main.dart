@@ -85,7 +85,7 @@ class _MainComponentState extends State<MainComponent> {
             width: 165,
             child: TextButton(
                 style: TextButton.styleFrom(
-                  primary: Colors.black,
+                  foregroundColor: Colors.black,
                   // add outline border without filling the center
                   shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(8)),
