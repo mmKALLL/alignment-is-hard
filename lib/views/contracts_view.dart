@@ -12,17 +12,19 @@ class ContractsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final actions = Actions(gs);
     final List<Contract> contracts = gs.contracts;
     final List<Widget> contractWidgets =
         contracts.map((contract) => ContractWidget(contracts.indexOf(contract), gs, contract, handleAction)).toList();
     return Center(
         child: Column(
       children: [
-        Text('Trust: ${gs.trust}%, ${180 - (gs.turn % 180)} days until new contracts.'),
+        Text('Trust: ${gs.trust}%, ${(gs.turn % 180)}/180 days until new contracts.'),
         Text('Alignment contract win condition: ${gs.finishedAlignmentContracts}/${gs.alignmentContractsNeededToWin}'),
         Row(
           children: contractWidgets,
-        )
+        ),
+        ActionButton(gs, handleAction, actions.refreshContracts, Icons.add),
       ],
     ));
   }
@@ -49,15 +51,22 @@ class ContractWidget extends StatelessWidget {
             // This comes with a small performance cost, and you should not set [clipBehavior]
             // unless you need it.
             clipBehavior: Clip.hardEdge,
+            color: contract.failed
+                ? Colors.red
+                : contract.succeeded
+                    ? Colors.green
+                    : contract.started
+                        ? Colors.blue.shade200
+                        : Colors.grey.shade300,
             child: InkWell(
                 splashColor: Colors.blue.withAlpha(30),
                 onTap: () {
-                  handleAction(actions.contractAccept(index));
+                  if (!contract.started) handleAction(actions.contractAccept(index));
                 },
                 child: Container(
                     padding: const EdgeInsets.all(8),
                     child: Column(children: [
-                      Text('${contract.name} (${contract.isAlignmentContract ? 'A' : 'C'})'),
+                      Text('${contract.name} (${contract.isAlignmentContract ? 'A' : 'C'}, ${contract.deadline} days)'),
                       Text('Req: ${contract.requirementDescription}'),
                       paddedGameScreenDivider,
                       Text('On accept: ${contract.acceptDescription}'),

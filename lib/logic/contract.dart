@@ -38,7 +38,8 @@ class Contract {
 
   int daysSinceStarting = 0;
   bool started = false;
-  bool completed = false;
+  bool failed = false;
+  bool succeeded = false;
 }
 
 getRandomContract(GameState gs) {
@@ -57,7 +58,7 @@ getRandomContract(GameState gs) {
   // Generate action effects
   final List<ActionEffect> onAccept = getAcceptEffects(difficulty, acceptEffects, isAlignmentContract, gs.trust);
   final List<ActionEffect> onSuccess = [
-    ActionEffect(Param.trust, (2 * difficulty / 100).round()),
+    ActionEffect(Param.trust, max(isAlignmentContract ? 2 : 1, (2 * difficulty / 100)).round()),
     ...getSuccessEffects(difficulty, successEffects, isAlignmentContract, gs.trust)
   ];
   final List<ActionEffect> onFailure = [

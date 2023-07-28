@@ -1,5 +1,7 @@
 // ignore_for_file: sized_box_for_whitespace
 
+import 'dart:async';
+
 import 'package:alignment_is_hard/components/action_buttons.dart';
 import 'package:alignment_is_hard/components/human_allocation.dart';
 import 'package:alignment_is_hard/logic/actions.dart';
@@ -59,6 +61,9 @@ class MainComponent extends StatefulWidget {
 }
 
 class _MainComponentState extends State<MainComponent> {
+  _MainComponentState() {
+    gameLoop = Timer.periodic(const Duration(seconds: 1), (timer) => {setState(() => reduceTimeStep(gs, 1))});
+  }
   GameState gs = GameState();
 
   // This call to setState tells the Flutter framework that something has
@@ -73,6 +78,8 @@ class _MainComponentState extends State<MainComponent> {
       // TODO: Do something to handle the events of the action
     });
   }
+
+  late Timer gameLoop;
 
   @override
   Widget build(BuildContext context) {

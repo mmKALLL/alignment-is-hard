@@ -81,7 +81,7 @@ class Actions {
   contractSuccess(index) => Action('Contract success', [ActionEffect(Param.contractSuccess, index)], Event('contractSuccess'));
   contractFailure(index) => Action('Contract failure', [ActionEffect(Param.contractFailure, index)], Event('contractFailure'));
 
-  final refreshContracts = Action('Refresh contracts', [ActionEffect(Param.contractRefresh, -1), ActionEffect(Param.contractAccept, 1)]);
+  final refreshContracts = Action('Refresh contracts', [ActionEffect(Param.contractRefresh, 1), ActionEffect(Param.sp, -1)]);
 
   // UPGRADE ACTIONS
 
@@ -188,17 +188,20 @@ reduceActionEffects(GameState gs, List<ActionEffect> effects) {
       case Param.contractAccept:
         gs.contracts[effect.value].started = true;
         gs.contracts[effect.value].daysSinceStarting = 0;
-        gs = reduceActionEffects(gs, gs.contracts[effect.value].onAccept);
+        reduceActionEffects(gs, gs.contracts[effect.value].onAccept);
         break;
       case Param.contractSuccess:
-        gs.contracts[effect.value].completed = true;
+        gs.contracts[effect.value].succeeded = true;
         gs = reduceActionEffects(gs, gs.contracts[effect.value].onSuccess);
         gs.contracts[effect.value] = getRandomContract(gs);
         break;
       case Param.contractFailure:
-        gs.contracts[effect.value].completed = true;
+        gs.contracts[effect.value].succeeded = true;
         gs = reduceActionEffects(gs, gs.contracts[effect.value].onFailure);
         gs.contracts[effect.value] = getRandomContract(gs);
+        break;
+      case Param.contractRefresh:
+        gs.contracts = List.generate(2, (index) => getRandomContract(gs));
         break;
     }
   }
@@ -273,9 +276,12 @@ validateActionResourceSufficiency(GameState gs, ActionEffect effect) {
     case Param.contractAccept:
       return gs.contracts[amount].started == false;
     case Param.contractSuccess:
-      return gs.contracts[amount].started == true && gs.contracts[amount].completed == false;
+      return gs.contracts[amount].started == true && gs.contracts[amount].succeeded == false;
     case Param.contractFailure:
-      return gs.contracts[amount].started == true && gs.contracts[amount].completed == false;
+      return gs.contracts[amount].started == true && gs.contracts[amount].succeeded == false;
+    case Param.contractRefresh:
+      gs.contracts.map((c) => c.started ? c : getRandomContract(gs));
+      break;
     // No default switch case acts as an assertNever; you get warnings if a case is not handled. Handling all of them causes the below return to be unreachable.
   }
   return true;
@@ -309,6 +315,7 @@ reduceTimeStep(GameState gs, int timeUsed) {
 
   // gs.contracts.map((e) => {
   //   if (e.started && !e.completed) {e.daysSinceStarting += timeUsed}
+  //   e.failed = true;
   //  return e
   //  });
 }

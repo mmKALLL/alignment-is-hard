@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:math';
 
+import 'package:alignment_is_hard/logic/actions.dart';
 import 'package:alignment_is_hard/logic/contract.dart';
 import 'package:flutter/material.dart' hide Action, Actions;
 
@@ -22,6 +24,7 @@ enum Param {
   contractAccept,
   contractSuccess,
   contractFailure,
+  contractRefresh
 }
 
 // Utility used to show human-readable versions of the parameters
@@ -38,9 +41,9 @@ class GameState {
   GameState() {
     contracts = List.generate(2, (index) => getRandomContract(this));
   }
-  int currentScreen = 5; // 0: title, 5: ingame, 6: upgrades
+  int currentScreen = Screen.ingame;
 
-  int turn = 0; // Number of days elapsed
+  int turn = 1; // Number of days elapsed
   int gameSpeed = 1; // 0 = paused; normally one turn happens each second, but this acts as a multiplier
   int lastSelectedGameSpeed = 1; // Used to restore game speed after pausing
 
@@ -79,7 +82,7 @@ class GameState {
   int rpProgress = 0;
   int epProgress = 0;
   int spProgress = 0;
-  int progressPerLevel = 200;
+  int progressPerLevel = 100;
 
   int toNextRP() => progressPerLevel - rpProgress;
   int toNextEP() => progressPerLevel - epProgress;
@@ -91,7 +94,7 @@ class GameState {
   Upgrades upgrades = Upgrades();
   List<Upgrade>? upgradesToSelect;
 
-  List<Contract> contracts = [];
+  late List<Contract> contracts;
 
   Organization playerOrganization = Organization('Meta AI', 0.05, FeatureName.automation);
   List<Organization> organizations = [
