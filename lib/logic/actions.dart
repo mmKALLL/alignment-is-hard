@@ -327,7 +327,7 @@ reduceTimeStep(GameState gs, int timeUsed) {
 List<Contract> mapContractStatus(GameState gs, int timeUsed) {
   return gs.contracts.map((c) {
     if (c.started) {
-      if (!(c.succeeded || c.failed)) c.daysSinceStarting += timeUsed;
+      if (!(c.failed)) c.daysSinceStarting += timeUsed;
       if (c.daysSinceStarting >= c.deadline) c.failed = true;
 
       // Mark contracts as successful (= ready for collection) if their requirements are met. Even if a contract is successful at one point, its status may change after changes in the game state
