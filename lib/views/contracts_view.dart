@@ -19,7 +19,7 @@ class ContractsView extends StatelessWidget {
     return Center(
         child: Column(
       children: [
-        Text('Trust: ${gs.trust}%, ${(gs.turn % 180)}/180 days until new contracts.'),
+        Text('Trust: ${gs.trust}%, ${(gs.turn % gs.contractCycle)}/${gs.contractCycle} days until new contracts.'),
         Text('Alignment contract win condition: ${gs.finishedAlignmentContracts}/${gs.alignmentContractsNeededToWin}'),
         Row(
           children: contractWidgets,

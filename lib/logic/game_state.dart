@@ -95,6 +95,7 @@ class GameState {
   Upgrades upgrades = Upgrades();
   List<Upgrade>? upgradesToSelect;
 
+  final int contractCycle = 360; // Number of days between contract auto-refreshes
   late List<Contract> contracts;
 
   Organization playerOrganization = Organization('Meta AI', 0.05, FeatureName.automation);

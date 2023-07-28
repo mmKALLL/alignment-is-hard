@@ -63,7 +63,7 @@ class MainComponent extends StatefulWidget {
 
 class _MainComponentState extends State<MainComponent> {
   _MainComponentState() {
-    gameLoop = Timer.periodic(const Duration(seconds: 1), (timer) => {setState(() => reduceTimeStep(gs, 1))});
+    gameLoop = Timer.periodic(const Duration(milliseconds: 300), (timer) => {setState(() => reduceTimeStep(gs, 1))});
   }
   GameState gs = GameState();
 

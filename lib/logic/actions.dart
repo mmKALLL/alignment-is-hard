@@ -197,7 +197,10 @@ reduceActionEffects(GameState gs, List<ActionEffect> effects) {
       case Param.contractClaimed:
         final contract = gs.contracts[effect.value];
         if (!(contract.succeeded || contract.failed)) break;
-        if (contract.succeeded) reduceActionEffects(gs, contract.requirements);
+        if (contract.succeeded) {
+          gs.finishedAlignmentContracts += contract.isAlignmentContract ? 1 : 0;
+          reduceActionEffects(gs, contract.requirements);
+        }
         final action = contract.succeeded ? contract.onSuccess : contract.onFailure;
         reduceActionEffects(gs, action);
         gs.contracts[effect.value] = getRandomContract(gs);
@@ -335,6 +338,10 @@ List<Contract> mapContractStatus(GameState gs, int timeUsed) {
         c.succeeded = true;
       } else {
         c.succeeded = false;
+      }
+    } else {
+      if (gs.turn % gs.contractCycle == 0) {
+        return getRandomContract(gs);
       }
     }
     return c;
