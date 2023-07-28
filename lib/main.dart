@@ -4,6 +4,7 @@ import 'dart:async';
 
 import 'package:alignment_is_hard/components/action_buttons.dart';
 import 'package:alignment_is_hard/components/human_allocation.dart';
+import 'package:alignment_is_hard/components/top_bar.dart';
 import 'package:alignment_is_hard/logic/actions.dart';
 import 'package:alignment_is_hard/logic/game_state.dart';
 import 'package:alignment_is_hard/components/resource_display.dart';
@@ -198,8 +199,6 @@ class _MainComponentState extends State<MainComponent> {
                                 ? addReturnButton([UpgradeScreenActionButtons(gs, handleAction)])
                                 : addReturnButton([const Text('Unknown Screen')]);
 
-    Size appbarSize = Size(MediaQuery.of(context).size.width, 48);
-
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     //
@@ -207,20 +206,7 @@ class _MainComponentState extends State<MainComponent> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     return Scaffold(
-      appBar: PreferredSize(
-          preferredSize: appbarSize,
-          child: Container(
-              height: appbarSize.height,
-              color: GameColors.mainColor,
-              child: Wrap(
-                spacing: 20,
-                runSpacing: 8,
-                alignment: WrapAlignment.center,
-                runAlignment: WrapAlignment.center,
-                crossAxisAlignment: WrapCrossAlignment.center,
-
-                children: [const Text('arst'), Text('Game speed: ${gs.gameSpeed}x')], // TODO: Add icons and numbers to main app bar
-              ))),
+      appBar: buildTopBar(context, gs),
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
