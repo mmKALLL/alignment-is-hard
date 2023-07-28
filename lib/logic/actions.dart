@@ -7,7 +7,7 @@ class Actions {
   Actions(this.gs);
   final GameState gs;
 
-  late Action addHumanToRp = Action(
+  final Action addHumanToRp = Action(
     'Add human to RP',
     [
       ActionEffect(Param.freeHumans, -1),
@@ -16,35 +16,35 @@ class Actions {
       // if (gs.happiness < 25) ActionEffect('happiness', 1)
     ],
   );
-  late Action removeHumanFromRp = Action(
+  final Action removeHumanFromRp = Action(
     'Remove human from RP',
     [
       ActionEffect(Param.freeHumans, 1),
       ActionEffect(Param.rpWorkers, -1),
     ],
   );
-  late Action addHumanToEp = Action(
+  final Action addHumanToEp = Action(
     'Add human to EP',
     [
       ActionEffect(Param.freeHumans, -1),
       ActionEffect(Param.epWorkers, 1),
     ],
   );
-  late Action removeHumanFromEp = Action(
+  final Action removeHumanFromEp = Action(
     'Remove human from EP',
     [
       ActionEffect(Param.freeHumans, 1),
       ActionEffect(Param.epWorkers, -1),
     ],
   );
-  late Action addHumanToSp = Action(
+  final Action addHumanToSp = Action(
     'Add human to SP',
     [
       ActionEffect(Param.freeHumans, -1),
       ActionEffect(Param.spWorkers, 1),
     ],
   );
-  late Action removeHumanFromSp = Action(
+  final Action removeHumanFromSp = Action(
     'Remove human from SP',
     [
       ActionEffect(Param.freeHumans, 1),
@@ -56,23 +56,23 @@ class Actions {
         'Go to $name',
         [ActionEffect(Param.currentScreen, screen)],
       );
-  late Action gotoUpgradeScreen = Action(
+  final Action gotoUpgradeScreen = Action(
     'Purchase upgrades',
     [ActionEffect(Param.currentScreen, Screen.upgrades)],
   );
-  late Action gotoHumanAllocationScreen = Action(
+  final Action gotoHumanAllocationScreen = Action(
     'Allocate humans',
     [ActionEffect(Param.currentScreen, Screen.humanAllocation)],
   );
-  late Action gotoGameScreen = Action(
+  final Action gotoGameScreen = Action(
     'Return',
     [ActionEffect(Param.currentScreen, Screen.ingame), ActionEffect(Param.gameSpeed, 1)],
   );
-  late Action gotoGameOver = Action(
+  final Action gotoGameOver = Action(
     'Lose the game (debug)',
     [ActionEffect(Param.currentScreen, Screen.gameOver), ActionEffect(Param.gameSpeed, 1)],
   );
-  late Action gotoGameWin = Action(
+  final Action gotoGameWin = Action(
     'Win the game (debug)',
     [ActionEffect(Param.currentScreen, Screen.victory), ActionEffect(Param.gameSpeed, 1)],
   );
@@ -80,6 +80,8 @@ class Actions {
   contractAccept(index) => Action('Accept contract', [ActionEffect(Param.contractAccept, index)], Event('contractAccept'));
   contractSuccess(index) => Action('Contract success', [ActionEffect(Param.contractSuccess, index)], Event('contractSuccess'));
   contractFailure(index) => Action('Contract failure', [ActionEffect(Param.contractFailure, index)], Event('contractFailure'));
+
+  final refreshContracts = Action('Refresh contracts', [ActionEffect(Param.contractRefresh, -1), ActionEffect(Param.contractAccept, 1)]);
 
   // UPGRADE ACTIONS
 
