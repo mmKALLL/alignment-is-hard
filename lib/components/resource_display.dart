@@ -65,11 +65,12 @@ capitalize(String name) {
 }
 
 class ResourceMeter extends StatelessWidget {
-  const ResourceMeter(this.label, this.value, this.color, [key]) : super(key: key);
+  const ResourceMeter(this.label, this.value, this.color, [this.isPercentage = false, key]) : super(key: key);
 
   final String label;
   final int value;
   final Color color;
+  final bool isPercentage;
 
   @override
   Widget build(BuildContext context) {
@@ -80,7 +81,7 @@ class ResourceMeter extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Text(
-          '$label: $value',
+          '$label: $value${isPercentage ? '%' : ''}',
           style: style,
         ),
       ),
@@ -96,6 +97,6 @@ class TimeDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text('Day ${day + 1}, year ${year + 2022}');
+    return Text('Day $day, year ${year + 2022}');
   }
 }

@@ -27,7 +27,7 @@ class HumanAllocation extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ResourceMeter(paramToLabel(Param.rp), gs.rp, GameColors.energyColor),
-                ResourceMeter('RP progress', gs.rpProgress, GameColors.energyColor),
+                ResourceMeter('Progress', gs.rpProgress, GameColors.energyColor, true),
                 if (handleAction != null)
                   AllocationButtons(gs, gs.rpWorkers.toString(), handleAction!, actions.addHumanToRp, actions.removeHumanFromRp),
               ],
@@ -36,7 +36,7 @@ class HumanAllocation extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ResourceMeter('EP', gs.ep, GameColors.energyColor),
-                ResourceMeter('EP progress', gs.epProgress, GameColors.energyColor),
+                ResourceMeter('Progress', gs.epProgress, GameColors.energyColor, true),
                 if (handleAction != null)
                   AllocationButtons(gs, gs.epWorkers.toString(), handleAction!, actions.addHumanToEp, actions.removeHumanFromEp),
               ],
@@ -45,7 +45,7 @@ class HumanAllocation extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ResourceMeter('SP', gs.sp, GameColors.energyColor),
-                ResourceMeter('SP progress', gs.spProgress, GameColors.energyColor),
+                ResourceMeter('Progress', gs.spProgress, GameColors.energyColor, true),
                 if (handleAction != null)
                   AllocationButtons(gs, gs.spWorkers.toString(), handleAction!, actions.addHumanToSp, actions.removeHumanFromSp),
               ],
