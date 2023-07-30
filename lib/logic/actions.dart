@@ -8,7 +8,7 @@ class Actions {
   final GameState gs;
 
   Action influenceAlignmentAcceptance() => Action(
-        'Influence public opinion of alignment',
+        'Influence public opinion',
         [
           ActionEffect(Param.alignmentAcceptance, (gs.influence / 10).round()),
           ActionEffect(Param.sp, -10),
@@ -69,14 +69,17 @@ class Actions {
     ],
   );
 
-  gotoScreen(int screen, String name) => Action(
+  Action gotoScreen(int screen, String name) => Action(
         'Go to $name',
         [ActionEffect(Param.currentScreen, screen)],
       );
-  final Action gotoUpgradeScreen = Action(
-    'Purchase upgrades',
-    [ActionEffect(Param.currentScreen, Screen.upgrades)],
-  );
+  Action researchUpgrade() => Action(
+        'Research an upgrade',
+        [
+          ActionEffect(Param.upgradeSelection, 100 + Random().nextInt(gs.upgrades.length * 15 + 20)),
+          ActionEffect(Param.rp, -(3 + gs.upgrades.length))
+        ],
+      );
   final Action gotoHumanAllocationScreen = Action(
     'Allocate humans',
     [ActionEffect(Param.currentScreen, Screen.humanAllocation)],
@@ -100,13 +103,6 @@ class Actions {
   contractClaimed(index) => Action('Claim contract', [ActionEffect(Param.contractClaimed, index)], Event('contractClaimed'));
 
   final refreshContracts = Action('Refresh contracts', [ActionEffect(Param.refreshContracts, 1), ActionEffect(Param.sp, -1)]);
-
-  // UPGRADE ACTIONS
-
-  late Action structureLevelUpgrade = Action(
-    'Get 5% more influence (Lv. ${gs.upgrades.influenceLevel})',
-    [ActionEffect(Param.money, -pow(gs.upgrades.influenceLevel + 1, 1.8).round() * 30), ActionEffect(Param.influence, 5)],
-  );
 }
 
 class ActionEffect {
@@ -151,6 +147,7 @@ reduceActionEffects(GameState gs, List<ActionEffect> effects) {
       case Param.resetGame:
         break;
       case Param.upgradeSelection:
+        // The value in this case is rarity, usually in range [100,250]
         gs.gameSpeed = 0;
         gs.currentScreen = Screen.upgradeSelection;
         gs.upgradesToSelect = []; // TODO: Add upgrade selection mechanism

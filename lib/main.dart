@@ -111,7 +111,7 @@ class _MainComponentState extends State<MainComponent> {
                   Text('Return to game'),
                 ])),
           ),
-          Padding(padding: const EdgeInsets.all(0), child: Column(children: mainContent))
+          Padding(padding: const EdgeInsets.only(top: 32), child: Column(children: mainContent))
         ]);
 
     // Column is also a layout widget. It takes a list of children and
@@ -140,10 +140,6 @@ class _MainComponentState extends State<MainComponent> {
                 height: 8,
               ),
               HumanAllocation(gs: gs, handleAction: handleAction),
-              // const SizedBox(
-              //   height: 8,
-              // ),
-              // Text('You are at ${locationToLabel(gs.currentLocation)}. What will you do with your life?'),
               GameScreenActionButtons(gs, handleAction)
             ],
           )
@@ -188,20 +184,20 @@ class _MainComponentState extends State<MainComponent> {
                   ])
                 : gs.currentScreen == Screen.contracts
                     ? addReturnButton([ContractsView(gs, handleAction)])
-                    : gs.currentScreen == Screen.upgrades
-                        ? addReturnButton(
-                            [ResourceDisplay(gs: gs, handleAction: handleAction), UpgradeScreenActionButtons(gs, handleAction)],
-                          )
-                        : gs.currentScreen == Screen.humanAllocation
-                            ? addReturnButton([
-                                ResourceDisplay(
-                                  gs: gs,
-                                  handleAction: handleAction,
-                                ),
-                              ])
-                            : gs.currentScreen == Screen.upgradeSelection
-                                ? addReturnButton([UpgradeScreenActionButtons(gs, handleAction)])
-                                : addReturnButton([const Text('Unknown Screen')]);
+                    // : gs.currentScreen == Screen.upgrades
+                    //     ? addReturnButton(
+                    //         [ResourceDisplay(gs: gs, handleAction: handleAction), UpgradeScreenActionButtons(gs, handleAction)],
+                    //       )
+                    : gs.currentScreen == Screen.humanAllocation
+                        ? addReturnButton([
+                            ResourceDisplay(
+                              gs: gs,
+                              handleAction: handleAction,
+                            ),
+                          ])
+                        : gs.currentScreen == Screen.upgradeSelection
+                            ? addReturnButton([const Text('Upgrade selection is WIP')])
+                            : addReturnButton([const Text('Unknown Screen')]);
 
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.

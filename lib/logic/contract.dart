@@ -52,7 +52,7 @@ Contract getRandomContract(GameState gs) {
   // Generate the variables needed for generating action effects
   difficultyWithVariance() => difficulty + Random().nextInt(20 + (difficulty / 5).floor());
   int acceptEffects = 1 + (difficultyWithVariance() / 250).floor();
-  int successEffects = 0 + (difficultyWithVariance() / 100).floor();
+  int successEffects = 0 + (difficultyWithVariance() / 125).floor();
   int failureEffects = 1 + (difficultyWithVariance() / 150).floor();
 
   // Generate action effects
@@ -68,7 +68,7 @@ Contract getRandomContract(GameState gs) {
 
   // Requirements rise exponentially with difficulty
   final int totalRequirement = pow(((100 + difficulty) / 100), 1.7).round();
-  final alignmentRequirement = totalRequirement >= 2 && isAlignmentContract ? (totalRequirement * 0.4).round() : 0;
+  final alignmentRequirement = totalRequirement >= 2 && isAlignmentContract ? (totalRequirement * 0.3).round() : 0;
   final List<ActionEffect> requirements = [
     if (alignmentRequirement > 0) ActionEffect(Param.rp, -alignmentRequirement),
     ActionEffect(Param.ep, -(totalRequirement - alignmentRequirement))

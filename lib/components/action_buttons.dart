@@ -21,6 +21,7 @@ class ActionButton extends StatelessWidget {
       enabled: action.effects.every((effect) => validateActionResourceSufficiency(gs, effect)),
       minVerticalPadding: effectText == null ? 22 : 1,
       title: labelText,
+      subtitle: Text(effectText ?? ''),
       onTap: () {
         handleAction(action);
       },
@@ -119,11 +120,9 @@ class GameScreenActionButtons extends StatelessWidget {
 
     return ActionButtonList(
       [
-        ActionButton(gs, handleAction, actions.gotoUpgradeScreen, Icons.trending_up_sharp),
-        gameScreenDivider,
         ActionButton(gs, handleAction, actions.gotoScreen(Screen.contracts, 'contracts'), Icons.trending_up_sharp),
         gameScreenDivider,
-        ActionButton(gs, handleAction, actions.hireHuman(), Icons.currency_exchange_sharp),
+        ActionButton(gs, handleAction, actions.researchUpgrade(), Icons.currency_exchange_sharp),
         gameScreenDivider,
         ActionButton(gs, handleAction, actions.influenceAlignmentAcceptance(), Icons.currency_exchange_sharp),
         gameScreenDivider,
@@ -135,23 +134,23 @@ class GameScreenActionButtons extends StatelessWidget {
   }
 }
 
-class UpgradeScreenActionButtons extends StatelessWidget {
-  const UpgradeScreenActionButtons(this.gs, this.handleAction, [key]) : super(key: key);
+// class UpgradeScreenActionButtons extends StatelessWidget {
+//   const UpgradeScreenActionButtons(this.gs, this.handleAction, [key]) : super(key: key);
 
-  final GameState gs;
-  final Function handleAction;
+//   final GameState gs;
+//   final Function handleAction;
 
-  @override
-  Widget build(BuildContext context) {
-    var actions = Actions(gs);
-    return ActionButtonList(
-      [
-        ActionButton(gs, handleAction, actions.structureLevelUpgrade, Icons.build_sharp),
-        gameScreenDivider,
-      ],
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     var actions = Actions(gs);
+//     return ActionButtonList(
+//       [
+//         ActionButton(gs, handleAction, actions.structureLevelUpgrade, Icons.build_sharp),
+//         gameScreenDivider,
+//       ],
+//     );
+//   }
+// }
 
 class AllocationButtons extends StatelessWidget {
   const AllocationButtons(this.gs, this.amount, this.handleAction, this.plusAction, this.minusAction, [key]) : super(key: key);

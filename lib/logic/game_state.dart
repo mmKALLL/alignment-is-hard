@@ -92,7 +92,7 @@ class GameState {
   List<String> recentActions = [];
   List<GameState> recentGS = [];
 
-  Upgrades upgrades = Upgrades();
+  List<Upgrade> upgrades = [];
   List<Upgrade>? upgradesToSelect;
 
   final int contractCycle = 360; // Number of days between contract auto-refreshes
@@ -114,10 +114,6 @@ class GameState {
   bool isGameWon() =>
       alignmentAcceptance >= 100 ||
       finishedAlignmentContracts >= alignmentContractsNeededToWin; // TODO: Check if game has been won due to a superintelligent aligned AI
-}
-
-class Upgrades {
-  int influenceLevel = 0;
 }
 
 class Upgrade {}

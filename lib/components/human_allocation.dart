@@ -50,6 +50,7 @@ class HumanAllocation extends StatelessWidget {
                   AllocationButtons(gs, gs.spWorkers, handleAction!, actions.addHumanToSp, actions.removeHumanFromSp),
               ],
             ),
+            if (handleAction != null) ActionButton(gs, handleAction!, actions.hireHuman(), Icons.currency_exchange_sharp),
           ],
         ));
   }

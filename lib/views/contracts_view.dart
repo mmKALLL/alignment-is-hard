@@ -42,7 +42,7 @@ class ContractWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final actions = Actions(gs);
     return Container(
-        padding: const EdgeInsets.all(8),
+        padding: const EdgeInsets.all(4),
         width: 200,
         height: 300,
         child: Card(
