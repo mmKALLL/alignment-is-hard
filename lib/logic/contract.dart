@@ -176,7 +176,7 @@ getFailureEffects(int difficulty, int totalEffects, bool isAlignmentContract, in
 }
 
 getEffectsFromPool(int totalEffects, List<WeightedEffect> effectPool) {
-  return List.generate(totalEffects, (index) {
+  return List.generate(min(totalEffects, effectPool.length), (index) {
     int totalWeight = effectPool.fold(0, (acc, cur) => acc + cur.weight);
     int weightIndex = Random().nextInt(totalWeight) + 1; // Random returns a value in range [0, max), but we want to check if it's
     int i = 0;
