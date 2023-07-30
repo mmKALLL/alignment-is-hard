@@ -226,17 +226,7 @@ reduceActionEffects(GameState gs, List<ActionEffect> effects) {
     }
   }
 
-  if (gs.isGameOver()) {
-    gs.currentScreen = Screen.gameOver;
-    gs.gameSpeed = 0;
-    return;
-  }
-
-  if (gs.isGameWon()) {
-    gs.currentScreen = Screen.victory;
-    gs.gameSpeed = 0;
-    return;
-  }
+  checkWinConditions(gs);
 }
 
 validateActionResourceSufficiency(GameState gs, ActionEffect effect) {
@@ -320,7 +310,7 @@ reduceTimeStep(GameState gs, int timeUsed) {
   gs.turn += timeUsed;
 
   gs.money += gs.passiveMoneyGain;
-  gs.money -= gs.getTotalWorkers() + gs.freeHumans / 10;
+  gs.money -= gs.getTotalWorkers();
 
   gs.rpProgress += gs.rpWorkers;
   gs.epProgress += gs.epWorkers;
@@ -342,6 +332,7 @@ reduceTimeStep(GameState gs, int timeUsed) {
   }
 
   gs.contracts = mapContractStatus(gs, timeUsed);
+  checkWinConditions(gs);
 }
 
 List<Contract> mapContractStatus(GameState gs, int timeUsed) {
@@ -363,4 +354,18 @@ List<Contract> mapContractStatus(GameState gs, int timeUsed) {
     }
     return c;
   }).toList();
+}
+
+void checkWinConditions(GameState gs) {
+  if (gs.isGameOver()) {
+    gs.currentScreen = Screen.gameOver;
+    gs.gameSpeed = 0;
+    return;
+  }
+
+  if (gs.isGameWon()) {
+    gs.currentScreen = Screen.victory;
+    gs.gameSpeed = 0;
+    return;
+  }
 }

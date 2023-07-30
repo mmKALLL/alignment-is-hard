@@ -29,7 +29,7 @@ class HumanAllocation extends StatelessWidget {
                 ResourceMeter(paramToLabel(Param.rp), gs.rp, GameColors.energyColor),
                 ResourceMeter('Progress', gs.rpProgress, GameColors.energyColor, true),
                 if (handleAction != null)
-                  AllocationButtons(gs, gs.rpWorkers.toString(), handleAction!, actions.addHumanToRp, actions.removeHumanFromRp),
+                  AllocationButtons(gs, gs.rpWorkers, handleAction!, actions.addHumanToRp, actions.removeHumanFromRp),
               ],
             ),
             Row(
@@ -38,7 +38,7 @@ class HumanAllocation extends StatelessWidget {
                 ResourceMeter('EP', gs.ep, GameColors.energyColor),
                 ResourceMeter('Progress', gs.epProgress, GameColors.energyColor, true),
                 if (handleAction != null)
-                  AllocationButtons(gs, gs.epWorkers.toString(), handleAction!, actions.addHumanToEp, actions.removeHumanFromEp),
+                  AllocationButtons(gs, gs.epWorkers, handleAction!, actions.addHumanToEp, actions.removeHumanFromEp),
               ],
             ),
             Row(
@@ -47,7 +47,7 @@ class HumanAllocation extends StatelessWidget {
                 ResourceMeter('SP', gs.sp, GameColors.energyColor),
                 ResourceMeter('Progress', gs.spProgress, GameColors.energyColor, true),
                 if (handleAction != null)
-                  AllocationButtons(gs, gs.spWorkers.toString(), handleAction!, actions.addHumanToSp, actions.removeHumanFromSp),
+                  AllocationButtons(gs, gs.spWorkers, handleAction!, actions.addHumanToSp, actions.removeHumanFromSp),
               ],
             ),
           ],

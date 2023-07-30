@@ -61,9 +61,11 @@ class MainComponent extends StatefulWidget {
   State<MainComponent> createState() => _MainComponentState();
 }
 
+const debug = true;
+
 class _MainComponentState extends State<MainComponent> {
   _MainComponentState() {
-    gameLoop = Timer.periodic(const Duration(milliseconds: 300), (timer) => {setState(() => reduceTimeStep(gs, 1))});
+    gameLoop = Timer.periodic(const Duration(milliseconds: debug ? 300 : 1000), (timer) => {setState(() => reduceTimeStep(gs, 1))});
   }
   GameState gs = GameState();
 
@@ -90,9 +92,7 @@ class _MainComponentState extends State<MainComponent> {
   Widget build(BuildContext context) {
     final actions = Actions(gs);
 
-    addReturnButton(List<Widget> mainContent) => Padding(
-        padding: const EdgeInsets.all(8),
-        child: Stack(children: [
+    addReturnButton(List<Widget> mainContent) => Stack(children: [
           Container(
             width: 165,
             child: TextButton(
@@ -111,8 +111,8 @@ class _MainComponentState extends State<MainComponent> {
                   Text('Return to game'),
                 ])),
           ),
-          Column(children: mainContent)
-        ]));
+          Padding(padding: const EdgeInsets.all(0), child: Column(children: mainContent))
+        ]);
 
     // Column is also a layout widget. It takes a list of children and
     // arranges them vertically. By default, it sizes itself to fit its
@@ -210,17 +210,19 @@ class _MainComponentState extends State<MainComponent> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     return Scaffold(
-      appBar: buildTopBar(context, gs),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: mainWidget,
-      ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: _incrementCounter,
-      //   tooltip: 'Increment',
-      //   child: const Icon(Icons.add),
-      // ), // This trailing comma makes auto-formatting nicer for build methods.
-    );
+        appBar: buildTopBar(context, gs),
+        body: Padding(
+          padding: const EdgeInsets.all(8),
+          child: Center(
+            // Center is a layout widget. It takes a single child and positions it
+            // in the middle of the parent.
+            child: mainWidget,
+          ),
+          // floatingActionButton: FloatingActionButton(
+          //   onPressed: _incrementCounter,
+          //   tooltip: 'Increment',
+          //   child: const Icon(Icons.add),
+          // ), // This trailing comma makes auto-formatting nicer for build methods.
+        ));
   }
 }

@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:alignment_is_hard/logic/contract.dart';
+import 'package:alignment_is_hard/main.dart';
 import 'package:flutter/material.dart' hide Action, Actions;
 
 enum Param {
@@ -36,8 +37,6 @@ paramToLabel(Param param) {
   }
 }
 
-const debug = true;
-
 class GameState {
   GameState() {
     contracts = List.generate(2, (index) => getRandomContract(this));
@@ -64,6 +63,7 @@ class GameState {
   // Your human resources. Allocate to tasks to generate points in three general areas: capabilities, alignment, fieldbuilding
   int freeHumans = debug ? 10 : 2; // Each human uses one money / turn.
   double getTeamPerformance() => (30 / (25 + freeHumans)); // Unused. Effectiveness of each person. Having more decreases their efficiency.
+  bool canUnassignHumans = false;
 
   int rp = debug ? 10 : 1; // current research points. Used to improve facets of your AI or unlock upgrades
   int ep = debug ? 10 : 1; // current engineering points. Used to fulfill contracts

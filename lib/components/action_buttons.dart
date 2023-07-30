@@ -1,3 +1,4 @@
+import 'package:alignment_is_hard/components/resource_display.dart';
 import 'package:alignment_is_hard/logic/actions.dart';
 import 'package:alignment_is_hard/logic/game_state.dart';
 import 'package:flutter/material.dart' hide Action, Actions;
@@ -153,20 +154,20 @@ class UpgradeScreenActionButtons extends StatelessWidget {
 }
 
 class AllocationButtons extends StatelessWidget {
-  const AllocationButtons(this.gs, this.label, this.handleAction, this.plusAction, this.minusAction, [key]) : super(key: key);
+  const AllocationButtons(this.gs, this.amount, this.handleAction, this.plusAction, this.minusAction, [key]) : super(key: key);
 
   final GameState gs;
   final Function handleAction;
   final Action plusAction;
   final Action minusAction;
-  final String label;
+  final int amount;
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        IconActionButton(gs, handleAction, minusAction, Icons.exposure_minus_1_rounded, true, Colors.redAccent),
-        Text(label),
+        if (gs.canUnassignHumans) IconActionButton(gs, handleAction, minusAction, Icons.exposure_minus_1_rounded, true, Colors.redAccent),
+        ResourceMeter('Workers', amount, GameColors.energyColor),
         IconActionButton(gs, handleAction, plusAction, Icons.plus_one_sharp, true, Colors.green),
       ]
           .map((widget) => Padding(
