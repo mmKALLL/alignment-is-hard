@@ -155,6 +155,11 @@ class ListenableEvent {
 effectListToString(List<ActionEffect> effects) => effects.map((e) => e.toString()).join(', ');
 
 reduceActionEffects(GameState gs, List<ActionEffect> effects) {
+  // Don't allow the action to go through if any effects have insufficient resources
+  if (effects.any((effect) => !validateActionResourceSufficiency(gs, effect))) {
+    return;
+  }
+
   for (var effect in effects) {
     switch (effect.paramEffected) {
       case Param.currentScreen:
@@ -346,6 +351,7 @@ reduceTimeStep(GameState gs, int timeUsed) {
   }
 
   gs.contracts = mapContractStatus(gs, timeUsed);
+  gs.organizations = mapOrganizationStatus(gs, timeUsed);
   checkWinConditions(gs);
 }
 
@@ -372,6 +378,7 @@ List<Contract> mapContractStatus(GameState gs, int timeUsed) {
 
 List<Organization> mapOrganizationStatus(GameState gs, int timeUsed) {
   return gs.organizations.map((o) {
+    if (!o.active) return o;
     o.turnsSinceLastBreakthrough += timeUsed;
     if (o.turnsSinceLastBreakthrough >= o.breakthroughInterval) {
       handleBreakthrough(gs, o);
@@ -386,7 +393,8 @@ void handleBreakthrough(GameState gs, Organization o) {
   bool isAlignmentBreakthrough = Random().nextInt(100) < alignmentBreakthroughChance;
   int sign = isAlignmentBreakthrough ? 1 : -1;
 
-  List<Feature> eligibleFeatures = o.features.where((f) => f.isAlignmentFeature == isAlignmentBreakthrough && f.level < 5).toList();
+  List<Feature> eligibleFeatures =
+      o.features.where((f) => f.isAlignmentFeature == isAlignmentBreakthrough && f.level < featureMaxLevel).toList();
   if (eligibleFeatures.isEmpty) {
     setOrganizationInactive(o);
     return;
@@ -399,9 +407,10 @@ void handleBreakthrough(GameState gs, Organization o) {
 
   int featureIndex = o.features.indexWhere((element) => element.name == feature.name);
   o.features[featureIndex] = feature;
-  if (feature.level == 5 && eligibleFeatures.length == 1) {
+  if (feature.level == featureMaxLevel && eligibleFeatures.length == 1) {
     setOrganizationInactive(o);
   }
+  // TODO - handle this in a more robust way, currently breakthroughs circumvent the entire action effect reducer
   // TODO - launch an event on breakthrough
 }
 

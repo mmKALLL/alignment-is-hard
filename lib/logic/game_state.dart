@@ -116,32 +116,22 @@ class GameState {
   int finishedAlignmentContracts = 0;
 
   int getYear() => 1 + (turn / 360).floor();
-  bool isGameOver() =>
-      asiOutcome <= 0 ||
-      alignmentAcceptance <= 0 ||
-      money <= 0; // TODO: Check if game has been lost due to a superintelligent misaligned AI
-  bool isGameWon() =>
-      asiOutcome >= 100 ||
-      alignmentAcceptance >= 100 ||
-      finishedAlignmentContracts >= alignmentContractsNeededToWin; // TODO: Check if game has been won due to a superintelligent aligned AI
+  bool isGameOver() => asiOutcome <= 0 || alignmentAcceptance <= 0 || money <= 0;
+  bool isGameWon() => asiOutcome >= 100 || alignmentAcceptance >= 100 || finishedAlignmentContracts >= alignmentContractsNeededToWin;
 }
 
 class Upgrade {}
 
 class Feature extends Weighted {
   Feature(this.name, this.isAlignmentFeature, int alignmentDisposition, bool isMainFocus) {
-    value = level = Random().nextInt(isMainFocus ? 4 : 2); // Levels range from 0-5
+    value = level = Random().nextInt(2) + (isMainFocus ? 1 : 0); // 1-2 for main focus, 0-1 for others
     weight = (isMainFocus ? 2 : 1) + Random().nextInt(4); // 1-5, chance to pick within the same type of features
   }
 
   final FeatureName name;
   final bool isAlignmentFeature;
 
-  late int level;
-  // late int maxRandomProgress;
-  // late int progress; // 0-100, 100 progress needed to reach the next level.
-  // late int workers;
-  // late double workerDelta;
+  late int level; // Levels range from 0-5
 }
 
 /*
@@ -154,6 +144,29 @@ class Feature extends Weighted {
   automated research (can improve itself to superhuman levels in x turns),
 */
 enum FeatureName { agency, strategy, deception, automation, interpretability, boundedness, predictability, alignment }
+
+String getShortFeatureName(FeatureName name) {
+  switch (name) {
+    case FeatureName.agency:
+      return 'agen.';
+    case FeatureName.strategy:
+      return 'strat.';
+    case FeatureName.deception:
+      return 'dcep.';
+    case FeatureName.automation:
+      return 'auto.';
+    case FeatureName.interpretability:
+      return 'intrp.';
+    case FeatureName.boundedness:
+      return 'bndn.';
+    case FeatureName.predictability:
+      return 'pred.';
+    case FeatureName.alignment:
+      return 'align.';
+  }
+}
+
+const int featureMaxLevel = 5;
 
 List<Feature> createFeatures(int alignmentDisposition, FeatureName mainFocus) {
   Feature createFeature(FeatureName name, bool isAlignmentFeature) {
@@ -171,7 +184,7 @@ List<Feature> createFeatures(int alignmentDisposition, FeatureName mainFocus) {
 class Organization {
   Organization(this.name, this.alignmentDisposition, this.mainFocus, int currentYear) {
     features = createFeatures(alignmentDisposition, mainFocus);
-    breakthroughInterval = 50 + Random().nextInt((1000 / (currentYear + 5)).round());
+    breakthroughInterval = 80 + Random().nextInt((50 + 1000 / (currentYear + 5)).round());
   }
 
   final String name;

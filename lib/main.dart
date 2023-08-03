@@ -9,6 +9,7 @@ import 'package:alignment_is_hard/logic/actions.dart';
 import 'package:alignment_is_hard/logic/game_state.dart';
 import 'package:alignment_is_hard/components/resource_display.dart';
 import 'package:alignment_is_hard/views/contracts_view.dart';
+import 'package:alignment_is_hard/views/organizations_view.dart';
 import 'package:flutter/material.dart' hide Action, Actions;
 // import 'package:freezed_annotation/freezed_annotation.dart';
 // import 'package:flutter/foundation.dart';
@@ -129,20 +130,23 @@ class _MainComponentState extends State<MainComponent> {
     // axis because Columns are vertical (the cross axis would be
     // horizontal).
     Widget mainWidget = gs.currentScreen == Screen.ingame
-        ? Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              ResourceDisplay(
-                gs: gs,
-                handleAction: handleAction,
-              ),
-              const SizedBox(
-                height: 8,
-              ),
-              HumanAllocation(gs: gs, handleAction: handleAction),
-              GameScreenActionButtons(gs, handleAction)
-            ],
-          )
+        ? ListView(children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                ResourceDisplay(
+                  gs: gs,
+                  handleAction: handleAction,
+                ),
+                const SizedBox(
+                  height: 8,
+                ),
+                HumanAllocation(gs: gs, handleAction: handleAction),
+                GameScreenActionButtons(gs, handleAction),
+                OrganizationsView(gs, handleAction),
+              ],
+            ),
+          ])
         // Game over and victory screens
         : gs.currentScreen == Screen.gameOver
             ? Column(mainAxisAlignment: MainAxisAlignment.center, children: [
