@@ -172,6 +172,7 @@ getFailureEffects(int difficulty, int totalEffects, bool isAlignmentContract, in
 
   final effectPool = isAlignmentContract ? alignmentEffectPool : capabilityEffectPool;
 
+  // TODO - refactor to use pickListOfWeighted
   return getEffectsFromPool(totalEffects, effectPool);
 }
 

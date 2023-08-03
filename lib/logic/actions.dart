@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:alignment_is_hard/logic/contract.dart';
 import 'package:alignment_is_hard/logic/game_state.dart';
+import 'package:alignment_is_hard/logic/util.dart';
 
 class Actions {
   Actions(this.gs);
@@ -14,6 +15,29 @@ class Actions {
           ActionEffect(Param.sp, -10),
         ],
         Event('influenceAlignmentAcceptance'),
+      );
+  Action increaseInfluence() => Action(
+        'Increase influence',
+        [
+          ActionEffect(Param.influence, 10),
+          ActionEffect(Param.sp, -10),
+        ],
+        Event('increaseInfluence'),
+      );
+  Action researchUpgrade() => Action(
+        'Research an upgrade',
+        [
+          ActionEffect(Param.upgradeSelection, 100 + Random().nextInt(gs.upgrades.length * 15 + 20)),
+          ActionEffect(Param.rp, -(3 + gs.upgrades.length))
+        ],
+      );
+  Action influenceOrganizationAlignmentDisposition(orgIndex) => Action(
+        'Influence organization alignment disposition',
+        [
+          ActionEffect(Param.organizationAlignmentDisposition, (orgIndex)),
+          ActionEffect(Param.rp, -5),
+        ],
+        Event('influenceOrganizationAlignmentDisposition'),
       );
 
   Action hireHuman() => Action(
@@ -73,13 +97,6 @@ class Actions {
         'Go to $name',
         [ActionEffect(Param.currentScreen, screen)],
       );
-  Action researchUpgrade() => Action(
-        'Research an upgrade',
-        [
-          ActionEffect(Param.upgradeSelection, 100 + Random().nextInt(gs.upgrades.length * 15 + 20)),
-          ActionEffect(Param.rp, -(3 + gs.upgrades.length))
-        ],
-      );
   final Action gotoHumanAllocationScreen = Action(
     'Allocate humans',
     [ActionEffect(Param.currentScreen, Screen.humanAllocation)],
@@ -90,11 +107,11 @@ class Actions {
   );
   final Action gotoGameOver = Action(
     'Lose the game (debug)',
-    [ActionEffect(Param.currentScreen, Screen.gameOver), ActionEffect(Param.gameSpeed, 1)],
+    [ActionEffect(Param.currentScreen, Screen.gameOver), ActionEffect(Param.gameSpeed, 0)],
   );
   final Action gotoGameWin = Action(
     'Win the game (debug)',
-    [ActionEffect(Param.currentScreen, Screen.victory), ActionEffect(Param.gameSpeed, 1)],
+    [ActionEffect(Param.currentScreen, Screen.victory), ActionEffect(Param.gameSpeed, 0)],
   );
 
   contractAccept(index) => Action('Accept contract', [ActionEffect(Param.contractAccept, index)], Event('contractAccept'));
@@ -351,6 +368,47 @@ List<Contract> mapContractStatus(GameState gs, int timeUsed) {
     }
     return c;
   }).toList();
+}
+
+List<Organization> mapOrganizationStatus(GameState gs, int timeUsed) {
+  return gs.organizations.map((o) {
+    o.turnsSinceLastBreakthrough += timeUsed;
+    if (o.turnsSinceLastBreakthrough >= o.breakthroughInterval) {
+      handleBreakthrough(gs, o);
+    }
+    return o;
+  }).toList();
+}
+
+void handleBreakthrough(GameState gs, Organization o) {
+  o.turnsSinceLastBreakthrough -= o.breakthroughInterval;
+  int alignmentBreakthroughChance = gs.alignmentAcceptance + o.alignmentDisposition;
+  bool isAlignmentBreakthrough = Random().nextInt(100) < alignmentBreakthroughChance;
+  int sign = isAlignmentBreakthrough ? 1 : -1;
+
+  List<Feature> eligibleFeatures = o.features.where((f) => f.isAlignmentFeature == isAlignmentBreakthrough && f.level < 5).toList();
+  if (eligibleFeatures.isEmpty) {
+    setOrganizationInactive(o);
+    return;
+  }
+
+  final feature = pickWeighted(eligibleFeatures);
+  feature.level += 1;
+  gs.alignmentAcceptance += isAlignmentBreakthrough ? 0 : -1;
+  gs.asiOutcome += sign * feature.level;
+
+  int featureIndex = o.features.indexWhere((element) => element.name == feature.name);
+  o.features[featureIndex] = feature;
+  if (feature.level == 5 && eligibleFeatures.length == 1) {
+    setOrganizationInactive(o);
+  }
+  // TODO - launch an event on breakthrough
+}
+
+Organization setOrganizationInactive(Organization o) {
+  o.active = false;
+  o.turnsSinceLastBreakthrough = 0;
+  return o;
 }
 
 void checkWinConditions(GameState gs) {

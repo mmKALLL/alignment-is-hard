@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:alignment_is_hard/logic/contract.dart';
+import 'package:alignment_is_hard/logic/util.dart';
 import 'package:alignment_is_hard/main.dart';
 import 'package:flutter/material.dart' hide Action, Actions;
 
@@ -12,6 +13,7 @@ enum Param {
   trust,
   alignmentAcceptance,
   influence,
+  organizationAlignmentDisposition,
   rp,
   ep,
   sp,
@@ -47,8 +49,11 @@ class GameState {
   int gameSpeed = 1; // 0 = paused; normally one turn happens each second, but this acts as a multiplier
   int lastSelectedGameSpeed = 1; // Used to restore game speed after pausing
 
-  // 0-100. Public view of alignment. One of the win/loss conditions, influences what rate of org breakthroughs lead to alignment improvements
-  int alignmentAcceptance = 15;
+  // 0-100. Public view of alignment. One of the win/loss conditions, influences what rate of org breakthroughs lead to alignment improvements. Second-order effect on asiAlignment.
+  int alignmentAcceptance = 20;
+
+  // 0-100. Shifted whenever breakthroughs are made, by the level of the feature receiving the breakthrough. 0 = capabilities win; misaligned ASI. 100 = aligned ASI.
+  int asiOutcome = 50;
 
   // 0-200. Trust towards your organization. Gain or lose depending on how your fund/contract money is handled. If you have high trust you'll get better contracts and retention
   // TODO: How to inform the player of trust's benefits in a transparent manner?
@@ -98,44 +103,45 @@ class GameState {
   final int contractCycle = 360; // Number of days between contract auto-refreshes
   late List<Contract> contracts;
 
-  Organization playerOrganization = Organization('Meta AI', 0.05, FeatureName.automation);
+  // Organization playerOrganization = Organization('Meta AI', -30, FeatureName.automation);
   List<Organization> organizations = [
-    Organization('Meta AI', 0.05, FeatureName.automation),
-    Organization('Anthropic', 0.3, FeatureName.boundedness),
-    Organization('Noeon', 0.75, FeatureName.interpretability),
-    Organization('OpenAI', 0.85, FeatureName.strategy),
+    Organization('Meta AI', -30, FeatureName.automation, 0),
+    Organization('Anthropic', 10, FeatureName.boundedness, 0),
+    Organization('Noeon', -5, FeatureName.interpretability, 0),
+    Organization('OpenAI', 25, FeatureName.strategy, 0),
+    Organization('DeepMind', 0, FeatureName.predictability, 0),
   ];
 
   int alignmentContractsNeededToWin = 50;
   int finishedAlignmentContracts = 0;
 
   int getYear() => 1 + (turn / 360).floor();
-  bool isGameOver() => alignmentAcceptance <= 0 || money <= 0; // TODO: Check if game has been lost due to a superintelligent misaligned AI
+  bool isGameOver() =>
+      asiOutcome <= 0 ||
+      alignmentAcceptance <= 0 ||
+      money <= 0; // TODO: Check if game has been lost due to a superintelligent misaligned AI
   bool isGameWon() =>
+      asiOutcome >= 100 ||
       alignmentAcceptance >= 100 ||
       finishedAlignmentContracts >= alignmentContractsNeededToWin; // TODO: Check if game has been won due to a superintelligent aligned AI
 }
 
 class Upgrade {}
 
-class Feature {
-  Feature(this.name, this.isAlignmentFeature, double alignmentDisposition, bool isMainFocus) {
-    maxRandomProgress =
-        20 + ((isAlignmentFeature ? alignmentDisposition : (1 - alignmentDisposition)) * 50 + (isMainFocus ? 60 : 0)).round();
-    level = (maxRandomProgress / 100).floor();
-    progress = Random().nextInt(maxRandomProgress % 100);
-    workers = (progress / 2).floor();
-    workerDelta = maxRandomProgress / 100;
+class Feature extends Weighted {
+  Feature(this.name, this.isAlignmentFeature, int alignmentDisposition, bool isMainFocus) {
+    value = level = Random().nextInt(isMainFocus ? 4 : 2); // Levels range from 0-5
+    weight = (isMainFocus ? 2 : 1) + Random().nextInt(4); // 1-5, chance to pick within the same type of features
   }
 
   final FeatureName name;
   final bool isAlignmentFeature;
 
-  late int level; // Levels range from 0-3
-  late int maxRandomProgress;
-  late int progress; // 0-100, 100 progress needed to reach the next level.
-  late int workers;
-  late double workerDelta;
+  late int level;
+  // late int maxRandomProgress;
+  // late int progress; // 0-100, 100 progress needed to reach the next level.
+  // late int workers;
+  // late double workerDelta;
 }
 
 /*
@@ -149,7 +155,7 @@ class Feature {
 */
 enum FeatureName { agency, strategy, deception, automation, interpretability, boundedness, predictability, alignment }
 
-List<Feature> createFeatures(double alignmentDisposition, FeatureName mainFocus) {
+List<Feature> createFeatures(int alignmentDisposition, FeatureName mainFocus) {
   Feature createFeature(FeatureName name, bool isAlignmentFeature) {
     return Feature(name, isAlignmentFeature, alignmentDisposition, name == mainFocus);
   }
@@ -163,13 +169,16 @@ List<Feature> createFeatures(double alignmentDisposition, FeatureName mainFocus)
 }
 
 class Organization {
-  Organization(this.name, this.alignmentDisposition, this.mainFocus) {
+  Organization(this.name, this.alignmentDisposition, this.mainFocus, int currentYear) {
     features = createFeatures(alignmentDisposition, mainFocus);
+    breakthroughInterval = 50 + Random().nextInt((1000 / (currentYear + 5)).round());
   }
 
   final String name;
-  double alignmentDisposition; // 0-1, how readily the org pursues alignment regardless of current alignmentAcceptance
-  int turnsToNextBreakthrough = 10 + Random().nextInt(100);
+  int alignmentDisposition; // -50 to +50, added to alignmentAcceptance when determining how likely the org is to make breakthroughs
+  late int breakthroughInterval;
+  int turnsSinceLastBreakthrough = 0;
+  bool active = true; // Organizations become inactive once all their features in one category are maxed out
   FeatureName mainFocus;
   late List<Feature> features;
 }

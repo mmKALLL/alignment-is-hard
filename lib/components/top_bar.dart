@@ -20,6 +20,7 @@ PreferredSize buildTopBar(BuildContext context, GameState gs) {
             children: [
               getMoneyDisplay(gs),
               Text('Alignment acceptance: ${gs.alignmentAcceptance}'),
+              Text('ASI outcome: ${gs.asiOutcome}'),
               TimeDisplay(gs.turn, gs.getYear()),
               Text('Game speed: ${gs.gameSpeed}x')
             ], // TODO: Add icons and numbers to main app bar
