@@ -126,6 +126,8 @@ class GameScreenActionButtons extends StatelessWidget {
         ActionButton(gs, handleAction, actions.researchUpgrade(), Icons.currency_exchange_sharp),
         gameScreenDivider,
         ActionButton(gs, handleAction, actions.influenceAlignmentAcceptance(), Icons.currency_exchange_sharp),
+        gameScreenDivider,
+        ActionButton(gs, handleAction, actions.increaseInfluence(), Icons.currency_exchange_sharp),
         if (debug) gameScreenDivider,
         if (debug) ActionButton(gs, handleAction, actions.gotoGameOver, Icons.currency_exchange_sharp),
         if (debug) gameScreenDivider,

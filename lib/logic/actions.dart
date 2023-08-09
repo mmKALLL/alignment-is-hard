@@ -34,16 +34,14 @@ class Actions {
         'Increase influence',
         [
           ActionEffect(Param.influence, 10),
-          ActionEffect(Param.sp, -10),
+          ActionEffect(Param.sp, -5),
         ],
         Event('increaseInfluence'),
       );
+  static int nextResearchQuality = 100 + Random().nextInt(20);
   Action researchUpgrade() => Action(
         'Research an upgrade',
-        [
-          ActionEffect(Param.upgradeSelection, 100 + Random().nextInt(gs.upgrades.length * 15 + 20)),
-          ActionEffect(Param.rp, -(3 + gs.upgrades.length))
-        ],
+        [ActionEffect(Param.upgradeSelection, nextResearchQuality), ActionEffect(Param.rp, -(3 + gs.upgrades.length))],
       );
   Action influenceOrganizationAlignmentDisposition(orgIndex) => Action(
         'Influence organization alignment disposition',
@@ -188,6 +186,7 @@ reduceActionEffects(GameState gs, List<ActionEffect> effects) {
         gs.gameSpeed = 0;
         gs.currentScreen = Screen.upgradeSelection;
         gs.upgradesToSelect = []; // TODO: Add upgrade selection mechanism
+        Actions.nextResearchQuality = 100 + Random().nextInt(gs.upgrades.length * 15 + 20);
         break;
       case Param.gameSpeed:
         gs.gameSpeed = effect.value;

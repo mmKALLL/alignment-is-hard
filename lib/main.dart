@@ -98,10 +98,10 @@ class _MainComponentState extends State<MainComponent> {
           setGameSpeed(3);
         }
         if (event.logicalKey == LogicalKeyboardKey.digit4) {
-          setGameSpeed(4);
+          setGameSpeed(5);
         }
         if (event.logicalKey == LogicalKeyboardKey.digit5) {
-          setGameSpeed(5);
+          setGameSpeed(8);
         }
       }
       return true; // No need to bubble the event
