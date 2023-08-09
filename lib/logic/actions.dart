@@ -419,7 +419,11 @@ void handleBreakthrough(GameState gs, Organization o) {
 
   final feature = pickWeighted(eligibleFeatures);
   feature.level += 1;
-  gs.alignmentAcceptance += isAlignmentBreakthrough ? 0 : -1;
+  gs.alignmentAcceptance += feature.level <= 1
+      ? 0
+      : isAlignmentBreakthrough
+          ? 1
+          : -1;
   gs.asiOutcome += sign * feature.level;
 
   int featureIndex = o.features.indexWhere((element) => element.name == feature.name);
