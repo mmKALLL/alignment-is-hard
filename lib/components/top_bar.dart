@@ -5,26 +5,38 @@ import 'package:intl/intl.dart';
 
 PreferredSize buildTopBar(BuildContext context, GameState gs) {
   final appbarSize = Size(MediaQuery.of(context).size.width, 48);
+  final List<List<Widget>> childRows = [
+    [
+      getMoneyDisplay(gs),
+      Text('Alignment acceptance: ${gs.alignmentAcceptance}'),
+    ],
+    [Text('ASI outcome: ${gs.asiOutcome}'), TimeDisplay(gs.turn, gs.getYear()), Text('Game speed: ${gs.gameSpeed}x')]
+  ]; // TODO: Add icons and numbers to main app bar
+
   return PreferredSize(
       preferredSize: appbarSize,
       child: Container(
           height: appbarSize.height,
           color: GameColors.mainColor,
-          child: Wrap(
-            spacing: 20,
-            runSpacing: 8,
-            alignment: WrapAlignment.center,
-            runAlignment: WrapAlignment.center,
-            crossAxisAlignment: WrapCrossAlignment.center,
-
-            children: [
-              getMoneyDisplay(gs),
-              Text('Alignment acceptance: ${gs.alignmentAcceptance}'),
-              Text('ASI outcome: ${gs.asiOutcome}'),
-              TimeDisplay(gs.turn, gs.getYear()),
-              Text('Game speed: ${gs.gameSpeed}x')
-            ], // TODO: Add icons and numbers to main app bar
-          )));
+          child: Column(
+              children: childRows
+                  .map((rowChildren) => Padding(
+                        padding: const EdgeInsets.only(top: 4),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Wrap(
+                              spacing: 20,
+                              runSpacing: 8,
+                              alignment: WrapAlignment.center,
+                              runAlignment: WrapAlignment.center,
+                              crossAxisAlignment: WrapCrossAlignment.center,
+                              children: rowChildren,
+                            )
+                          ],
+                        ),
+                      ))
+                  .toList())));
 }
 
 getMoneyDisplay(GameState gs) {
