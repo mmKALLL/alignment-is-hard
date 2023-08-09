@@ -1,4 +1,3 @@
-import 'package:alignment_is_hard/components/top_bar.dart';
 import 'package:alignment_is_hard/logic/game_state.dart';
 import 'package:flutter/material.dart' hide Action, Actions;
 
@@ -17,13 +16,13 @@ class ResourceDisplay extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        TimeDisplay(gs.turn, gs.getYear()),
-        const SizedBox(
-          height: 8,
-        ),
+        // TimeDisplay(gs.turn, gs.getYear()),
+        // const SizedBox(
+        //   height: 8,
+        // ),
         Wrap(spacing: 20, runSpacing: 8, children: [
-          getMoneyDisplay(gs),
-          NumericDisplay(name: 'alignment acceptance', value: gs.alignmentAcceptance, isPercentage: true),
+          // getMoneyDisplay(gs),
+          // NumericDisplay(name: 'alignment acceptance', value: gs.alignmentAcceptance, isPercentage: true),
           NumericDisplay(name: 'trust', value: gs.trust, isPercentage: true),
           NumericDisplay(name: 'influence', value: gs.influence, isPercentage: true),
         ]),

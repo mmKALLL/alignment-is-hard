@@ -9,6 +9,13 @@ class Actions {
   Actions(this.gs);
   final GameState gs;
 
+  Action pauseGame() => Action(
+        'Pause',
+        [
+          ActionEffect(Param.gameSpeed, gs.gameSpeed == 0 ? gs.lastSelectedGameSpeed : 0),
+        ],
+      );
+
   Action influenceAlignmentAcceptance() => Action(
         'Influence public opinion',
         [
@@ -49,6 +56,7 @@ class Actions {
         ],
         Event('hireHuman'),
       );
+
   final Action addHumanToRp = Action(
     'Add human to RP',
     [

@@ -11,6 +11,7 @@ import 'package:alignment_is_hard/components/resource_display.dart';
 import 'package:alignment_is_hard/views/contracts_view.dart';
 import 'package:alignment_is_hard/views/organizations_view.dart';
 import 'package:flutter/material.dart' hide Action, Actions;
+import 'package:flutter/services.dart';
 // import 'package:freezed_annotation/freezed_annotation.dart';
 // import 'package:flutter/foundation.dart';
 // part 'main.dart';
@@ -62,7 +63,7 @@ class MainComponent extends StatefulWidget {
   State<MainComponent> createState() => _MainComponentState();
 }
 
-const debug = true;
+const debug = false;
 
 class Constants {
   static bool get isDebug => debug;
@@ -73,6 +74,13 @@ class Constants {
 class _MainComponentState extends State<MainComponent> {
   _MainComponentState() {
     gameLoop = Timer.periodic(const Duration(milliseconds: debug ? 300 : 1000), (timer) => {setState(() => reduceTimeStep(gs, 1))});
+
+    HardwareKeyboard.instance.addHandler((event) {
+      if (event is KeyDownEvent && event.logicalKey == LogicalKeyboardKey.space) {
+        handleAction(Actions(gs).pauseGame());
+      }
+      return true; // No need to bubble the event
+    });
   }
   GameState gs = GameState();
 
@@ -143,9 +151,6 @@ class _MainComponentState extends State<MainComponent> {
                 ResourceDisplay(
                   gs: gs,
                   handleAction: handleAction,
-                ),
-                const SizedBox(
-                  height: 8,
                 ),
                 HumanAllocation(gs: gs, handleAction: handleAction),
                 GameScreenActionButtons(gs, handleAction, debug),
@@ -224,11 +229,6 @@ class _MainComponentState extends State<MainComponent> {
             // in the middle of the parent.
             child: mainWidget,
           ),
-          // floatingActionButton: FloatingActionButton(
-          //   onPressed: _incrementCounter,
-          //   tooltip: 'Increment',
-          //   child: const Icon(Icons.add),
-          // ), // This trailing comma makes auto-formatting nicer for build methods.
         ));
   }
 }
