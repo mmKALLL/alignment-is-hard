@@ -72,12 +72,37 @@ class Constants {
 }
 
 class _MainComponentState extends State<MainComponent> {
+  setGameSpeed(int speedMultiplier) {
+    gameLoop.cancel();
+    gameLoop = Timer.periodic(
+        Duration(milliseconds: ((debug ? 300 : 1000) / speedMultiplier).round()), (timer) => {setState(() => reduceTimeStep(gs, 1))});
+
+    handleAction(Actions(gs).changeSpeed(speedMultiplier));
+  }
+
   _MainComponentState() {
     gameLoop = Timer.periodic(const Duration(milliseconds: debug ? 300 : 1000), (timer) => {setState(() => reduceTimeStep(gs, 1))});
 
     HardwareKeyboard.instance.addHandler((event) {
-      if (event is KeyDownEvent && event.logicalKey == LogicalKeyboardKey.space) {
-        handleAction(Actions(gs).pauseGame());
+      if (event is KeyDownEvent) {
+        if (event.logicalKey == LogicalKeyboardKey.space) {
+          handleAction(Actions(gs).pauseGame());
+        }
+        if (event.logicalKey == LogicalKeyboardKey.digit1) {
+          setGameSpeed(1);
+        }
+        if (event.logicalKey == LogicalKeyboardKey.digit2) {
+          setGameSpeed(2);
+        }
+        if (event.logicalKey == LogicalKeyboardKey.digit3) {
+          setGameSpeed(3);
+        }
+        if (event.logicalKey == LogicalKeyboardKey.digit4) {
+          setGameSpeed(4);
+        }
+        if (event.logicalKey == LogicalKeyboardKey.digit5) {
+          setGameSpeed(5);
+        }
       }
       return true; // No need to bubble the event
     });

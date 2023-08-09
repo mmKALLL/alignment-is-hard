@@ -15,6 +15,12 @@ class Actions {
           ActionEffect(Param.gameSpeed, gs.gameSpeed == 0 ? gs.lastSelectedGameSpeed : 0),
         ],
       );
+  Action changeSpeed(int multiplier) => Action(
+        'Change game speed',
+        [
+          ActionEffect(Param.gameSpeed, multiplier),
+        ],
+      );
 
   Action influenceAlignmentAcceptance() => Action(
         'Influence public opinion',
