@@ -1,5 +1,13 @@
 Alignment is Hard notes
 
+Glossary:
+
+Organization - the main "allies and antagonists" of the game, their progress determines the high-level tug of war between alignment and capabilities in the game
+Breakthrough - every x days, organizations can make a "breakthrough", which increases an organization's research area's progress by one (in addition to other effects)
+AA - Alignment acceptance, one of the wincons and a modifier to what % of research goes into alignment
+AD - Alignment disposition, an individual modifier for organizations that gets applied on top of AA to determine the outcome of breakthroughs
+ASI outcome - bar that starts at 50% and shifts whenever a breakthrough is made; if it reaches 0% you lose (due to misaligned ASI), and if 100% you win (due to aligned ASI)
+
 There's several main resources
 
 - Alignment acceptance - Public view of alignment. Influences what rate of org breakthroughs lead to alignment improvements, or e.g. how likely a new researcher is to join an alignment team vs a capabilities team

@@ -64,6 +64,12 @@ class MainComponent extends StatefulWidget {
 
 const debug = true;
 
+class Constants {
+  static bool get isDebug => debug;
+  static int organizationAlignmentDispositionGain = 20;
+  static int organizationAlignmentDispositionRpUse = 5;
+}
+
 class _MainComponentState extends State<MainComponent> {
   _MainComponentState() {
     gameLoop = Timer.periodic(const Duration(milliseconds: debug ? 300 : 1000), (timer) => {setState(() => reduceTimeStep(gs, 1))});
@@ -142,7 +148,7 @@ class _MainComponentState extends State<MainComponent> {
                   height: 8,
                 ),
                 HumanAllocation(gs: gs, handleAction: handleAction),
-                GameScreenActionButtons(gs, handleAction),
+                GameScreenActionButtons(gs, handleAction, debug),
                 OrganizationsView(gs, handleAction),
               ],
             ),

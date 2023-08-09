@@ -1,5 +1,8 @@
+import 'dart:math';
+
 import 'package:alignment_is_hard/logic/actions.dart';
 import 'package:alignment_is_hard/logic/game_state.dart';
+import 'package:alignment_is_hard/main.dart';
 import 'package:flutter/material.dart' hide Action, Actions;
 
 class OrganizationsView extends StatelessWidget {
@@ -18,6 +21,8 @@ class OrganizationsView extends StatelessWidget {
         child: Column(
       children: [
         Text('Organizations - next in ${360 - (gs.turn % 360)} days'),
+        Text(
+            'Tap to change attitude by ${Constants.organizationAlignmentDispositionGain} for ${Constants.organizationAlignmentDispositionRpUse} RP'),
         ...organizationWidgets,
       ],
     ));
@@ -37,7 +42,7 @@ class OrganizationWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final actions = Actions(gs);
-    final ad = organization.alignmentDisposition;
+    final int ad = organization.alignmentDisposition;
     return Container(
         padding: const EdgeInsets.all(4),
         width: MediaQuery.of(context).size.width - 8,
@@ -48,7 +53,7 @@ class OrganizationWidget extends StatelessWidget {
             // This comes with a small performance cost, and you should not set [clipBehavior]
             // unless you need it.
             clipBehavior: Clip.hardEdge,
-            color: Color.fromRGBO(220 + (ad < 0 ? -ad : 0), 220 + (ad > 0 ? ad : 0), 220, 1),
+            color: Color.fromRGBO(210 + min(45, ad < 0 ? -ad : 0), 220 + min(35, ad > 0 ? ad : 0), 220, 1),
             child: InkWell(
                 splashColor: Colors.blue.withAlpha(30),
                 onTap: () {
@@ -87,7 +92,7 @@ class FeatureDisplay extends StatelessWidget {
           width: 40,
           height: 16,
           margin: const EdgeInsets.only(right: 4),
-          color: isMainFocus ? Color.fromARGB(48, 94, 99, 255) : null,
+          color: isMainFocus ? const Color.fromARGB(48, 94, 99, 255) : null,
           child: Text(getShortFeatureName(feature.name))),
       ...List.generate(
           featureMaxLevel,

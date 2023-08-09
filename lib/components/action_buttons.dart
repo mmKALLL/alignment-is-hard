@@ -109,10 +109,11 @@ const gameScreenDivider = Divider(height: 4, color: Colors.black26);
 const paddedGameScreenDivider = Padding(padding: EdgeInsets.only(top: 4, bottom: 4), child: Divider(height: 4, color: Colors.black26));
 
 class GameScreenActionButtons extends StatelessWidget {
-  const GameScreenActionButtons(this.gs, this.handleAction, [key]) : super(key: key);
+  const GameScreenActionButtons(this.gs, this.handleAction, this.debug, [key]) : super(key: key);
 
   final GameState gs;
   final Function handleAction;
+  final bool debug;
 
   @override
   Widget build(BuildContext context) {
@@ -125,10 +126,10 @@ class GameScreenActionButtons extends StatelessWidget {
         ActionButton(gs, handleAction, actions.researchUpgrade(), Icons.currency_exchange_sharp),
         gameScreenDivider,
         ActionButton(gs, handleAction, actions.influenceAlignmentAcceptance(), Icons.currency_exchange_sharp),
-        gameScreenDivider,
-        ActionButton(gs, handleAction, actions.gotoGameOver, Icons.currency_exchange_sharp),
-        gameScreenDivider,
-        ActionButton(gs, handleAction, actions.gotoGameWin, Icons.currency_exchange_sharp),
+        if (debug) gameScreenDivider,
+        if (debug) ActionButton(gs, handleAction, actions.gotoGameOver, Icons.currency_exchange_sharp),
+        if (debug) gameScreenDivider,
+        if (debug) ActionButton(gs, handleAction, actions.gotoGameWin, Icons.currency_exchange_sharp),
       ],
     );
   }

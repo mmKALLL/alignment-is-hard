@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:alignment_is_hard/logic/contract.dart';
 import 'package:alignment_is_hard/logic/game_state.dart';
 import 'package:alignment_is_hard/logic/util.dart';
+import 'package:alignment_is_hard/main.dart';
 
 class Actions {
   Actions(this.gs);
@@ -35,7 +36,7 @@ class Actions {
         'Influence organization alignment disposition',
         [
           ActionEffect(Param.organizationAlignmentDisposition, (orgIndex)),
-          ActionEffect(Param.rp, -5),
+          ActionEffect(Param.rp, -Constants.organizationAlignmentDispositionRpUse),
         ],
         Event('influenceOrganizationAlignmentDisposition'),
       );
@@ -242,6 +243,10 @@ reduceActionEffects(GameState gs, List<ActionEffect> effects) {
         gs.contracts[effect.value] = getRandomContract(gs);
         gs.contracts = mapContractStatus(gs, 0);
         break;
+
+      case Param.organizationAlignmentDisposition:
+        gs.organizations[effect.value].alignmentDisposition += Constants.organizationAlignmentDispositionGain;
+        break;
     }
   }
 
@@ -262,6 +267,9 @@ validateActionResourceSufficiency(GameState gs, ActionEffect effect) {
       return gs.contracts.any((c) => !c.started);
     case Param.contractClaimed:
       return gs.contracts[value].started == true && (gs.contracts[value].succeeded || gs.contracts[value].failed);
+    case Param.organizationAlignmentDisposition:
+      return gs.organizations[value].active &&
+          gs.organizations[value].alignmentDisposition < 60 - Constants.organizationAlignmentDispositionGain;
     default:
       break;
   }
@@ -317,6 +325,7 @@ validateActionResourceSufficiency(GameState gs, ActionEffect effect) {
     case Param.contractFailure:
     case Param.refreshContracts:
     case Param.contractClaimed:
+    case Param.organizationAlignmentDisposition:
       return true;
 
     // No default switch case acts as an assertNever; you get warnings if a case is not handled. Handling all of them causes the below return to be unreachable.
