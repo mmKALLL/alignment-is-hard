@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:alignment_is_hard/logic/contract.dart';
 import 'package:alignment_is_hard/logic/game_state.dart';
+import 'package:alignment_is_hard/logic/upgrade.dart';
 import 'package:alignment_is_hard/logic/util.dart';
 import 'package:alignment_is_hard/main.dart';
 
@@ -185,7 +186,7 @@ reduceActionEffects(GameState gs, List<ActionEffect> effects) {
         // The value in this case is rarity, usually in range [100,250]
         gs.gameSpeed = 0;
         gs.currentScreen = Screen.upgradeSelection;
-        gs.upgradesToSelect = []; // TODO: Add upgrade selection mechanism
+        gs.upgradesToSelect = getUpgradeSelectionOptions();
         Actions.nextResearchQuality = 100 + Random().nextInt(gs.upgrades.length * 15 + 20);
         break;
       case Param.gameSpeed:
@@ -283,6 +284,8 @@ validateActionResourceSufficiency(GameState gs, ActionEffect effect) {
     case Param.organizationAlignmentDisposition:
       return gs.organizations[value].active &&
           gs.organizations[value].alignmentDisposition < 60 - Constants.organizationAlignmentDispositionGain;
+    case Param.upgradeSelection:
+      return canUpgrade();
     default:
       break;
   }

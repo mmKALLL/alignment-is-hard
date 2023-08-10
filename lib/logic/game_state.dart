@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:alignment_is_hard/logic/contract.dart';
+import 'package:alignment_is_hard/logic/upgrade.dart';
 import 'package:alignment_is_hard/logic/util.dart';
 import 'package:alignment_is_hard/main.dart';
 import 'package:flutter/material.dart' hide Action, Actions;
@@ -46,10 +47,10 @@ class GameState {
   int currentScreen = Screen.ingame;
 
   int turn = 1; // Number of days elapsed
-  int gameSpeed = 1; // 0 = paused; normally one turn happens each second, but this acts as a multiplier
+  int gameSpeed = debug ? 1 : 0; // 0 = paused; normally one turn happens each second, but this acts as a multiplier
   int lastSelectedGameSpeed = 1; // Used to restore game speed after pausing
 
-  // 0-100. Public view of alignment. One of the win/loss conditions, influences what rate of org breakthroughs lead to alignment improvements. Second-order effect on asiAlignment.
+  // 0-100. Public view of alignment. One of the win/loss conditions, influences what rate of org breakthroughs lead to alignment improvements. Second-order effect on asiOutcome.
   int alignmentAcceptance = 20;
 
   // 0-100. Shifted whenever breakthroughs are made, by the level of the feature receiving the breakthrough. 0 = capabilities win; misaligned ASI. 100 = aligned ASI.
@@ -97,7 +98,7 @@ class GameState {
   List<String> recentActions = [];
   List<GameState> recentGS = [];
 
-  List<Upgrade> upgrades = [];
+  List<Upgrade> upgrades = staticUpgrades;
   List<Upgrade>? upgradesToSelect;
 
   final int contractCycle = 360; // Number of days between contract auto-refreshes
@@ -119,8 +120,6 @@ class GameState {
   bool isGameOver() => asiOutcome <= 0 || alignmentAcceptance <= 0 || money <= 0;
   bool isGameWon() => asiOutcome >= 100 || alignmentAcceptance >= 100 || finishedAlignmentContracts >= alignmentContractsNeededToWin;
 }
-
-class Upgrade {}
 
 class Feature extends Weighted {
   Feature(this.name, this.isAlignmentFeature, int alignmentDisposition, bool isMainFocus) {

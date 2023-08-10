@@ -10,6 +10,7 @@ import 'package:alignment_is_hard/logic/game_state.dart';
 import 'package:alignment_is_hard/components/resource_display.dart';
 import 'package:alignment_is_hard/views/contracts_view.dart';
 import 'package:alignment_is_hard/views/organizations_view.dart';
+import 'package:alignment_is_hard/views/upgrade_selection_view.dart';
 import 'package:flutter/material.dart' hide Action, Actions;
 import 'package:flutter/services.dart';
 // import 'package:freezed_annotation/freezed_annotation.dart';
@@ -63,7 +64,7 @@ class MainComponent extends StatefulWidget {
   State<MainComponent> createState() => _MainComponentState();
 }
 
-const debug = false;
+const debug = true;
 
 class Constants {
   static bool get isDebug => debug;
@@ -224,10 +225,6 @@ class _MainComponentState extends State<MainComponent> {
                   ])
                 : gs.currentScreen == Screen.contracts
                     ? addReturnButton([ContractsView(gs, handleAction)])
-                    // : gs.currentScreen == Screen.upgrades
-                    //     ? addReturnButton(
-                    //         [ResourceDisplay(gs: gs, handleAction: handleAction), UpgradeScreenActionButtons(gs, handleAction)],
-                    //       )
                     : gs.currentScreen == Screen.humanAllocation
                         ? addReturnButton([
                             ResourceDisplay(
@@ -236,24 +233,26 @@ class _MainComponentState extends State<MainComponent> {
                             ),
                           ])
                         : gs.currentScreen == Screen.upgradeSelection
-                            ? addReturnButton([const Text('Upgrade selection is WIP')])
+                            ? addReturnButton([UpgradeSelectionView(gs, handleAction)])
                             : addReturnButton([const Text('Unknown Screen')]);
 
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Scaffold(
-        appBar: buildTopBar(context, gs),
-        body: Padding(
-          padding: const EdgeInsets.all(8),
-          child: Center(
-            // Center is a layout widget. It takes a single child and positions it
-            // in the middle of the parent.
-            child: mainWidget,
-          ),
-        ));
+    // If need support for variable width, can check https://stackoverflow.com/questions/72020592/how-to-make-flutter-web-app-a-certain-size-and-keep-phone-dimensions
+    return Center(
+      child: ClipRect(
+        child: SizedBox(
+            width: 440,
+            height: 800,
+            child: Scaffold(
+                appBar: buildTopBar(context, gs),
+                body: Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: Center(
+                    // Center is a layout widget. It takes a single child and positions it
+                    // in the middle of the parent.
+                    child: mainWidget,
+                  ),
+                ))),
+      ),
+    );
   }
 }
