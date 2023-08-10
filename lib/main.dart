@@ -70,6 +70,14 @@ class Constants {
   static bool get isDebug => debug;
   static int organizationAlignmentDispositionGain = 20;
   static int organizationAlignmentDispositionRpUse = 5;
+
+  static final roundedTextButtonStyle = TextButton.styleFrom(
+      foregroundColor: Colors.black,
+      // add outline border without filling the center
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(8)),
+        side: BorderSide(color: Color.fromARGB(140, 0, 0, 0), width: 1.2),
+      ));
 }
 
 class _MainComponentState extends State<MainComponent> {
@@ -137,14 +145,7 @@ class _MainComponentState extends State<MainComponent> {
           Container(
             width: 165,
             child: TextButton(
-                style: TextButton.styleFrom(
-                  foregroundColor: Colors.black,
-                  // add outline border without filling the center
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(8)),
-                    side: BorderSide(color: Color.fromARGB(140, 0, 0, 0), width: 1.2),
-                  ),
-                ),
+                style: Constants.roundedTextButtonStyle,
                 onPressed: () => handleAction(actions.gotoGameScreen),
                 child: Row(children: const [
                   Icon(Icons.arrow_back_sharp, size: 16),

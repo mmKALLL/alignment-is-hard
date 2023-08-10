@@ -27,7 +27,7 @@ class Actions {
         'Influence public opinion',
         [
           ActionEffect(Param.alignmentAcceptance, (gs.influence / 10).round()),
-          ActionEffect(Param.sp, -10),
+          ActionEffect(Param.sp, -(10 - getUpgrade(UpgradeId.PoetryGenerator).level * 2)),
         ],
         Event('influenceAlignmentAcceptance'),
       );
@@ -35,14 +35,18 @@ class Actions {
         'Increase influence',
         [
           ActionEffect(Param.influence, 10),
-          ActionEffect(Param.sp, -5),
+          ActionEffect(Param.sp, -(5 - getUpgrade(UpgradeId.PoetryGenerator).level)),
         ],
         Event('increaseInfluence'),
       );
   static int nextResearchQuality = 100 + Random().nextInt(20);
   Action researchUpgrade() => Action(
         'Research an upgrade',
-        [ActionEffect(Param.upgradeSelection, nextResearchQuality), ActionEffect(Param.rp, -(3 + gs.upgrades.length))],
+        [
+          ActionEffect(Param.upgradeSelection, nextResearchQuality),
+          // ActionEffect(Param.rp, -(3 + gs.upgrades.length))
+          ActionEffect(Param.rp, -(3 + totalUpgradeLevel()))
+        ],
       );
   Action influenceOrganizationAlignmentDisposition(orgIndex) => Action(
         'Influence organization alignment disposition',
@@ -57,7 +61,7 @@ class Actions {
         'Hire a new human',
         [
           ActionEffect(Param.freeHumans, 1),
-          ActionEffect(Param.sp, -gs.getTotalHumans()),
+          ActionEffect(Param.sp, -(gs.getTotalHumans() * (1 - getUpgrade(UpgradeId.PoetryGenerator).level * 0.2)).round()),
         ],
         Event('hireHuman'),
       );
@@ -220,12 +224,21 @@ reduceActionEffects(GameState gs, List<ActionEffect> effects) {
         break;
       case Param.rp:
         gs.rp += effect.value;
+        if (Random().nextInt(10) < getUpgrade(UpgradeId.RewardHacking).level) {
+          gs.rp += 1;
+        }
         break;
       case Param.ep:
         gs.ep += effect.value;
+        if (Random().nextInt(10) < getUpgrade(UpgradeId.RewardHacking).level) {
+          gs.ep += 1;
+        }
         break;
       case Param.sp:
         gs.sp += effect.value;
+        if (Random().nextInt(10) < getUpgrade(UpgradeId.RewardHacking).level) {
+          gs.sp += 1;
+        }
         break;
 
       // Upgrades, contracts, etc
@@ -355,6 +368,7 @@ reduceTimeStep(GameState gs, int timeUsed) {
 
   gs.money += gs.passiveMoneyGain;
   gs.money -= gs.getTotalWorkers();
+  gs.money += gs.rpWorkers * getUpgrade(UpgradeId.CognitiveEmulation).level * 0.3;
 
   gs.rpProgress += gs.rpWorkers;
   gs.epProgress += gs.epWorkers;
@@ -363,16 +377,28 @@ reduceTimeStep(GameState gs, int timeUsed) {
     gs.rpProgress -= gs.progressPerLevel;
     gs.rp += 1;
     gs.totalRp += 1;
+    if (Random().nextInt(10) < getUpgrade(UpgradeId.RewardHacking).level) {
+      gs.rp += 1;
+      gs.totalRp += 1;
+    }
   }
   if (gs.toNextEP() <= 0) {
     gs.epProgress -= gs.progressPerLevel;
     gs.ep += 1;
     gs.totalEp += 1;
+    if (Random().nextInt(10) < getUpgrade(UpgradeId.RewardHacking).level) {
+      gs.ep += 1;
+      gs.totalEp += 1;
+    }
   }
   if (gs.toNextSP() <= 0) {
     gs.spProgress -= gs.progressPerLevel;
     gs.sp += 1;
     gs.totalSp += 1;
+    if (Random().nextInt(10) < getUpgrade(UpgradeId.RewardHacking).level) {
+      gs.sp += 1;
+      gs.totalSp += 1;
+    }
   }
 
   gs.contracts = mapContractStatus(gs, timeUsed);

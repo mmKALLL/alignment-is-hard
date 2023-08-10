@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:alignment_is_hard/logic/actions.dart';
 import 'package:alignment_is_hard/logic/game_state.dart';
+import 'package:alignment_is_hard/logic/upgrade.dart';
 // import 'package:flutter/material.dart' hide Action, Actions;
 
 class Contract {
@@ -100,7 +101,7 @@ getContractMoneyValue(int difficulty, int totalEffects, bool isAlignmentContract
   // 50 / RP; 50 => 100, 100 => 200, ...
   // In general alignment contracts pay 70-110% of the cost of solving them, while capability contracts pay 150-220%
   int value = getRandomValue(40, difficulty, 1.5);
-  return ((isAlignmentContract ? 0.9 : 2.05) *
+  return ((isAlignmentContract ? (0.9 + getUpgrade(UpgradeId.RewardHacking).level * 0.25) : 2.05) *
           // (totalEffects == 1 ? 1 : 0.65) * ; currently money is the only effect
           (trust / 100) *
           value)
