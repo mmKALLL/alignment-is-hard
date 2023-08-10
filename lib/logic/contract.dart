@@ -99,8 +99,8 @@ getRandomValue(int base, int difficulty, [double difficultyFactor = 1]) {
 getContractMoneyValue(int difficulty, int totalEffects, bool isAlignmentContract, int trust) {
   // 50 / RP; 50 => 100, 100 => 200, ...
   // In general alignment contracts pay 70-110% of the cost of solving them, while capability contracts pay 150-220%
-  int value = getRandomValue(20, difficulty, 1.5);
-  return ((isAlignmentContract ? 1.0 : 2.05) *
+  int value = getRandomValue(40, difficulty, 1.5);
+  return ((isAlignmentContract ? 0.9 : 2.05) *
           // (totalEffects == 1 ? 1 : 0.65) * ; currently money is the only effect
           (trust / 100) *
           value)

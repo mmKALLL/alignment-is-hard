@@ -70,9 +70,9 @@ class GameState {
   double getTeamPerformance() => (30 / (25 + freeHumans)); // Unused. Effectiveness of each person. Having more decreases their efficiency.
   bool canUnassignHumans = false;
 
-  int rp = debug ? 10 : 1; // current research points. Used to improve facets of your AI or unlock upgrades
-  int ep = debug ? 10 : 1; // current engineering points. Used to fulfill contracts
-  int sp = debug ? 10 : 1; // current staff points. Used to get better contracts/funds, develop the field, or hire more people
+  int rp = debug ? 10 : 2; // current research points. Used to improve facets of your AI or unlock upgrades
+  int ep = debug ? 10 : 2; // current engineering points. Used to fulfill contracts
+  int sp = debug ? 10 : 2; // current staff points. Used to get better contracts/funds, develop the field, or hire more people
 
   int rpWorkers = 1; // Number of people working on RP
   int epWorkers = 1; // Number of people working on EP
