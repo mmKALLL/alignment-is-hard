@@ -12,23 +12,23 @@ There's several main resources
 
 - Alignment acceptance - Public view of alignment. Influences what rate of org breakthroughs lead to alignment improvements, or e.g. how likely a new researcher is to join an alignment team vs a capabilities team
 - Trust - start at 100, gain or lose depending on how your fund/contract money is handled. If you have high trust you'll get better contracts and retention
-- Money - needed to hire researchers, engineers, and staff. No loans.
-- Researchers / engineers / staff - your human resources which can be allocated to tasks to generate points in three general areas: capabilities, alignment, fieldbuilding
-- RP / EP - research / engineering points. Used to fulfill contracts or unlock upgrades.
+- Money - needed to hire researchers, engineers, and staff. You lose if this runs out.
+- RP - Research Points - used to unlock upgrades and influence individual organizations
+- EP - Engineering Points - used to fulfill contracts
 - SP - staff points - used to get better contracts/funds, hire more people, and develop the field (= increase global alignment acceptance or influence individual orgs to change focuses)
 
 Win/loss conditions
 
 - The goal is to ensure that when a superintelligent AI is created, it will be aligned to human needs and values. There are multiple win conditions:
   1) Achieve 100% alignment acceptance
-  2) Finish x alignment funding contracts (20?)
-  3) Have an org achieve max level in all alignment-releated research directions
-- You lose if the research to align superintelligent AI becomes hopeless. There are also multiple loss conditions:
-  1) End up with 0% alignmnt acceptance
-  2) Run out of funds and can't take any new contracts
-  3) Have an org achieve max level in all capabilities-related research directions
+  2) Achieve 100% ASI outcome
+  3) Finish 50 alignment funding contracts
+- You lose if the research to align superintelligent AI becomes hopeless. There are multiple loss conditions:
+  1) Have 0% alignmnt acceptance
+  2) Have 0% ASI outcome
+  3) Run out of funds and can't take any new contracts
 - Each year a new org spawns, with greater funding and more bias towards capabilities research over time (although affected by alignment acceptance)
-- Each finished capabilities direction also decreases alignment acceptance, whereas alignment achievements get no such benefit
+- Breakthroughs made by organizations cause ASI outcome to increase/decrease by the level of the breakthrough. Similarly level 2+ breakthroughs increase/decrease alignment acceptance by 1.
 - Should make it high-risk high-reward in the sense that if the player pursues only a single goal, they will take extra risk on the other two areas
   - There could even be some kind of anti-synergies; e.g. focusing only on alignment acceptance leaves you more open to running out of funds than focusing on org manipulation would
 
