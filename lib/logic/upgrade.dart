@@ -20,12 +20,17 @@ class Upgrade {
 }
 
 // TODO - Right now the effects of these are handled with hardcoded conditional logic in the action reducers. However, that's fine for the prototype; we will get type errors after removing upgrade level during the implementation of the event-based effect reducer.
-List<Upgrade> staticUpgrades = [
+List<Upgrade> initialUpgrades = [
   Upgrade(UpgradeId.RewardHacking, 'Reward Hacking', '10% chance per level to get an extra point when receiving RP/EP/SP', 10),
   Upgrade(UpgradeId.LethalityList, 'Lethal List', 'Alignment contracts provide 25% more money per level', 4),
   Upgrade(UpgradeId.PoetryGenerator, 'Poetry Generator', 'SP actions are 20% cheaper per level', 4),
   Upgrade(UpgradeId.CognitiveEmulation, 'Cognitive Emulation', 'Cost of humans assigned to RP is reduced by 30% per level', 3),
 ];
+List<Upgrade> staticUpgrades = [...initialUpgrades];
+void resetUpgrades() {
+  staticUpgrades = [...initialUpgrades];
+  nextUpgrades = shuffleNextUpgrades();
+}
 
 Upgrade getUpgrade(UpgradeId id) => staticUpgrades.firstWhere((upgrade) => upgrade.id == id);
 

@@ -8,6 +8,7 @@ import 'package:alignment_is_hard/components/top_bar.dart';
 import 'package:alignment_is_hard/logic/actions.dart';
 import 'package:alignment_is_hard/logic/game_state.dart';
 import 'package:alignment_is_hard/components/resource_display.dart';
+import 'package:alignment_is_hard/logic/upgrade.dart';
 import 'package:alignment_is_hard/views/contracts_view.dart';
 import 'package:alignment_is_hard/views/organizations_view.dart';
 import 'package:alignment_is_hard/views/upgrade_selection_view.dart';
@@ -64,7 +65,7 @@ class MainComponent extends StatefulWidget {
   State<MainComponent> createState() => _MainComponentState();
 }
 
-const debug = true;
+const debug = false;
 
 class Constants {
   static bool get isDebug => debug;
@@ -128,6 +129,7 @@ class _MainComponentState extends State<MainComponent> {
     setState(() {
       if (action.effects[0].paramEffected == Param.resetGame) {
         gs = GameState();
+        resetUpgrades();
         return;
       }
       reduceActionEffects(gs, action.effects);

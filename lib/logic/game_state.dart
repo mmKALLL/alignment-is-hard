@@ -63,17 +63,17 @@ class GameState {
   // The various turn-based actions have an passive and active component - passive is gained each turn, active when a turn is used to take that action
   int influence = 100;
 
-  double money = debug ? 500000 : 500; // 1 = 1k USD. Needed to hire researchers, engineers, and staff. No loans.
+  double money = debug ? 500000 : 1000; // 1 = 1k USD. Needed to hire researchers, engineers, and staff. No loans.
   int passiveMoneyGain = 0;
 
   // Your human resources. Allocate to tasks to generate points in three general areas: capabilities, alignment, fieldbuilding
-  int freeHumans = debug ? 10 : 2; // Each human uses one money / turn.
+  int freeHumans = debug ? 10 : 3; // Each human uses one money / turn.
   double getTeamPerformance() => (30 / (25 + freeHumans)); // Unused. Effectiveness of each person. Having more decreases their efficiency.
   bool canUnassignHumans = false;
 
-  int rp = debug ? 10 : 2; // current research points. Used to improve facets of your AI or unlock upgrades
-  int ep = debug ? 10 : 2; // current engineering points. Used to fulfill contracts
-  int sp = debug ? 10 : 2; // current staff points. Used to get better contracts/funds, develop the field, or hire more people
+  int rp = debug ? 100 : 4; // current research points. Used to improve facets of your AI or unlock upgrades
+  int ep = debug ? 100 : 4; // current engineering points. Used to fulfill contracts
+  int sp = debug ? 100 : 4; // current staff points. Used to get better contracts/funds, develop the field, or hire more people
 
   int rpWorkers = 1; // Number of people working on RP
   int epWorkers = 1; // Number of people working on EP

@@ -45,7 +45,8 @@ class Actions {
         [
           ActionEffect(Param.upgradeSelection, nextResearchQuality),
           // ActionEffect(Param.rp, -(3 + gs.upgrades.length))
-          ActionEffect(Param.rp, -(3 + totalUpgradeLevel()))
+          // ActionEffect(Param.rp, -(3 + totalUpgradeLevel()))
+          ActionEffect(Param.rp, -3)
         ],
       );
   Action influenceOrganizationAlignmentDisposition(orgIndex) => Action(
@@ -183,6 +184,7 @@ reduceActionEffects(GameState gs, List<ActionEffect> effects) {
       case Param.currentScreen:
         gs.currentScreen = effect.value;
         if (effect.value != Screen.ingame) gs.gameSpeed = 0;
+        if (effect.value == Screen.ingame) gs.gameSpeed = gs.lastSelectedGameSpeed;
         break;
       case Param.resetGame:
         break;
