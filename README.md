@@ -49,3 +49,5 @@ ASI outcome - bar that starts at 50% and shifts whenever a breakthrough is made;
 After installing Flutter, you should be able to simply open the project in VS Code and use the Flutter extension to start a debug session.
 
 Building the game can be done with `flutter build web`.
+
+For uploading to itch.io, you'll need to remove the <base href> tag from the built index.html file (as itch does black magic with the URL resolver and won't handle relative paths correctly), and zip the entire build folder with index.html in the root.
