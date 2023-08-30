@@ -359,9 +359,8 @@ validateActionResourceSufficiency(GameState gs, ActionEffect effect) {
     case Param.organizationAlignmentDisposition:
       return true;
 
-    // No default switch case acts as an assertNever; you get warnings if a case is not handled. Handling all of them causes the below return to be unreachable.
+    // No default switch case acts as an assertNever; you get warnings if a case is not handled.
   }
-  return true;
 }
 
 reduceTimeStep(GameState gs, int timeUsed) {
