@@ -104,7 +104,11 @@ getContractMoneyValue(int difficulty, int totalEffects, bool isAlignmentContract
   // In general alignment contracts pay 70-110% of the cost of solving them, while capability contracts pay 150-220%
   int value = getRandomValue(40, difficulty, 1.5);
   return ((isAlignmentContract ? (0.9 + getUpgrade(UpgradeId.RewardHacking).level * 0.25) : 2.05) *
-          // (totalEffects == 1 ? 1 : 0.65) * ; currently money is the only effect
+          (totalEffects == 0
+              ? 1.25
+              : totalEffects == 1
+                  ? 1
+                  : 0.65) *
           (trust / 100) *
           value)
       .round();
