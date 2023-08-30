@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:alignment_is_hard/logic/actions.dart';
 import 'package:alignment_is_hard/logic/game_state.dart';
 import 'package:alignment_is_hard/logic/upgrade.dart';
+import 'package:alignment_is_hard/logic/util.dart';
 // import 'package:flutter/material.dart' hide Action, Actions;
 
 class Contract {
@@ -86,11 +87,12 @@ Contract getRandomContract(GameState gs) {
   return contract;
 }
 
-class WeightedEffect {
-  WeightedEffect(this.weight, this.effect);
+class WeightedEffect extends Weighted {
+  WeightedEffect(weight, this.effect) {
+    super.weight = weight;
+  }
 
   final ActionEffect effect;
-  final int weight;
 }
 
 getRandomValue(int base, int difficulty, [double difficultyFactor = 1]) {
@@ -173,26 +175,9 @@ getFailureEffects(int difficulty, int totalEffects, bool isAlignmentContract, in
 
   final effectPool = isAlignmentContract ? alignmentEffectPool : capabilityEffectPool;
 
-  // TODO - refactor to use pickListOfWeighted
   return getEffectsFromPool(totalEffects, effectPool);
 }
 
 getEffectsFromPool(int totalEffects, List<WeightedEffect> effectPool) {
-  return List.generate(min(totalEffects, effectPool.length), (index) {
-    int totalWeight = effectPool.fold(0, (acc, cur) => acc + cur.weight);
-    int weightIndex = Random().nextInt(totalWeight) + 1; // Random returns a value in range [0, max), but we want to check if it's
-    int i = 0;
-    while (i < effectPool.length) {
-      weightIndex -= effectPool[i].weight;
-      if (weightIndex <= 0) {
-        final action = effectPool[i];
-        effectPool.removeAt(i); // side effect so we don't get same effect twice
-        return action.effect;
-      }
-    }
-    throw 'was not able to pick an effect, i=$i, totalWeight=$totalWeight, weightIndex=$weightIndex, pool=${effectPool.toString()}';
-    // Should never happen but get the first one as a failsafe
-    // effectPool.removeAt(0);
-    // return effectPool[0];
-  });
+  return pickListOfWeighted(totalEffects, effectPool).map((e) => e.effect).toList();
 }
