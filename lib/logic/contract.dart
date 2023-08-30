@@ -124,25 +124,25 @@ getSuccessEffects(int difficulty, int totalEffects, bool isAlignmentContract, in
   }
 
   List<WeightedEffect> alignmentEffectPool = [
-    WeightedEffect(6, ActionEffect(Param.alignmentAcceptance, getRandomValue(1, difficulty, 0.02))),
-    WeightedEffect(3, ActionEffect(Param.trust, getRandomValue(3, difficulty, 0.015))),
-    WeightedEffect(2, ActionEffect(Param.freeHumans, 1)),
+    WeightedEffect(10, ActionEffect(Param.alignmentAcceptance, getRandomValue(1, difficulty, 0.02))),
+    WeightedEffect(6, ActionEffect(Param.trust, getRandomValue(3, difficulty, 0.015))),
+    WeightedEffect(1, ActionEffect(Param.freeHumans, 1)),
     WeightedEffect(1, ActionEffect(Param.upgradeSelection, getRandomValue(25, difficulty, 0.33))),
-    WeightedEffect(1, ActionEffect(Param.rp, getRandomValue(1, difficulty, 0.005))),
-    WeightedEffect(3, ActionEffect(Param.influence, getRandomValue(3, difficulty, 0.022))),
+    WeightedEffect(2, ActionEffect(Param.rp, getRandomValue(1, difficulty, 0.005))),
+    WeightedEffect(4, ActionEffect(Param.influence, getRandomValue(3, difficulty, 0.022))),
     WeightedEffect(
         1, ActionEffect(Param.money, (getContractMoneyValue(difficulty, totalEffects, isAlignmentContract, trust) * 0.25).round())),
   ];
 
   List<WeightedEffect> capabilityEffectPool = [
-    WeightedEffect(2, ActionEffect(Param.alignmentAcceptance, -getRandomValue(1, difficulty, 0.02))),
-    WeightedEffect(2, ActionEffect(Param.trust, getRandomValue(3, difficulty, 0.015))),
-    WeightedEffect(2, ActionEffect(Param.freeHumans, 1)),
-    WeightedEffect(2, ActionEffect(Param.upgradeSelection, getRandomValue(25, difficulty, 0.33))),
-    WeightedEffect(1, ActionEffect(Param.rp, getRandomValue(1, difficulty, 0.005))),
-    WeightedEffect(1, ActionEffect(Param.influence, getRandomValue(3, difficulty, 0.022))),
+    WeightedEffect(20, ActionEffect(Param.alignmentAcceptance, -getRandomValue(1, difficulty, 0.02))),
     WeightedEffect(
-        6, ActionEffect(Param.money, (getContractMoneyValue(difficulty, totalEffects, isAlignmentContract, trust) * 0.2).round())),
+        3, ActionEffect(Param.money, (getContractMoneyValue(difficulty, totalEffects, isAlignmentContract, trust) * 0.2).round())),
+    WeightedEffect(6, ActionEffect(Param.trust, getRandomValue(3, difficulty, 0.015))),
+    WeightedEffect(2, ActionEffect(Param.influence, getRandomValue(3, difficulty, 0.022))),
+    WeightedEffect(1, ActionEffect(Param.freeHumans, 1)),
+    WeightedEffect(1, ActionEffect(Param.upgradeSelection, getRandomValue(25, difficulty, 0.33))),
+    WeightedEffect(2, ActionEffect(Param.sp, getRandomValue(1, difficulty, 0.005))),
   ];
 
   final effectPool = isAlignmentContract ? alignmentEffectPool : capabilityEffectPool;
