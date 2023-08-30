@@ -57,7 +57,6 @@ class GameState {
   int asiOutcome = 50;
 
   // 0-200. Trust towards your organization. Gain or lose depending on how your fund/contract money is handled. If you have high trust you'll get better contracts and retention
-  // TODO: How to inform the player of trust's benefits in a transparent manner?
   int trust = 100;
 
   // The various turn-based actions have an passive and active component - passive is gained each turn, active when a turn is used to take that action
@@ -71,9 +70,9 @@ class GameState {
   double getTeamPerformance() => (30 / (25 + freeHumans)); // Unused. Effectiveness of each person. Having more decreases their efficiency.
   bool canUnassignHumans = false;
 
-  int rp = debug ? 100 : 4; // current research points. Used to improve facets of your AI or unlock upgrades
-  int ep = debug ? 100 : 4; // current engineering points. Used to fulfill contracts
-  int sp = debug ? 100 : 4; // current staff points. Used to get better contracts/funds, develop the field, or hire more people
+  int rp = debug ? 100 : 5; // current research points. Used to improve facets of your AI or unlock upgrades
+  int ep = debug ? 100 : 5; // current engineering points. Used to fulfill contracts
+  int sp = debug ? 100 : 5; // current staff points. Used to get better contracts/funds, develop the field, or hire more people
 
   int rpWorkers = 1; // Number of people working on RP
   int epWorkers = 1; // Number of people working on EP
