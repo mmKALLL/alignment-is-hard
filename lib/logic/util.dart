@@ -26,6 +26,7 @@ List<T> pickListOfWeighted<T extends Weighted>(int elementsToPick, List<T> origi
         pool.removeAt(i); // side effect so we don't get same element twice
         return weighted;
       }
+      i++;
     }
     throw 'was not able to pick an effect, i=$i, totalWeight=$totalWeight, weightIndex=$weightIndex, pool=${pool.toString()}';
   });
