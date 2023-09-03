@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:alignment_is_hard/logic/contract.dart';
 import 'package:alignment_is_hard/logic/upgrade.dart';
-import 'package:alignment_is_hard/logic/util.dart';
+import 'package:alignment_is_hard/logic/weighted.dart';
 import 'package:alignment_is_hard/main.dart';
 import 'package:flutter/material.dart' hide Action, Actions;
 
@@ -13,6 +13,7 @@ enum Param {
   money,
   trust,
   alignmentAcceptance,
+  asiOutcome,
   influence,
   organizationAlignmentDisposition,
   rp,
@@ -64,6 +65,7 @@ class GameState {
 
   double money = debug ? 500000 : 1000; // 1 = 1k USD. Needed to hire researchers, engineers, and staff. No loans.
   int passiveMoneyGain = 0;
+  double wagePerHumanPerDay = 1.0;
 
   // Your human resources. Allocate to tasks to generate points in three general areas: capabilities, alignment, fieldbuilding
   int freeHumans = debug ? 10 : 3; // Each human uses one money / turn.
@@ -105,10 +107,10 @@ class GameState {
 
   // Organization playerOrganization = Organization('Meta AI', -30, FeatureName.automation);
   List<Organization> organizations = [
-    Organization('Meta AI', -30, FeatureName.automation, 0),
-    Organization('Anthropic', 10, FeatureName.boundedness, 0),
-    Organization('Noeon', -5, FeatureName.interpretability, 0),
-    Organization('OpenAI', 25, FeatureName.strategy, 0),
+    Organization('Meta AI', -20, FeatureName.automation, 0),
+    Organization('Anthropic', -5, FeatureName.boundedness, 0),
+    Organization('Noeon', -20, FeatureName.interpretability, 0),
+    Organization('OpenAI', 10, FeatureName.strategy, 0),
     Organization('DeepMind', 0, FeatureName.predictability, 0),
   ];
 
@@ -142,6 +144,10 @@ class Feature extends Weighted {
   automated research (can improve itself to superhuman levels in x turns),
 */
 enum FeatureName { agency, strategy, deception, automation, interpretability, boundedness, predictability, alignment }
+
+bool isAlignmentFeature(FeatureName featureName) {
+  return [FeatureName.interpretability, FeatureName.boundedness, FeatureName.predictability, FeatureName.alignment].contains(featureName);
+}
 
 String getShortFeatureName(FeatureName name) {
   switch (name) {
@@ -183,6 +189,7 @@ class Organization {
   Organization(this.name, this.alignmentDisposition, this.mainFocus, int currentYear) {
     features = createFeatures(alignmentDisposition, mainFocus);
     breakthroughInterval = 80 + Random().nextInt((50 + 1000 / (currentYear + 5)).round());
+    alignmentDisposition += isAlignmentFeature(mainFocus) ? 15 : -15;
   }
 
   final String name;

@@ -5,6 +5,7 @@ import 'dart:async';
 import 'package:alignment_is_hard/components/action_buttons.dart';
 import 'package:alignment_is_hard/components/human_allocation.dart';
 import 'package:alignment_is_hard/components/top_bar.dart';
+import 'package:alignment_is_hard/logic/action_reducer.dart';
 import 'package:alignment_is_hard/logic/actions.dart';
 import 'package:alignment_is_hard/logic/game_state.dart';
 import 'package:alignment_is_hard/components/resource_display.dart';
@@ -119,12 +120,6 @@ class _MainComponentState extends State<MainComponent> {
   }
   GameState gs = GameState();
 
-  // This call to setState tells the Flutter framework that something has
-  // changed in this State, which causes it to rerun the build method below
-  // so that the display can reflect the updated values. If we changed
-  // _counter without calling setState(), then the build method would not be
-  // called again, and so nothing would appear to happen.
-
   void handleAction(Action action) {
     setState(() {
       if (action.effects[0].paramEffected == Param.resetGame) {
@@ -132,8 +127,7 @@ class _MainComponentState extends State<MainComponent> {
         resetUpgrades();
         return;
       }
-      reduceActionEffects(gs, action.effects);
-      // TODO: Do something to handle any events of the action
+      reduceActionEffects(gs, action.effects, action.eventId);
     });
   }
 
@@ -199,14 +193,7 @@ class _MainComponentState extends State<MainComponent> {
                   gs: gs,
                 ),
                 const SizedBox(height: 32),
-                ActionButton(
-                    gs,
-                    handleAction,
-                    Action(
-                      'Try again!',
-                      [ActionEffect(Param.resetGame, 0)],
-                    ),
-                    Icons.arrow_back_sharp)
+                ActionButton(gs, handleAction, actions.resetGame, Icons.arrow_back_sharp)
               ])
             : gs.currentScreen == Screen.victory
                 ? Column(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -217,14 +204,7 @@ class _MainComponentState extends State<MainComponent> {
                     const SizedBox(height: 32),
                     ResourceDisplay(gs: gs),
                     const SizedBox(height: 32),
-                    ActionButton(
-                        gs,
-                        handleAction,
-                        Action(
-                          'Try again!',
-                          [ActionEffect(Param.resetGame, 0)],
-                        ),
-                        Icons.arrow_back_sharp)
+                    ActionButton(gs, handleAction, actions.resetGame, Icons.arrow_back_sharp)
                   ])
                 : gs.currentScreen == Screen.contracts
                     ? addReturnButton([ContractsView(gs, handleAction)])

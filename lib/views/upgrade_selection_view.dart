@@ -57,7 +57,7 @@ class UpgradeWidget extends StatelessWidget {
             child: InkWell(
                 splashColor: Colors.blue.withAlpha(30),
                 onTap: () {
-                  upgrade.onSelect();
+                  selectUpgrade(gs, upgrade);
                   handleAction(actions.gotoGameScreen);
                 },
                 child: Container(

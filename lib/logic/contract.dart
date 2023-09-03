@@ -4,6 +4,7 @@ import 'package:alignment_is_hard/logic/actions.dart';
 import 'package:alignment_is_hard/logic/game_state.dart';
 import 'package:alignment_is_hard/logic/upgrade.dart';
 import 'package:alignment_is_hard/logic/util.dart';
+import 'package:alignment_is_hard/logic/weighted.dart';
 // import 'package:flutter/material.dart' hide Action, Actions;
 
 class Contract {

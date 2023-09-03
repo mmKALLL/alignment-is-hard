@@ -78,3 +78,68 @@ enum FeatureName {
   Boundedness
   Alignment
 }
+
+
+
+Event-based reducer refactoring notes:
+
+Upgrades have various categories:
+
+- modify a resource gain by + or * (problematic because this won't be reflected on the contract preview... unless you take it into account!? it's in gs after all)
+    - possibly non-fixed, e.g. +% based on number of alignment contracts or orgs with maxxed research
+    - fractional RP/EP/SP can be converted into progress
+    - other params take the floor of the value, it's more interesting
+- immediately gain some amount of a resource
+- triggers: when x, gain y
+    - internal counter can make it "every zth x gains y"
+    - this can also be a good way to add positives to bad events
+- contracts also give x, or y% better rewards, or -z% less penalties
+- modify the way orgs work or are generated
+    - e.g. 50% higher chance of alignment breakthrough or focus
+- modify some set of actions
+    - e.g. SP actions are 20% cheaper
+    - these can be implemented as events I guess...?
+
+
+req for actions:
+
+- need to have an event id, which maps into event handlers in game state
+
+req for params:
+
+- need addition modifiers
+- need multiplication modifiers
+- need event listeners
+
+req for upgrades:
+
+- need list of modifiers and events that the upgrade adds
+- when gaining an upgrade the game state adds them to a param => effect map
+- when reducing an event, can simply fetch the list from game state
+- need an "on purchase" event as well; for immediate increases etc
+- need to keep track of an internal counter that may be changed by events
+
+req for events:
+
+- need to take GS, stack, param, value
+- may change GS directly in addition to returning any param changes to be added on the stack
+
+open questions:
+
+- who tracks modifiers? is it the param or the upgrade? => upgrade should specify them, and when an upgrade is gained game state has a map from param to its upgrades
+- who tracks events? => game state
+- how to construct the formula of the modifiers? => can call function that takes param name and game state
+- how to ensure that events don't cause an infinite loop? => when reducing, pass a list of already invoked event/modifier ids and forbid any duplicates?
+
+function's outer logic =>
+- handle the parameters that will be changed as a stack, with base amount and parameter type attached to each element
+- if the amount is an integer, convert the amount to a double and remember if it needs to be rounded at the end or not
+
+inner loop =>
+- pop the topmost element on the stack
+- calculate all modifiers for the element, additions/subtractions first, multiplications next, and any other modifier functions using the intermediate value afterwards
+- increase the value in game state and run all events attached to that param, passing the added param's type, intermediate value, remaining param stack. Events may add more values to the param stack, but not affect game state directly
+
+cleanup =>
+- if the action itself has any event listeners (e.g. "gain x whenever you hire a person" as opposed to "gain x whenever you gain a person"), those are ran after the main effect stack has been resolved. The events may in turn cause more reductions to happen
+

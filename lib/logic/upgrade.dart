@@ -1,29 +1,105 @@
+import 'dart:math';
+
+import 'package:alignment_is_hard/logic/actions.dart';
+import 'package:alignment_is_hard/logic/game_state.dart';
+import 'package:alignment_is_hard/logic/stack_list.dart';
+
 // ignore: constant_identifier_names
 enum UpgradeId { RewardHacking, LethalityList, PoetryGenerator, CognitiveEmulation }
 
-class Upgrade {
-  Upgrade(this.id, this.name, this.description, this.maxLevel);
+typedef GetUpgradeString = String Function(int level);
 
+class Upgrade {
+  Upgrade(this.id, this.name, this._getDescription,
+      {this.modifiers = const [],
+      this.eventHandlers = const [],
+      this.paramEventHandlers = const [],
+      this.onLevelUp,
+      this.maxLevel = 3,
+      this.contractModifiers = const [],
+      this.organizationModifiers = const []});
   final UpgradeId id;
   final String name;
-  final String description;
+  final GetUpgradeString _getDescription;
+  String description = '';
+  void Function(GameState gs, int level)?
+      onLevelUp; // function with side effects, used to immediately add resources etc. Should create an Effect and call action reducer by convention
+  List<Modifier> modifiers = []; // mods that affect resource gain
+  List<ParamEventHandler> paramEventHandlers = []; // handlers that can stack more effects when a parameter's value has been changed
+  List<ActionEventHandler> eventHandlers = []; // handlers that can perform additional reductions when actions are taken
+  List<Modifier> contractModifiers = []; // mods that affect contract generation
+  List<Modifier> organizationModifiers = []; // mods that affect organization generation
 
-  // bool owned = false;
+  bool owned = false;
   int level = 0;
-  int maxLevel;
-  onSelect() {
-    level += 1;
-    nextUpgrades = shuffleNextUpgrades();
-  }
+  final int maxLevel;
 }
 
-// TODO - Right now the effects of these are handled with hardcoded conditional logic in the action reducers. However, that's fine for the prototype; we will get type errors after removing upgrade level during the implementation of the event-based effect reducer.
+enum ModifierType {
+  add,
+  multiply,
+  function, // Applied at the end of adds/multiplies in arbitrary order
+}
+
+typedef ModifierFunction = double Function(double value, int level);
+
+class Modifier {
+  Modifier(this.param, this.type, this.apply);
+  // final String sourceName;
+  // final String sourceDescription;
+  final Param param;
+  final ModifierType type;
+  final ModifierFunction apply;
+}
+
+typedef ActionEventHandlerFunction = void Function(GameState gs, StackList<ActionEffect> effectStack, EventId eventId, int level);
+
+class ActionEventHandler {
+  ActionEventHandler(this.trigger, this.handler);
+  final EventId trigger;
+  final ActionEventHandlerFunction handler;
+}
+
+typedef ParamEventHandlerFunction = void Function(GameState gs, StackList<ActionEffect> effectStack, Param param, num value, int level);
+
+class ParamEventHandler {
+  ParamEventHandler(this.trigger, this.handler);
+  final Param trigger;
+  final ParamEventHandlerFunction handler;
+}
+
 List<Upgrade> initialUpgrades = [
-  Upgrade(UpgradeId.RewardHacking, 'Reward Hacking', '10% chance per level to get an extra point when receiving RP/EP/SP', 10),
-  Upgrade(UpgradeId.LethalityList, 'Lethal List', 'Alignment contracts provide 25% more money per level', 4),
-  Upgrade(UpgradeId.PoetryGenerator, 'Poetry Generator', 'SP actions are 20% cheaper per level', 4),
-  Upgrade(UpgradeId.CognitiveEmulation, 'Cognitive Emulation', 'Cost of humans assigned to RP is reduced by 30% per level', 3),
+  Upgrade(UpgradeId.RewardHacking, 'Reward Hacking', (l) => '${l * 10}% chance to get an extra point when receiving RP/EP/SP',
+      paramEventHandlers: [
+        ParamEventHandler(Param.rp, (gs, effectStack, param, value, level) {
+          if (Random().nextDouble() <= 0.1 * level) effectStack.push(ActionEffect(Param.rp, 1));
+        }),
+        ParamEventHandler(Param.ep, (gs, effectStack, param, value, level) {
+          if (Random().nextDouble() <= 0.1 * level) effectStack.push(ActionEffect(Param.ep, 1));
+        }),
+        ParamEventHandler(Param.sp, (gs, effectStack, param, value, level) {
+          if (Random().nextDouble() <= 0.1 * level) effectStack.push(ActionEffect(Param.sp, 1));
+        }),
+      ]),
+  Upgrade(UpgradeId.LethalityList, 'Lethal List', (l) => 'Alignment contracts provide ${l * 25}% more money', contractModifiers: [
+    Modifier(Param.money, ModifierType.multiply, (value, level) => value * (1 + 0.25 * level)),
+  ]),
+  Upgrade(
+    UpgradeId.PoetryGenerator,
+    'Poetry Generator',
+    (l) => 'SP actions are ${l * 20}% cheaper',
+    modifiers: [
+      Modifier(Param.sp, ModifierType.multiply, (value, level) => value >= 0 ? value : value * (1 - 0.2 * level)),
+    ],
+  ),
+  Upgrade(UpgradeId.CognitiveEmulation, 'Cognitive Emulation', (l) => 'Cost of humans assigned to RP is reduced by ${l * 30}%',
+      eventHandlers: [
+        ActionEventHandler(EventId.dayChange, (gs, effectStack, eventId, level) {
+          effectStack.push(ActionEffect(Param.money, (gs.rpWorkers * gs.wagePerHumanPerDay * 0.3 * level).floor()));
+        }),
+      ]),
 ];
+
 List<Upgrade> staticUpgrades = [...initialUpgrades];
 void resetUpgrades() {
   staticUpgrades = [...initialUpgrades];
@@ -38,11 +114,22 @@ bool canUpgrade() => nextUpgrades.isNotEmpty;
 int totalUpgradeLevel() => staticUpgrades.fold(0, (total, upgrade) => total + upgrade.level);
 
 shuffleNextUpgrades() {
-  final availableUpgrades = staticUpgrades.where((upgrade) => upgrade.level < upgrade.maxLevel).toList();
+  final availableUpgrades = staticUpgrades.where((upgrade) => !upgrade.owned && upgrade.level < upgrade.maxLevel).toList();
   availableUpgrades.shuffle(); // in-place operation
-  return availableUpgrades.length >= 2 ? availableUpgrades.sublist(0, 2) : availableUpgrades;
+  return availableUpgrades.length >= 3 ? availableUpgrades.sublist(0, 3) : availableUpgrades;
 }
 
 List<Upgrade> getUpgradeSelectionOptions() {
-  return nextUpgrades; // TODO: placeholder until we have actual upgrade logic
+  return nextUpgrades;
+}
+
+void selectUpgrade(GameState gs, Upgrade upgrade) {
+  upgrade.owned = true;
+  upgrade.level += 1;
+  upgrade.description = upgrade._getDescription(upgrade.level);
+
+  // FIXME: Add effects and handlers from upgrade into game state's tracking
+
+  upgrade.onLevelUp?.call(gs, upgrade.level);
+  nextUpgrades = shuffleNextUpgrades();
 }
