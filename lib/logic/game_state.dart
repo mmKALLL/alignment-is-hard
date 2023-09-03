@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:alignment_is_hard/logic/actions.dart';
 import 'package:alignment_is_hard/logic/contract.dart';
 import 'package:alignment_is_hard/logic/upgrade.dart';
 import 'package:alignment_is_hard/logic/weighted.dart';
@@ -113,6 +114,25 @@ class GameState {
     Organization('OpenAI', 10, FeatureName.strategy, 0),
     Organization('DeepMind', 0, FeatureName.predictability, 0),
   ];
+
+  // modifiers that affect param gain/loss
+  Map<Param, ModifierFunction> addModifiers = {};
+  Map<Param, ModifierFunction> multModifiers = {};
+  Map<Param, ModifierFunction> functionModifiers = {};
+
+  Map<Param, ParamEventHandlerFunction> paramEventHandlers =
+      {}; // handlers that can stack more effects when a parameter's value has been changed
+  Map<EventId, ActionEventHandlerFunction> eventHandlers = {}; // handlers that can perform additional reductions when actions are taken
+
+  // mods that affect contract generation
+  Map<Param, ModifierFunction> contractAddModifiers = {};
+  Map<Param, ModifierFunction> contractMultModifiers = {};
+  Map<Param, ModifierFunction> contractFunctionModifiers = {};
+
+  // mods that affect organization generation
+  Map<Param, ModifierFunction> organizationAddModifiers = {};
+  Map<Param, ModifierFunction> organizationMultModifiers = {};
+  Map<Param, ModifierFunction> organizationFunctionModifiers = {};
 
   int alignmentContractsNeededToWin = 50;
   int finishedAlignmentContracts = 0;

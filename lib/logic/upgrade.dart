@@ -55,17 +55,17 @@ class Modifier {
 typedef ActionEventHandlerFunction = void Function(GameState gs, StackList<ActionEffect> effectStack, EventId eventId, int level);
 
 class ActionEventHandler {
-  ActionEventHandler(this.trigger, this.handler);
+  ActionEventHandler(this.trigger, this.apply);
   final EventId trigger;
-  final ActionEventHandlerFunction handler;
+  final ActionEventHandlerFunction apply;
 }
 
 typedef ParamEventHandlerFunction = void Function(GameState gs, StackList<ActionEffect> effectStack, Param param, num value, int level);
 
 class ParamEventHandler {
-  ParamEventHandler(this.trigger, this.handler);
+  ParamEventHandler(this.trigger, this.apply);
   final Param trigger;
-  final ParamEventHandlerFunction handler;
+  final ParamEventHandlerFunction apply;
 }
 
 List<Upgrade> initialUpgrades = [
@@ -128,8 +128,60 @@ void selectUpgrade(GameState gs, Upgrade upgrade) {
   upgrade.level += 1;
   upgrade.description = upgrade._getDescription(upgrade.level);
 
-  // FIXME: Add effects and handlers from upgrade into game state's tracking
+  pushUpgradeModifiersToGameState(gs, upgrade);
 
   upgrade.onLevelUp?.call(gs, upgrade.level);
   nextUpgrades = shuffleNextUpgrades();
+}
+
+void pushUpgradeModifiersToGameState(GameState gs, Upgrade upgrade) {
+  for (var modifier in upgrade.modifiers) {
+    switch (modifier.type) {
+      case ModifierType.add:
+        gs.addModifiers[modifier.param] = modifier.apply;
+        break;
+      case ModifierType.multiply:
+        gs.multModifiers[modifier.param] = modifier.apply;
+        break;
+      case ModifierType.function:
+        gs.functionModifiers[modifier.param] = modifier.apply;
+        break;
+    }
+  }
+
+  for (var paramEventHandler in upgrade.paramEventHandlers) {
+    gs.paramEventHandlers[paramEventHandler.trigger] = paramEventHandler.apply;
+  }
+
+  for (var eventHandler in upgrade.eventHandlers) {
+    gs.eventHandlers[eventHandler.trigger] = eventHandler.apply;
+  }
+
+  for (var modifier in upgrade.contractModifiers) {
+    switch (modifier.type) {
+      case ModifierType.add:
+        gs.contractAddModifiers[modifier.param] = modifier.apply;
+        break;
+      case ModifierType.multiply:
+        gs.contractMultModifiers[modifier.param] = modifier.apply;
+        break;
+      case ModifierType.function:
+        gs.contractFunctionModifiers[modifier.param] = modifier.apply;
+        break;
+    }
+  }
+
+  for (var modifier in upgrade.organizationModifiers) {
+    switch (modifier.type) {
+      case ModifierType.add:
+        gs.organizationAddModifiers[modifier.param] = modifier.apply;
+        break;
+      case ModifierType.multiply:
+        gs.organizationMultModifiers[modifier.param] = modifier.apply;
+        break;
+      case ModifierType.function:
+        gs.organizationFunctionModifiers[modifier.param] = modifier.apply;
+        break;
+    }
+  }
 }
