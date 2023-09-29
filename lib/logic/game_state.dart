@@ -116,23 +116,26 @@ class GameState {
   ];
 
   // modifiers that affect param gain/loss
-  Map<Param, ModifierFunction> addModifiers = {};
-  Map<Param, ModifierFunction> multModifiers = {};
-  Map<Param, ModifierFunction> functionModifiers = {};
+  Map<Param, List<CurriedModifier>> addModifiers = {};
+  Map<Param, List<CurriedModifier>> multModifiers = {};
+  Map<Param, List<CurriedModifier>> functionModifiers = {};
 
-  Map<Param, ParamEventHandlerFunction> paramEventHandlers =
+  Map<Param, List<CurriedParamEventHandler>> paramEventHandlers =
       {}; // handlers that can stack more effects when a parameter's value has been changed
-  Map<EventId, ActionEventHandlerFunction> eventHandlers = {}; // handlers that can perform additional reductions when actions are taken
+  Map<EventId, List<CurriedActionEventHandler>> eventHandlers =
+      {}; // handlers that can perform additional reductions when actions are taken
 
   // mods that affect contract generation
-  Map<Param, ModifierFunction> contractAddModifiers = {};
-  Map<Param, ModifierFunction> contractMultModifiers = {};
-  Map<Param, ModifierFunction> contractFunctionModifiers = {};
+  // FIXME: Make these affect contract gen
+  Map<Param, List<CurriedModifier>> contractAddModifiers = {};
+  Map<Param, List<CurriedModifier>> contractMultModifiers = {};
+  Map<Param, List<CurriedModifier>> contractFunctionModifiers = {};
 
   // mods that affect organization generation
-  Map<Param, ModifierFunction> organizationAddModifiers = {};
-  Map<Param, ModifierFunction> organizationMultModifiers = {};
-  Map<Param, ModifierFunction> organizationFunctionModifiers = {};
+  // FIXME: Make these affect organization gen
+  Map<Param, List<CurriedModifier>> organizationAddModifiers = {};
+  Map<Param, List<CurriedModifier>> organizationMultModifiers = {};
+  Map<Param, List<CurriedModifier>> organizationFunctionModifiers = {};
 
   int alignmentContractsNeededToWin = 50;
   int finishedAlignmentContracts = 0;
