@@ -4,6 +4,7 @@ import 'package:alignment_is_hard/logic/action_validator.dart';
 import 'package:alignment_is_hard/logic/actions.dart';
 import 'package:alignment_is_hard/logic/contract.dart';
 import 'package:alignment_is_hard/logic/game_state.dart';
+import 'package:alignment_is_hard/logic/stack_list.dart';
 import 'package:alignment_is_hard/logic/upgrade.dart';
 import 'package:alignment_is_hard/logic/weighted.dart';
 import 'package:alignment_is_hard/main.dart';
@@ -14,114 +15,162 @@ reduceActionEffects(GameState gs, List<ActionEffect> effects, EventId eventId) {
     return;
   }
 
-  // FIXME: Create a stack of effects and apply them one by one, along with any mods from game state. Finally call all the event handlers triggered by the event id
+  // Keep track of triggered event handlers to prevent infinite loops. No handler may fire more than a specified number of times. Don't change the list of handlers within gs during reduceActionEffects
+  Map<Param, int> paramEventHandlerCounts = {};
+  Map<EventId, int> actionEventHandlerCounts = {};
+  const maxCallStack = 5;
 
-  for (var effect in effects) {
-    switch (effect.paramEffected) {
-      case Param.currentScreen:
-        gs.currentScreen = effect.value;
-        if (effect.value != Screen.ingame) gs.gameSpeed = 0;
-        if (effect.value == Screen.ingame) gs.gameSpeed = gs.lastSelectedGameSpeed;
-        break;
-      case Param.resetGame:
-        break;
-      case Param.upgradeSelection:
-        // The value in this case is rarity, usually in range [100,250]
-        gs.gameSpeed = 0;
-        gs.currentScreen = Screen.upgradeSelection;
-        gs.upgradesToSelect = getUpgradeSelectionOptions();
-        Actions.nextResearchQuality = 100 + Random().nextInt(gs.upgrades.length * 15 + 20);
-        break;
-      case Param.gameSpeed:
-        gs.gameSpeed = effect.value;
-        if (effect.value != 0) gs.lastSelectedGameSpeed = effect.value;
-        break;
+  // Create a stack of effects and apply them one by one, along with any mods from game state
+  StackList<ActionEffect> effectStack = StackList(effects);
 
-      case Param.money:
-        gs.money += effect.value;
-        break;
-      case Param.trust:
-        gs.trust += effect.value;
-        break;
-      case Param.alignmentAcceptance:
-        gs.alignmentAcceptance += effect.value;
-        break;
-      case Param.asiOutcome:
-        gs.asiOutcome += effect.value;
-        break;
-      case Param.influence:
-        gs.influence += effect.value;
-        break;
-      case Param.freeHumans:
-        gs.freeHumans += effect.value;
-        break;
-      case Param.rpWorkers:
-        gs.rpWorkers += effect.value;
-        break;
-      case Param.epWorkers:
-        gs.epWorkers += effect.value;
-        break;
-      case Param.spWorkers:
-        gs.spWorkers += effect.value;
-        break;
-      case Param.rp:
-        gs.rp += effect.value;
-        if (Random().nextInt(10) < getUpgrade(UpgradeId.RewardHacking).level) {
-          gs.rp += 1;
-        }
-        break;
-      case Param.ep:
-        gs.ep += effect.value;
-        if (Random().nextInt(10) < getUpgrade(UpgradeId.RewardHacking).level) {
-          gs.ep += 1;
-        }
-        break;
-      case Param.sp:
-        gs.sp += effect.value;
-        if (Random().nextInt(10) < getUpgrade(UpgradeId.RewardHacking).level) {
-          gs.sp += 1;
-        }
-        break;
+  // First we handle any event handlers, so that they have an opportunity to push additional effects to the stack. However, events only get handled once; the reduction doesn't generate additional events.
+  final actionEventHandlers = gs.eventHandlers[eventId] ?? [];
+  for (var handler in actionEventHandlers) {
+    actionEventHandlerCounts[eventId] = (actionEventHandlerCounts[eventId] ?? 0) + 1;
+    if (actionEventHandlerCounts[eventId]! <= maxCallStack) {
+      handler(gs, effectStack, eventId);
+    }
+  }
 
-      // Upgrades, contracts, etc
-      case Param.contractAccept:
-        gs.contracts[effect.value].started = true;
-        gs.contracts[effect.value].daysSinceStarting = 0;
-        gs.contracts = updateContractStatus(gs, 0);
-        reduceActionEffects(gs, gs.contracts[effect.value].onAccept, EventId.contractAccept);
-        break;
-      case Param.contractSuccess:
-        gs.contracts[effect.value].succeeded = true;
-        break;
-      case Param.contractFailure:
-        gs.contracts[effect.value].failed = true;
-        break;
-      case Param.refreshContracts:
-        gs.contracts = gs.contracts.map((Contract c) => c.started ? c : getRandomContract(gs)).toList();
-        break;
+  while (effectStack.isNotEmpty) {
+    final effect = effectStack.pop();
+    if (effect == null) continue;
+    double value = effect.value.toDouble();
 
-      case Param.contractClaimed:
-        final contract = gs.contracts[effect.value];
-        if (!(contract.succeeded || contract.failed)) break;
-        if (contract.succeeded) {
-          // Remove the resources promised by the contract before getting the rewards
-          gs.finishedAlignmentContracts += contract.isAlignmentContract ? 1 : 0;
-          reduceActionEffects(gs, contract.requirements, EventId.internalStateChange);
-        }
-        final action = contract.succeeded ? contract.onSuccess : contract.onFailure;
-        final eventId = contract.succeeded ? EventId.contractSuccess : EventId.contractFailure;
-        reduceActionEffects(gs, action, eventId);
-        gs.contracts[effect.value] = getRandomContract(gs);
-        gs.contracts = updateContractStatus(gs, 0);
-        break;
+    // Apply any mods to the effect
+    for (CurriedModifier modifier in gs.addModifiers[effect.paramEffected] ?? []) {
+      value = modifier(value);
+    }
 
-      case Param.organizationAlignmentDisposition:
-        gs.organizations[effect.value].alignmentDisposition += Constants.organizationAlignmentDispositionGain;
-        break;
+    for (CurriedModifier modifier in gs.multModifiers[effect.paramEffected] ?? []) {
+      value = modifier(value);
+    }
+
+    for (CurriedModifier modifier in gs.functionModifiers[effect.paramEffected] ?? []) {
+      value = modifier(value);
+    }
+
+    int truncatedValue = value.toInt();
+
+    // Apply the effect to the game state
+    applyParamUpdate(gs, effect.paramEffected, truncatedValue);
+
+    // Call any further handlers that resulted from the param / event being modified
+    final paramEventHandlers = gs.paramEventHandlers[effect.paramEffected] ?? [];
+    for (var handler in paramEventHandlers) {
+      paramEventHandlerCounts[effect.paramEffected] = (paramEventHandlerCounts[effect.paramEffected] ?? 0) + 1;
+      if (paramEventHandlerCounts[effect.paramEffected]! <= maxCallStack) {
+        handler(gs, effectStack, effect.paramEffected, truncatedValue);
+      }
     }
   }
 
   checkWinConditions(gs);
+}
+
+applyParamUpdate(GameState gs, Param paramEffected, int value) {
+  switch (paramEffected) {
+    case Param.currentScreen:
+      gs.currentScreen = value;
+      if (value != Screen.ingame) gs.gameSpeed = 0;
+      if (value == Screen.ingame) gs.gameSpeed = gs.lastSelectedGameSpeed;
+      break;
+    case Param.resetGame:
+      break;
+    case Param.upgradeSelection:
+      // The value in this case is rarity, usually in range [100,250]
+      gs.gameSpeed = 0;
+      gs.currentScreen = Screen.upgradeSelection;
+      gs.upgradesToSelect = getUpgradeSelectionOptions();
+      Actions.nextResearchQuality = 100 + Random().nextInt(gs.upgrades.length * 15 + 20);
+      break;
+    case Param.gameSpeed:
+      gs.gameSpeed = value;
+      if (value != 0) gs.lastSelectedGameSpeed = value;
+      break;
+
+    case Param.money:
+      gs.money += value;
+      break;
+    case Param.trust:
+      gs.trust += value;
+      break;
+    case Param.alignmentAcceptance:
+      gs.alignmentAcceptance += value;
+      break;
+    case Param.asiOutcome:
+      gs.asiOutcome += value;
+      break;
+    case Param.influence:
+      gs.influence += value;
+      break;
+    case Param.freeHumans:
+      gs.freeHumans += value;
+      break;
+    case Param.rpWorkers:
+      gs.rpWorkers += value;
+      break;
+    case Param.epWorkers:
+      gs.epWorkers += value;
+      break;
+    case Param.spWorkers:
+      gs.spWorkers += value;
+      break;
+    case Param.rp:
+      gs.rp += value;
+      if (Random().nextInt(10) < getUpgrade(UpgradeId.RewardHacking).level) {
+        gs.rp += 1;
+      }
+      break;
+    case Param.ep:
+      gs.ep += value;
+      if (Random().nextInt(10) < getUpgrade(UpgradeId.RewardHacking).level) {
+        gs.ep += 1;
+      }
+      break;
+    case Param.sp:
+      gs.sp += value;
+      if (Random().nextInt(10) < getUpgrade(UpgradeId.RewardHacking).level) {
+        gs.sp += 1;
+      }
+      break;
+
+    // Upgrades, contracts, etc
+    case Param.contractAccept:
+      gs.contracts[value].started = true;
+      gs.contracts[value].daysSinceStarting = 0;
+      gs.contracts = updateContractStatus(gs, 0);
+      reduceActionEffects(gs, gs.contracts[value].onAccept, EventId.contractAccept);
+      break;
+    case Param.contractSuccess:
+      gs.contracts[value].succeeded = true;
+      break;
+    case Param.contractFailure:
+      gs.contracts[value].failed = true;
+      break;
+    case Param.refreshContracts:
+      gs.contracts = gs.contracts.map((Contract c) => c.started ? c : getRandomContract(gs)).toList();
+      break;
+
+    case Param.contractClaimed:
+      final contract = gs.contracts[value];
+      if (!(contract.succeeded || contract.failed)) break;
+      if (contract.succeeded) {
+        // Remove the resources promised by the contract before getting the rewards
+        gs.finishedAlignmentContracts += contract.isAlignmentContract ? 1 : 0;
+        reduceActionEffects(gs, contract.requirements, EventId.internalStateChange);
+      }
+      final action = contract.succeeded ? contract.onSuccess : contract.onFailure;
+      final eventId = contract.succeeded ? EventId.contractSuccess : EventId.contractFailure;
+      reduceActionEffects(gs, action, eventId);
+      gs.contracts[value] = getRandomContract(gs);
+      gs.contracts = updateContractStatus(gs, 0);
+      break;
+
+    case Param.organizationAlignmentDisposition:
+      gs.organizations[value].alignmentDisposition += Constants.organizationAlignmentDispositionGain;
+      break;
+  }
 }
 
 reduceTimeStep(GameState gs, int timeUsed) {
