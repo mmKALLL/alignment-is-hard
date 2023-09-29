@@ -197,10 +197,10 @@ class _MainComponentState extends State<MainComponent> {
               ])
             : gs.currentScreen == Screen.victory
                 ? Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                    const Text(style: TextStyle(fontSize: 24), 'Victory!!!'),
+                    const Text(style: TextStyle(fontSize: 24), 'Victory!'),
                     const SizedBox(height: 64),
                     const Text(
-                        'Congratulations, you managed to endure the desert and \nmake your way toward a brighter future! \n\nFinal status:'),
+                        'Congratulations, you managed to overcome the odds and \ndevelop aligned superintelligence! \n\nFinal status:'),
                     const SizedBox(height: 32),
                     ResourceDisplay(gs: gs),
                     const SizedBox(height: 32),
