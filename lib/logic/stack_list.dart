@@ -2,7 +2,10 @@ import 'dart:collection';
 
 // Called StackList to avoid conflict with Material's Stack component
 class StackList<T> {
-  final _queue = Queue<T>();
+  StackList(List<T> elements) {
+    _queue = Queue.from(elements);
+  }
+  late Queue<T> _queue;
 
   void push(T element) {
     _queue.addLast(element);
