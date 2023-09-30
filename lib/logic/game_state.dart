@@ -11,6 +11,7 @@ enum Param {
   currentScreen,
   gameSpeed,
   resetGame,
+  day,
   money,
   trust,
   alignmentAcceptance,
@@ -104,6 +105,7 @@ class GameState {
   List<Upgrade>? upgradesToSelect;
 
   final int contractCycle = 360; // Number of days between contract auto-refreshes
+  int organizationCycle = 720; // Number of days between new organizations appearing
   late List<Contract> contracts;
 
   // Organization playerOrganization = Organization('Meta AI', -30, FeatureName.automation);

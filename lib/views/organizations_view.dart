@@ -20,7 +20,7 @@ class OrganizationsView extends StatelessWidget {
     return Center(
         child: Column(
       children: [
-        Text('Organizations - next in ${360 - (gs.turn % 360)} days'),
+        Text('Organizations - next in ${gs.organizationCycle - (gs.turn % gs.organizationCycle)} days'),
         Text(
             'Tap to change attitude by ${Constants.organizationAlignmentDispositionGain} for ${Constants.organizationAlignmentDispositionRpUse} RP'),
         ...organizationWidgets,
