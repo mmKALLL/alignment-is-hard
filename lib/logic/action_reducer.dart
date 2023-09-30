@@ -179,7 +179,6 @@ applyParamUpdate(GameState gs, Param paramEffected, int value) {
 reduceTimeStep(GameState gs) {
   if (gs.gameSpeed == 0) return;
   const timeUsed = 1;
-  // FIXME: CognitiveEmulation doesn't work despite having an event handler for day change
   reduceActionEffects(gs, [ActionEffect(Param.day, 1)], EventId.dayChange);
 
   gs.money += gs.passiveMoneyGain;

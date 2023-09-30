@@ -121,10 +121,14 @@ List<Upgrade> initialUpgrades = [
       Modifier(Param.sp, ModifierType.multiply, (value, level) => value >= 0 ? value : value * (1 - 0.2 * level)),
     ],
   ),
-  Upgrade(UpgradeId.CognitiveEmulation, 'Cognitive Emulation', (l) => 'Cost of humans assigned to RP is reduced by ${l * 30}%',
+  Upgrade(UpgradeId.CognitiveEmulation, 'Cognitive Emulation', (l) => 'Cost of humans assigned to RP is reduced by ${l * 50}%',
+      maxLevel: 1,
       eventHandlers: [
         ActionEventHandler(EventId.dayChange, (gs, effectStack, eventId, level) {
-          effectStack.push(ActionEffect(Param.money, (gs.rpWorkers * gs.wagePerHumanPerDay * 0.3 * level).floor()));
+          effectStack.push(ActionEffect(
+              Param.money,
+              (gs.rpWorkers * gs.wagePerHumanPerDay * 0.5 * level)
+                  .floor())); // TODO: Because of this floor the calculation kinda sucks - there's no reduction for just a single RP human... Should represent money as an integer instead of 1 = 1k...
         }),
       ]),
 ];
