@@ -46,6 +46,7 @@ validateActionResourceSufficiency(GameState gs, ActionEffect effect) {
     case Param.resetGame:
     case Param.upgradeSelection:
     case Param.gameSpeed:
+    case Param.day:
       return true;
 
     case Param.money:
