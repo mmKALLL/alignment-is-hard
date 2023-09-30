@@ -86,13 +86,13 @@ class _MainComponentState extends State<MainComponent> {
   setGameSpeed(int speedMultiplier) {
     gameLoop.cancel();
     gameLoop = Timer.periodic(
-        Duration(milliseconds: ((debug ? 300 : 1000) / speedMultiplier).round()), (timer) => {setState(() => reduceTimeStep(gs, 1))});
+        Duration(milliseconds: ((debug ? 300 : 1000) / speedMultiplier).round()), (timer) => {setState(() => reduceTimeStep(gs))});
 
     handleAction(Actions(gs).changeSpeed(speedMultiplier));
   }
 
   _MainComponentState() {
-    gameLoop = Timer.periodic(const Duration(milliseconds: debug ? 300 : 1000), (timer) => {setState(() => reduceTimeStep(gs, 1))});
+    gameLoop = Timer.periodic(const Duration(milliseconds: debug ? 300 : 1000), (timer) => {setState(() => reduceTimeStep(gs))});
 
     HardwareKeyboard.instance.addHandler((event) {
       if (event is KeyDownEvent) {

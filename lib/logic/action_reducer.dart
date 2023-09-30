@@ -173,8 +173,9 @@ applyParamUpdate(GameState gs, Param paramEffected, int value) {
   }
 }
 
-reduceTimeStep(GameState gs, int timeUsed) {
+reduceTimeStep(GameState gs) {
   if (gs.gameSpeed == 0) return;
+  const timeUsed = 1;
   gs.turn += timeUsed;
 
   gs.money += gs.passiveMoneyGain;
