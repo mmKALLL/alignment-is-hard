@@ -119,6 +119,15 @@ applyParamUpdate(GameState gs, Param paramEffected, int value) {
     case Param.spWorkers:
       gs.spWorkers += value;
       break;
+    case Param.rpProgress:
+      gs.rpProgress += value;
+      break;
+    case Param.epProgress:
+      gs.epProgress += value;
+      break;
+    case Param.spProgress:
+      gs.spProgress += value;
+      break;
     case Param.rp:
       gs.rp += value;
       gs.totalRp += value;
@@ -182,13 +191,13 @@ reduceTimeStep(GameState gs) {
       [
         ActionEffect(Param.day, 1),
         ActionEffect(Param.money, gs.passiveMoneyGain),
-        ActionEffect(Param.money, (-gs.getTotalWorkers() * gs.wagePerHumanPerDay).round())
+        ActionEffect(Param.money, (-gs.getTotalWorkers() * gs.wagePerHumanPerDay).round()),
+        ActionEffect(Param.rpProgress, gs.rpWorkers),
+        ActionEffect(Param.epProgress, gs.epWorkers),
+        ActionEffect(Param.spProgress, gs.spWorkers),
       ],
       EventId.dayChange);
 
-  gs.rpProgress += gs.rpWorkers;
-  gs.epProgress += gs.epWorkers;
-  gs.spProgress += gs.spWorkers;
   if (gs.toNextRP() <= 0) {
     gs.rpProgress -= gs.progressPerLevel;
     incrementParam(gs, Param.rp);

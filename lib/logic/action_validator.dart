@@ -26,7 +26,7 @@ validateActionResourceSufficiency(GameState gs, ActionEffect effect) {
       break;
   }
 
-  // All resources can always be added to. Negative amounts are validated
+  // All resources can always be added to. First check if effects of increase are legal
   if (effect.value >= 0) {
     switch (effect.paramEffected) {
       case Param.rpWorkers:
@@ -39,6 +39,8 @@ validateActionResourceSufficiency(GameState gs, ActionEffect effect) {
         return true;
     }
   }
+
+  // Then validate resource sufficiency for negative effects
   final amount = effect.value.abs();
   switch (effect.paramEffected) {
     case Param.currentScreen:
@@ -70,6 +72,12 @@ validateActionResourceSufficiency(GameState gs, ActionEffect effect) {
       return gs.spWorkers >= amount;
     case Param.freeHumans:
       return gs.freeHumans >= amount;
+    case Param.rpProgress:
+      return gs.rpProgress >= amount;
+    case Param.epProgress:
+      return gs.epProgress >= amount;
+    case Param.spProgress:
+      return gs.spProgress >= amount;
 
     case Param.alignmentAcceptance:
     case Param.asiOutcome:
