@@ -121,21 +121,15 @@ applyParamUpdate(GameState gs, Param paramEffected, int value) {
       break;
     case Param.rp:
       gs.rp += value;
-      if (Random().nextInt(10) < getUpgrade(UpgradeId.RewardHacking).level) {
-        gs.rp += 1;
-      }
+      gs.totalRp += value;
       break;
     case Param.ep:
       gs.ep += value;
-      if (Random().nextInt(10) < getUpgrade(UpgradeId.RewardHacking).level) {
-        gs.ep += 1;
-      }
+      gs.totalEp += value;
       break;
     case Param.sp:
       gs.sp += value;
-      if (Random().nextInt(10) < getUpgrade(UpgradeId.RewardHacking).level) {
-        gs.sp += 1;
-      }
+      gs.totalSp += value;
       break;
 
     // Upgrades, contracts, etc
@@ -176,47 +170,40 @@ applyParamUpdate(GameState gs, Param paramEffected, int value) {
   }
 }
 
+incrementParam(GameState gs, Param param, [int value = 1, EventId event = EventId.internalStateChange]) {
+  return reduceActionEffects(gs, [ActionEffect(param, 1)], event);
+}
+
 reduceTimeStep(GameState gs) {
   if (gs.gameSpeed == 0) return;
-  const timeUsed = 1;
-  reduceActionEffects(gs, [ActionEffect(Param.day, 1)], EventId.dayChange);
 
-  gs.money += gs.passiveMoneyGain;
-  gs.money -= gs.getTotalWorkers() * gs.wagePerHumanPerDay;
+  reduceActionEffects(
+      gs,
+      [
+        ActionEffect(Param.day, 1),
+        ActionEffect(Param.money, gs.passiveMoneyGain),
+        ActionEffect(Param.money, (-gs.getTotalWorkers() * gs.wagePerHumanPerDay).round())
+      ],
+      EventId.dayChange);
 
   gs.rpProgress += gs.rpWorkers;
   gs.epProgress += gs.epWorkers;
   gs.spProgress += gs.spWorkers;
   if (gs.toNextRP() <= 0) {
     gs.rpProgress -= gs.progressPerLevel;
-    gs.rp += 1;
-    gs.totalRp += 1;
-    if (Random().nextInt(10) < getUpgrade(UpgradeId.RewardHacking).level) {
-      gs.rp += 1;
-      gs.totalRp += 1;
-    }
+    incrementParam(gs, Param.rp);
   }
   if (gs.toNextEP() <= 0) {
     gs.epProgress -= gs.progressPerLevel;
-    gs.ep += 1;
-    gs.totalEp += 1;
-    if (Random().nextInt(10) < getUpgrade(UpgradeId.RewardHacking).level) {
-      gs.ep += 1;
-      gs.totalEp += 1;
-    }
+    incrementParam(gs, Param.ep);
   }
   if (gs.toNextSP() <= 0) {
     gs.spProgress -= gs.progressPerLevel;
-    gs.sp += 1;
-    gs.totalSp += 1;
-    if (Random().nextInt(10) < getUpgrade(UpgradeId.RewardHacking).level) {
-      gs.sp += 1;
-      gs.totalSp += 1;
-    }
+    incrementParam(gs, Param.sp);
   }
 
-  gs.contracts = updateContractStatus(gs, timeUsed);
-  gs.organizations = updateOrganizationStatus(gs, timeUsed);
+  gs.contracts = updateContractStatus(gs, 1);
+  gs.organizations = updateOrganizationStatus(gs, 1);
   checkWinConditions(gs);
 }
 
