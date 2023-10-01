@@ -1,10 +1,11 @@
 import 'dart:math';
 
+import 'package:alignment_is_hard/logic/action_reducer.dart';
 import 'package:alignment_is_hard/logic/actions.dart';
 import 'package:alignment_is_hard/logic/game_state.dart';
 import 'package:alignment_is_hard/logic/stack_list.dart';
 
-typedef GetUpgradeString = String Function(int level);
+typedef GetUpgradeString = String Function(int l); // l means level; shortened to make the string interpolation more readable
 
 class Upgrade {
   Upgrade(this.id, this.name, this._getDescription,
@@ -79,8 +80,22 @@ class ParamEventHandler {
   final ParamEventHandlerFunction apply;
 }
 
-// ignore: constant_identifier_names
-enum UpgradeId { RewardHacking, LethalityList, PoetryGenerator, CognitiveEmulation, Duplicator, SocialHacking }
+// ignore_for_file: constant_identifier_names
+enum UpgradeId {
+  RewardHacking,
+  LethalityList,
+  PoetryGenerator,
+  CognitiveEmulation,
+  Duplicator,
+  SocialHacking,
+
+  // TODO: Untested upgrades below
+  ResearchAdvisor,
+  EngineeringAdvisor,
+  SocialAdvisor,
+  OpenLetter,
+  InterpretabilityModel,
+}
 
 // NOTE: Event handlers are allowed to push effects on the stack, but NOT call reduceActionEffects directly. Calling it directly would bypass the symmetric event trigger infinite recursion prevention (i.e. actionEventHandlerCounts and maxCallStack).
 List<Upgrade> initialUpgrades = [
@@ -136,6 +151,43 @@ List<Upgrade> initialUpgrades = [
                   .floor())); // TODO: Because of this floor the calculation kinda sucks - there's no reduction for just a single RP human... Should represent money as an integer instead of 1 = 1k...
         }),
       ]),
+  Upgrade(
+    UpgradeId.ResearchAdvisor,
+    'Research Advisor',
+    (l) => 'RP generation is ${l * 20}% faster',
+    alwaysAppear: true,
+    modifiers: [Modifier(Param.rpProgress, ModifierType.multiply, (value, l) => value >= 0 ? value * (1 + 0.2 * l) : value)],
+  ),
+  Upgrade(
+    UpgradeId.EngineeringAdvisor,
+    'Engineering Advisor',
+    (l) => 'EP generation is ${l * 20}% faster',
+    alwaysAppear: true,
+    modifiers: [Modifier(Param.epProgress, ModifierType.multiply, (value, l) => value >= 0 ? value * (1 + 0.2 * l) : value)],
+  ),
+  Upgrade(
+    UpgradeId.SocialAdvisor,
+    'Social Advisor',
+    (l) => 'SP generation is ${l * 20}% faster',
+    alwaysAppear: true,
+    modifiers: [Modifier(Param.spProgress, ModifierType.multiply, (value, l) => value >= 0 ? value * (1 + 0.2 * l) : value)],
+  ),
+  Upgrade(
+    UpgradeId.OpenLetter,
+    'Open Letter',
+    (l) => 'Gain 30 influence',
+    maxLevel: 2,
+    alwaysAppear: true,
+    onLevelUp: (gs, level) => reduceActionEffects(gs, [ActionEffect(Param.influence, 30)]),
+  ),
+  Upgrade(
+    UpgradeId.InterpretabilityModel,
+    'Interpretability Model',
+    (l) => 'Contract trust gain/loss is increased by ${l * 50}%',
+    maxLevel: 2,
+    alwaysAppear: true,
+    contractModifiers: [Modifier(Param.trust, ModifierType.multiply, (value, level) => value * (1 + 0.5 * level))],
+  ),
 ];
 
 List<Upgrade> staticUpgrades = [...initialUpgrades];
@@ -157,17 +209,21 @@ List<Upgrade> nextUpgrades = shuffleNextUpgrades();
 bool canUpgrade() => nextUpgrades.isNotEmpty;
 int totalUpgradeLevel() => staticUpgrades.fold(0, (total, upgrade) => total + upgrade.level);
 
-shuffleNextUpgrades() {
-  final availableUpgrades = staticUpgrades
+List<Upgrade> shuffleNextUpgrades() {
+  final List<Upgrade> availableUpgrades = staticUpgrades
       .where((upgrade) =>
           // TODO: Should consider whether upgrade level-ups should be included or not; !upgrade.owned &&
           upgrade.level < upgrade.maxLevel)
       .toList();
-  final alwaysAppearUpgrades = availableUpgrades.where((upgrade) => upgrade.alwaysAppear).toList();
+  final List<Upgrade> alwaysAppearUpgrades = availableUpgrades.where((upgrade) => upgrade.alwaysAppear).toList();
   availableUpgrades.shuffle(); // in-place operation
   return [
-    ...alwaysAppearUpgrades,
-    ...(availableUpgrades.length >= 3 ? availableUpgrades.sublist(0, 3 - alwaysAppearUpgrades.length) : availableUpgrades)
+    ...(alwaysAppearUpgrades.length > 4 ? alwaysAppearUpgrades.sublist(0, 4) : alwaysAppearUpgrades),
+    ...(alwaysAppearUpgrades.length >= 4
+        ? []
+        : availableUpgrades.length > 4
+            ? availableUpgrades.sublist(0, 4 - alwaysAppearUpgrades.length)
+            : availableUpgrades)
   ];
 }
 

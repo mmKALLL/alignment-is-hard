@@ -22,7 +22,10 @@ class UpgradeSelectionView extends StatelessWidget {
       children: [
         const Text('Choose an upgrade!'),
         Row(
-          children: upgradeWidgets,
+          children: upgradeWidgets.sublist(0, 2),
+        ),
+        Row(
+          children: upgradeWidgets.sublist(2),
         ),
         TextButton(
             style: Constants.roundedTextButtonStyle,
@@ -67,7 +70,7 @@ class UpgradeWidget extends StatelessWidget {
                       paddedGameScreenDivider,
                       Text('(Level ${upgrade.level}/${upgrade.maxLevel})'),
                       paddedGameScreenDivider,
-                      Text(upgrade.description),
+                      Text('${upgrade.description}.'),
                     ])))));
   }
 }
