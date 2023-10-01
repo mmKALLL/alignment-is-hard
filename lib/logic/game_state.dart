@@ -65,9 +65,10 @@ class GameState {
   // 0-200. Trust towards your organization. Gain or lose depending on how your fund/contract money is handled. If you have high trust you'll get better contracts and retention
   int trust = 100;
 
-  // The various turn-based actions have an passive and active component - passive is gained each turn, active when a turn is used to take that action
+  // 0-200. Influence is a percentage multiplier to the effect of your social actions (like increasing alignment acceptance)
   int influence = 100;
 
+  // The various turn-based actions have an passive and active component - passive is gained each turn, active when a turn is used to take that action
   double money = debug ? 500000 : 1000; // 1 = 1k USD. Needed to hire researchers, engineers, and staff. No loans.
   int passiveMoneyGain = 0;
   double wagePerHumanPerDay = 1.0;
