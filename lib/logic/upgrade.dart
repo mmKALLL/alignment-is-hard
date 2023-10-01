@@ -82,16 +82,18 @@ enum UpgradeId { RewardHacking, LethalityList, PoetryGenerator, CognitiveEmulati
 
 // NOTE: Event handlers are allowed to push effects on the stack, but NOT call reduceActionEffects directly. Calling it directly would bypass the symmetric event trigger infinite recursion prevention (i.e. actionEventHandlerCounts and maxCallStack).
 List<Upgrade> initialUpgrades = [
-  Upgrade(UpgradeId.RewardHacking, 'Reward Hacking', (l) => '${l * 10}% chance to get an extra point when receiving RP/EP/SP',
+  Upgrade(UpgradeId.RewardHacking, 'Reward Hacking', (l) => '${l * 6}% chance to get an extra point when receiving RP/EP/SP',
+      maxLevel: 5,
       paramEventHandlers: [
+        // NOTE: This allows the RP/EP/SP param handlers to be self-recursive. Thus with 20%+ chance it's common to see 3 or 4 points being gained at once.
         ParamEventHandler(Param.rp, (gs, effectStack, param, value, level) {
-          if (Random().nextDouble() <= 0.1 * level) effectStack.push(ActionEffect(Param.rp, 1));
+          if (Random().nextDouble() <= 0.06 * level) effectStack.push(ActionEffect(Param.rp, 1));
         }),
         ParamEventHandler(Param.ep, (gs, effectStack, param, value, level) {
-          if (Random().nextDouble() <= 0.1 * level) effectStack.push(ActionEffect(Param.ep, 1));
+          if (Random().nextDouble() <= 0.06 * level) effectStack.push(ActionEffect(Param.ep, 1));
         }),
         ParamEventHandler(Param.sp, (gs, effectStack, param, value, level) {
-          if (Random().nextDouble() <= 0.1 * level) effectStack.push(ActionEffect(Param.sp, 1));
+          if (Random().nextDouble() <= 0.06 * level) effectStack.push(ActionEffect(Param.sp, 1));
         }),
       ]),
   Upgrade(
