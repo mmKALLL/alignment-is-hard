@@ -15,7 +15,7 @@ You can use the spacebar to pause, and keys 1~5 to adjust the game speed.
 - Money - needed to hire researchers, engineers, and staff. You lose if this runs out.
 - RP - Research Points - used to unlock upgrades and influence individual organizations
 - EP - Engineering Points - used to fulfill contracts for money and other benefits
-- SP - staff points - used to hire more people and influence alignment acceptance
+- SP - Social Points - used to hire more people and influence alignment acceptance
 
 #### Secondary resources:
 

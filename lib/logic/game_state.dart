@@ -79,7 +79,7 @@ class GameState {
 
   int rp = debug ? 100 : 5; // current research points. Used to improve facets of your AI or unlock upgrades
   int ep = debug ? 100 : 5; // current engineering points. Used to fulfill contracts
-  int sp = debug ? 100 : 5; // current staff points. Used to get better contracts/funds, develop the field, or hire more people
+  int sp = debug ? 100 : 5; // current social points. Used to get better contracts/funds, develop the field, or hire more people
 
   int rpWorkers = 1; // Number of people working on RP
   int epWorkers = 1; // Number of people working on EP

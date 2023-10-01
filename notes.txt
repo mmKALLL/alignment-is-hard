@@ -15,7 +15,7 @@ There's several main resources
 - Money - needed to hire researchers, engineers, and staff. You lose if this runs out.
 - RP - Research Points - used to unlock upgrades and influence individual organizations
 - EP - Engineering Points - used to fulfill contracts
-- SP - staff points - used to get better contracts/funds, hire more people, and develop the field (= increase global alignment acceptance or influence individual orgs to change focuses)
+- SP - Social Points - used to get better contracts/funds, hire more people, and develop the field (= increase global alignment acceptance or influence individual orgs to change focuses)
 
 Win/loss conditions
 
