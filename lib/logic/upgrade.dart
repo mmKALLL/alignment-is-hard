@@ -14,7 +14,8 @@ class Upgrade {
       this.onLevelUp,
       this.maxLevel = 3,
       this.contractModifiers = const [],
-      this.organizationModifiers = const []}) {
+      this.organizationModifiers = const [],
+      this.alwaysAppear = false}) {
     description = _getDescription(1);
   }
   final UpgradeId id;
@@ -33,6 +34,7 @@ class Upgrade {
   int level = 0;
   int getLevel() => level;
   final int maxLevel;
+  final bool alwaysAppear; // Debug use only, can result in duplicates (see shuffleNextUpgrades)
 }
 
 enum ModifierType {
@@ -119,6 +121,7 @@ List<Upgrade> initialUpgrades = [
     UpgradeId.PoetryGenerator,
     'Poetry Generator',
     (l) => 'SP actions are ${l * 20}% cheaper',
+    alwaysAppear: true,
     modifiers: [
       Modifier(Param.sp, ModifierType.multiply, (value, level) => value >= 0 ? value : value * (1 - 0.2 * level)),
     ],
@@ -160,8 +163,12 @@ shuffleNextUpgrades() {
           // TODO: Should consider whether upgrade level-ups should be included or not; !upgrade.owned &&
           upgrade.level < upgrade.maxLevel)
       .toList();
+  final alwaysAppearUpgrades = availableUpgrades.where((upgrade) => upgrade.alwaysAppear).toList();
   availableUpgrades.shuffle(); // in-place operation
-  return availableUpgrades.length >= 3 ? availableUpgrades.sublist(0, 3) : availableUpgrades;
+  return [
+    ...alwaysAppearUpgrades,
+    ...(availableUpgrades.length >= 3 ? availableUpgrades.sublist(0, 3 - alwaysAppearUpgrades.length) : availableUpgrades)
+  ];
 }
 
 List<Upgrade> getUpgradeSelectionOptions() {
