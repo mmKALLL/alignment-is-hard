@@ -137,6 +137,11 @@ List<Upgrade> staticUpgrades = [...initialUpgrades];
 void resetUpgrades() {
   staticUpgrades = [...initialUpgrades];
   nextUpgrades = shuffleNextUpgrades();
+  for (Upgrade upgrade in staticUpgrades) {
+    upgrade.owned = false;
+    upgrade.level = 0;
+    upgrade.description = upgrade._getDescription(1);
+  }
 }
 
 // FIXME: Remove hardcoded effects of upgrades, can check usage of this function. Needs a bit of consideration on how to e.g. show the decreased price of SP effects...
