@@ -134,7 +134,7 @@ class GameState {
   Map<Param, List<CurriedModifier>> contractFunctionModifiers = {};
 
   // mods that affect organization generation
-  // FIXME: Make these affect organization gen
+  // TODO: Make these affect organization gen
   Map<Param, List<CurriedModifier>> organizationAddModifiers = {};
   Map<Param, List<CurriedModifier>> organizationMultModifiers = {};
   Map<Param, List<CurriedModifier>> organizationFunctionModifiers = {};
