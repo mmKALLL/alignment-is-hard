@@ -285,7 +285,7 @@ List<Upgrade> shuffleNextUpgrades() {
           // TODO: Should consider whether upgrade level-ups should be included or not; !upgrade.owned &&
           upgrade.level < upgrade.maxLevel)
       .toList();
-  final List<Upgrade> alwaysAppearUpgrades = availableUpgrades.where((upgrade) => upgrade.alwaysAppear).toList();
+  final List<Upgrade> alwaysAppearUpgrades = Constants.isDebug ? availableUpgrades.where((upgrade) => upgrade.alwaysAppear).toList() : [];
   availableUpgrades.shuffle(); // in-place operation
   return [
     ...(alwaysAppearUpgrades.length > 4 ? alwaysAppearUpgrades.sublist(0, 4) : alwaysAppearUpgrades),
