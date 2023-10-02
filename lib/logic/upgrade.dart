@@ -5,6 +5,7 @@ import 'package:alignment_is_hard/logic/actions.dart';
 import 'package:alignment_is_hard/logic/game_state.dart';
 import 'package:alignment_is_hard/logic/stack_list.dart';
 import 'package:alignment_is_hard/logic/util.dart';
+import 'package:alignment_is_hard/main.dart';
 
 typedef GetUpgradeString = String Function(int l); // l means level; shortened to make the string interpolation more readable
 
@@ -289,11 +290,7 @@ List<Upgrade> shuffleNextUpgrades() {
   availableUpgrades.shuffle(); // in-place operation
   return [
     ...(alwaysAppearUpgrades.length > 4 ? alwaysAppearUpgrades.sublist(0, 4) : alwaysAppearUpgrades),
-    ...(alwaysAppearUpgrades.length >= 4
-        ? []
-        : availableUpgrades.length > 4
-            ? availableUpgrades.sublist(0, 4 - alwaysAppearUpgrades.length)
-            : availableUpgrades)
+    ...(availableUpgrades.length > 4 ? availableUpgrades.sublist(0, max(0, 4 - alwaysAppearUpgrades.length)) : availableUpgrades)
   ];
 }
 
