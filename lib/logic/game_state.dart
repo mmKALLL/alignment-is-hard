@@ -108,7 +108,7 @@ class GameState {
   List<Upgrade> upgrades = staticUpgrades;
   List<Upgrade>? upgradesToSelect;
 
-  final int contractCycle = 360; // Number of days between contract auto-refreshes
+  int contractCycle = 360; // Number of days between contract auto-refreshes
   int organizationCycle = 720; // Number of days between new organizations appearing
   late List<Contract> contracts;
 

@@ -4,6 +4,7 @@ import 'package:alignment_is_hard/logic/action_reducer.dart';
 import 'package:alignment_is_hard/logic/actions.dart';
 import 'package:alignment_is_hard/logic/game_state.dart';
 import 'package:alignment_is_hard/logic/stack_list.dart';
+import 'package:alignment_is_hard/logic/util.dart';
 
 typedef GetUpgradeString = String Function(int l); // l means level; shortened to make the string interpolation more readable
 
@@ -44,16 +45,17 @@ enum ModifierType {
   function, // Applied at the end of adds/multiplies in arbitrary order
 }
 
-typedef ModifierFunction = double Function(double value, int level);
+typedef ModifierFunction = double Function(double value, int l); // l = level
 typedef CurriedModifier = double Function(double value);
 
 class Modifier {
-  Modifier(this.param, this.type, this.apply);
+  Modifier(this.param, this.type, this.apply, [this.filter = returnTrue]);
   // final String sourceName;
   // final String sourceDescription;
   final Param param;
   final ModifierType type;
   final ModifierFunction apply;
+  final bool Function() filter;
 }
 
 typedef ActionEventHandlerFunction = void Function(GameState gs, StackList<ActionEffect> effectStack, EventId eventId, int level);
@@ -95,6 +97,15 @@ enum UpgradeId {
   SocialAdvisor,
   OpenLetter,
   InterpretabilityModel,
+
+  TrustedAdvisor,
+  PassiveIncome,
+  DataScraping,
+  WarningSigns,
+  SocialEngineering,
+  FakeNews,
+  MoneyLaundering,
+  StrategicAlignment,
 }
 
 // NOTE: Event handlers are allowed to push effects on the stack, but NOT call reduceActionEffects directly. Calling it directly would bypass the symmetric event trigger infinite recursion prevention (i.e. actionEventHandlerCounts and maxCallStack).
@@ -129,7 +140,7 @@ List<Upgrade> initialUpgrades = [
       effectStack.push(ActionEffect(Param.sp, 1));
     })
   ]),
-  Upgrade(UpgradeId.LethalityList, 'Lethal List', (l) => 'Alignment contracts provide ${l * 25}% more money', contractModifiers: [
+  Upgrade(UpgradeId.LethalityList, 'List of Lethalities', (l) => 'Alignment contracts provide ${l * 25}% more money', contractModifiers: [
     Modifier(Param.money, ModifierType.multiply, (value, level) => value * (1 + 0.25 * level)),
   ]),
   Upgrade(
@@ -145,10 +156,8 @@ List<Upgrade> initialUpgrades = [
       maxLevel: 1,
       eventHandlers: [
         ActionEventHandler(EventId.dayChange, (gs, effectStack, eventId, level) {
-          effectStack.push(ActionEffect(
-              Param.money,
-              (gs.rpWorkers * gs.wagePerHumanPerDay * 0.5 * level)
-                  .floor())); // TODO: Because of this floor the calculation kinda sucks - there's no reduction for just a single RP human... Should represent money as an integer instead of 1 = 1k...
+          // TODO: Because of this floor the calculation kinda sucks - there's no reduction for just a single RP human... Should represent money as an integer instead of 1 = 1k...
+          effectStack.push(ActionEffect(Param.money, (gs.rpWorkers * gs.wagePerHumanPerDay * 0.5 * level).floor()));
         }),
       ]),
   Upgrade(
@@ -186,7 +195,68 @@ List<Upgrade> initialUpgrades = [
     (l) => 'Contract trust gain/loss is increased by ${l * 50}%',
     maxLevel: 2,
     alwaysAppear: true,
-    contractModifiers: [Modifier(Param.trust, ModifierType.multiply, (value, level) => value * (1 + 0.5 * level))],
+    contractModifiers: [Modifier(Param.trust, ModifierType.multiply, (value, l) => value * (1 + 0.5 * l))],
+  ),
+  Upgrade(
+    UpgradeId.TrustedAdvisor,
+    'Trusted Advisor',
+    (l) => 'Gain ${l * 3} more trust from finishing contracts',
+    alwaysAppear: true,
+    contractModifiers: [Modifier(Param.trust, ModifierType.add, (value, l) => l * 3)],
+  ),
+  Upgrade(
+    UpgradeId.PassiveIncome,
+    'Passive Income',
+    (l) => 'Gain ${l * 1000} money per day',
+    alwaysAppear: true,
+    eventHandlers: [
+      ActionEventHandler(EventId.dayChange, (gs, effectStack, eventId, l) {
+        effectStack.push(ActionEffect(Param.money, 1 * l));
+      })
+    ],
+  ),
+  Upgrade(
+    UpgradeId.DataScraping,
+    'Data Scraping',
+    (l) => 'Contract auto-refresh time is reduced by 33%', // TODO: Should use a dynamic percentage
+    alwaysAppear: true,
+    onLevelUp: (gs, l) => gs.contractCycle = (gs.contractCycle / 3 * 2).round(),
+  ),
+  Upgrade(
+      UpgradeId.WarningSigns, 'Warning Signs', (l) => 'Organizations take 20% longer to appear', // TODO: Should use a dynamic percentage
+      onLevelUp: (gs, l) => gs.organizationCycle = (gs.organizationCycle * 1.2).round()),
+  Upgrade(
+    UpgradeId.SocialEngineering,
+    'Social Engineering',
+    (l) => 'Contracts provide ${l * 2} more influence',
+    alwaysAppear: true,
+    contractModifiers: [Modifier(Param.influence, ModifierType.add, (value, l) => l * 2)],
+  ),
+  Upgrade(
+    UpgradeId.FakeNews,
+    'Fake News',
+    (l) => 'Gain 10 influence, but lose 10 trust',
+    alwaysAppear: true,
+    onLevelUp: (gs, l) => reduceActionEffects(gs, [ActionEffect(Param.influence, 10), ActionEffect(Param.trust, -10)]),
+  ),
+  Upgrade(
+    UpgradeId.MoneyLaundering,
+    'Money Laundering',
+    (l) => 'Gain 2000 money per day, but lose 20 trust',
+    alwaysAppear: true,
+    onLevelUp: (gs, l) => reduceActionEffects(gs, [ActionEffect(Param.money, 1), ActionEffect(Param.trust, -20)]),
+    eventHandlers: [
+      ActionEventHandler(EventId.dayChange, (gs, effectStack, eventId, l) {
+        effectStack.push(ActionEffect(Param.money, 2000 * l));
+      })
+    ],
+  ),
+  Upgrade(
+    UpgradeId.StrategicAlignment,
+    'Strategic Alignment',
+    (l) => 'Gain ${l * 2} more alignment acceptance from finishing alignment contracts',
+    alwaysAppear: true,
+    contractModifiers: [Modifier(Param.alignmentAcceptance, ModifierType.add, (value, l) => l * 2)],
   ),
 ];
 
