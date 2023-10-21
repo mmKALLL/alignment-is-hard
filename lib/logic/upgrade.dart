@@ -91,6 +91,7 @@ enum UpgradeId {
   CognitiveEmulation,
   Duplicator,
   SocialHacking,
+  DebateCourse,
 
   // TODO: Untested upgrades below
   ResearchAdvisor,
@@ -128,19 +129,28 @@ List<Upgrade> initialUpgrades = [
   Upgrade(
     UpgradeId.Duplicator,
     'Duplicator',
-    (l) => 'Gain an RP every time you gain an SP',
+    (l) => 'Whenever you gain an EP, 40% chance to gain an RP',
     maxLevel: 1,
     paramEventHandlers: [
-      ParamEventHandler(Param.sp, (gs, effectStack, param, value, level) {
-        effectStack.push(ActionEffect(Param.rp, 1));
+      ParamEventHandler(Param.ep, (gs, effectStack, param, value, level) {
+        if (Random().nextDouble() < 0.4) effectStack.push(ActionEffect(Param.rp, 1));
       })
     ],
   ),
-  Upgrade(UpgradeId.SocialHacking, 'Social Hacking', (l) => 'Gain an SP every time you gain an RP', maxLevel: 1, paramEventHandlers: [
-    ParamEventHandler(Param.rp, (gs, effectStack, param, value, level) {
-      effectStack.push(ActionEffect(Param.sp, 1));
-    })
-  ]),
+  Upgrade(UpgradeId.SocialHacking, 'Social Hacking', (l) => 'Whenever you gain an SP, 40% chance to gain an EP',
+      maxLevel: 1,
+      paramEventHandlers: [
+        ParamEventHandler(Param.sp, (gs, effectStack, param, value, level) {
+          if (Random().nextDouble() < 0.4) effectStack.push(ActionEffect(Param.ep, 1));
+        })
+      ]),
+  Upgrade(UpgradeId.DebateCourse, 'Debate Course', (l) => 'Whenever you gain an RP, 40% chance to gain an SP',
+      maxLevel: 1,
+      paramEventHandlers: [
+        ParamEventHandler(Param.rp, (gs, effectStack, param, value, level) {
+          if (Random().nextDouble() < 0.4) effectStack.push(ActionEffect(Param.sp, 1));
+        })
+      ]),
   Upgrade(UpgradeId.LethalityList, 'List of Lethalities', (l) => 'Alignment contracts provide ${l * 25}% more money', contractModifiers: [
     Modifier(Param.money, ModifierType.multiply, (value, level) => value * (1 + 0.25 * level)),
   ]),
@@ -185,10 +195,10 @@ List<Upgrade> initialUpgrades = [
   Upgrade(
     UpgradeId.OpenLetter,
     'Open Letter',
-    (l) => 'Gain 30 influence',
+    (l) => 'Gain 10 influence',
     maxLevel: 2,
     alwaysAppear: true,
-    onLevelUp: (gs, level) => reduceActionEffects(gs, [ActionEffect(Param.influence, 30)]),
+    onLevelUp: (gs, level) => reduceActionEffects(gs, [ActionEffect(Param.influence, 10)]),
   ),
   Upgrade(
     UpgradeId.InterpretabilityModel,
@@ -236,9 +246,9 @@ List<Upgrade> initialUpgrades = [
   Upgrade(
     UpgradeId.FakeNews,
     'Fake News',
-    (l) => 'Gain 10 influence, but lose 10 trust',
+    (l) => 'Gain 20 influence, but lose 20 trust',
     alwaysAppear: true,
-    onLevelUp: (gs, l) => reduceActionEffects(gs, [ActionEffect(Param.influence, 10), ActionEffect(Param.trust, -10)]),
+    onLevelUp: (gs, l) => reduceActionEffects(gs, [ActionEffect(Param.influence, 20), ActionEffect(Param.trust, -20)]),
   ),
   Upgrade(
     UpgradeId.MoneyLaundering,
