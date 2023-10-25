@@ -20,29 +20,30 @@ You can use the spacebar to pause, and keys 1~5 to adjust the game speed.
 #### Secondary resources:
 
 - Alignment acceptance - Public view of alignment. Influences what rate of org breakthroughs lead to alignment improvements, or e.g. how likely a new researcher is to join an alignment team vs a capabilities team
-- Trust - start at 100, gain or lose depending on how your fund/contract money is handled. If you have high trust you'll get better contracts and retention
-- Influence - affects how effective your persuasion efforts are
+- Trust - start at 100, gain or lose depending on how your fund/contract money is handled. If you have high trust you'll get more lucrative contracts
+- Influence - affects how effective your social persuasion efforts are
+
+#### Glossary:
+
+- ASI - Artificial Superintelligence. Your goal is to make sure that its discovery results in a positive outcome.
+- org - organization. The main "allies and antagonists" of the game, their progress determines the high-level tug of war between alignment and capabilities in the game
+- Breakthrough - every x days, organizations can make a "breakthrough", which increases an organization's progress in a research area (in addition to other effects)
+- AA - Alignment acceptance, one of the win conditions and a modifier to what percentage of research goes into alignment
+- AD - Alignment disposition, an individual modifier for organizations that gets applied on top of AA to determine the outcome of breakthroughs
+- ASI outcome - gauge that starts at 50% and shifts whenever a breakthrough is made; if it reaches 0% you lose (due to misaligned ASI), and if 100% you win (due to aligned ASI)
 
 #### Win/loss conditions
 
-- The goal is to ensure that when a superintelligent AI is created, it will be aligned to human needs and values. There are multiple win conditions:
+- When a superintelligent AI is created, you win if it will be aligned to human needs and values. There are multiple win conditions, and you only need to reach one of them:
   1. Achieve 100% alignment acceptance
   2. Achieve 100% ASI outcome
   3. Finish 50 alignment funding contracts
 - You lose if the research to align superintelligent AI becomes hopeless. There are multiple loss conditions:
-  1. Have 0% alignmnt acceptance
+  1. Have 0% alignment acceptance
   2. Have 0% ASI outcome
   3. Run out of funds and can't take any new contracts
 - Each year a new org spawns, with greater funding and more bias towards capabilities research over time (although affected by alignment acceptance)
 - Breakthroughs made by organizations cause ASI outcome to increase/decrease by the level of the breakthrough. Similarly level 2+ breakthroughs increase/decrease alignment acceptance by 1.
-
-#### Glossary:
-
-Organization - the main "allies and antagonists" of the game, their progress determines the high-level tug of war between alignment and capabilities in the game
-Breakthrough - every x days, organizations can make a "breakthrough", which increases an organization's research area's progress by one (in addition to other effects)
-AA - Alignment acceptance, one of the wincons and a modifier to what % of research goes into alignment
-AD - Alignment disposition, an individual modifier for organizations that gets applied on top of AA to determine the outcome of breakthroughs
-ASI outcome - bar that starts at 50% and shifts whenever a breakthrough is made; if it reaches 0% you lose (due to misaligned ASI), and if 100% you win (due to aligned ASI)
 
 ## Building the game
 
