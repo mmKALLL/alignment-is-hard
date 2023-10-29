@@ -35,37 +35,44 @@ reduceActionEffects(GameState gs, List<ActionEffect> effects, [EventId eventId =
   while (effectStack.isNotEmpty) {
     final effect = effectStack.pop();
     if (effect == null) continue;
-    double value = effect.value.toDouble();
 
-    // Apply any mods to the effect
-    for (CurriedModifier modifier in gs.addModifiers[effect.paramEffected] ?? []) {
-      value = modifier(value);
-    }
-
-    for (CurriedModifier modifier in gs.multModifiers[effect.paramEffected] ?? []) {
-      value = modifier(value);
-    }
-
-    for (CurriedModifier modifier in gs.functionModifiers[effect.paramEffected] ?? []) {
-      value = modifier(value);
-    }
-
-    int truncatedValue = value.toInt();
+    final effectValue = applyParamModifiers(effect, gs.addModifiers, gs.multModifiers, gs.functionModifiers);
 
     // Apply the effect to the game state
-    applyParamUpdate(gs, effect.paramEffected, truncatedValue);
+    applyParamUpdate(gs, effect.paramEffected, effectValue);
 
     // Call any further handlers that resulted from the param / event being modified
     final paramEventHandlers = gs.paramEventHandlers[effect.paramEffected] ?? [];
     for (var handler in paramEventHandlers) {
       paramEventHandlerCounts[effect.paramEffected] = (paramEventHandlerCounts[effect.paramEffected] ?? 0) + 1;
       if (paramEventHandlerCounts[effect.paramEffected]! <= maxCallStack) {
-        handler(gs, effectStack, effect.paramEffected, truncatedValue);
+        handler(gs, effectStack, effect.paramEffected, effectValue);
       }
     }
   }
 
   checkWinConditions(gs);
+}
+
+int applyParamModifiers(ActionEffect effect, Map<Param, List<CurriedModifier>> addModifiers,
+    Map<Param, List<CurriedModifier>> multModifiers, Map<Param, List<CurriedModifier>> functionModifiers) {
+  double value = effect.value.toDouble();
+
+  // Apply any mods to the effect
+  for (CurriedModifier modifier in addModifiers[effect.paramEffected] ?? []) {
+    value = modifier(value);
+  }
+
+  for (CurriedModifier modifier in multModifiers[effect.paramEffected] ?? []) {
+    value = modifier(value);
+  }
+
+  for (CurriedModifier modifier in functionModifiers[effect.paramEffected] ?? []) {
+    value = modifier(value);
+  }
+
+  int truncatedValue = value.toInt();
+  return truncatedValue;
 }
 
 applyParamUpdate(GameState gs, Param paramEffected, int value) {
