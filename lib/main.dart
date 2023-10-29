@@ -216,7 +216,7 @@ class _MainComponentState extends State<MainComponent> {
                             ),
                           ])
                         : gs.currentScreen == Screen.upgradeSelection
-                            ? addReturnButton([UpgradeSelectionView(gs, handleAction)])
+                            ? UpgradeSelectionView(gs, handleAction)
                             : addReturnButton([const Text('Unknown Screen')]);
 
     // If need support for variable width, can check https://stackoverflow.com/questions/72020592/how-to-make-flutter-web-app-a-certain-size-and-keep-phone-dimensions
