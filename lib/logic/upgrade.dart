@@ -226,16 +226,10 @@ List<Upgrade> initialUpgrades = [
       })
     ],
   ),
-  Upgrade(
-    UpgradeId.DataScraping,
-    'Data Scraping',
-    (l) => 'Contract auto-refresh time is reduced by 33%', // TODO: Should use a dynamic percentage
-    alwaysAppear: true,
-    onLevelUp: (gs, l) => gs.contractCycle = (gs.contractCycle / 3 * 2).round(),
-  ),
-  Upgrade(
-      UpgradeId.WarningSigns, 'Warning Signs', (l) => 'Organizations take 20% longer to appear', // TODO: Should use a dynamic percentage
-      onLevelUp: (gs, l) => gs.organizationCycle = (gs.organizationCycle * 1.2).round()),
+  Upgrade(UpgradeId.DataScraping, 'Data Scraping', (l) => 'Contract auto-refresh time is reduced by ${l * 30}%',
+      alwaysAppear: true, onLevelUp: (gs, l) => gs.contractCycle = (gs.contractCycle * 0.7).round(), maxLevel: 2),
+  Upgrade(UpgradeId.WarningSigns, 'Warning Signs', (l) => 'Organizations take ${l * 18}% longer to appear',
+      onLevelUp: (gs, l) => gs.organizationCycle *= (gs.organizationCycle * 1.18).round()),
   Upgrade(
     UpgradeId.SocialEngineering,
     'Social Engineering',
