@@ -62,7 +62,7 @@ class GameState {
   // 0-100. Shifted whenever breakthroughs are made, by the level of the feature receiving the breakthrough. 0 = capabilities win; misaligned ASI. 100 = aligned ASI.
   int asiOutcome = 50;
 
-  // 0-200. Trust towards your organization. Gain or lose depending on how your fund/contract money is handled. If you have high trust you'll get better contracts and retention
+  // 0-200. Trust towards your organization. Gain or lose depending on how your fund/contract money is handled. If you have high trust you'll get better contracts
   int trust = 100;
 
   // 0-200. Influence is a percentage multiplier to the effect of your social actions (like increasing alignment acceptance)
