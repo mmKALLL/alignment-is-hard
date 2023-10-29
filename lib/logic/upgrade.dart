@@ -211,7 +211,7 @@ List<Upgrade> initialUpgrades = [
   Upgrade(
     UpgradeId.TrustedAdvisor,
     'Trusted Advisor',
-    (l) => 'Gain ${l * 3} more trust from finishing contracts',
+    (l) => 'Gain ${l * 3} more trust from completing contracts',
     alwaysAppear: true,
     contractModifiers: [Modifier(Param.trust, ModifierType.add, (value, l) => l * 3)],
   ),

@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:alignment_is_hard/logic/action_reducer.dart';
 import 'package:alignment_is_hard/logic/actions.dart';
 import 'package:alignment_is_hard/logic/game_state.dart';
 import 'package:alignment_is_hard/logic/util.dart';
@@ -58,15 +59,20 @@ Contract getRandomContract(GameState gs) {
   int failureEffects = 1 + (difficultyWithVariance() / 150).floor();
 
   // Generate action effects
-  final List<ActionEffect> onAccept = getAcceptEffects(difficulty, acceptEffects, isAlignmentContract, gs.trust);
-  final List<ActionEffect> onSuccess = [
+  List<ActionEffect> onAccept = getAcceptEffects(difficulty, acceptEffects, isAlignmentContract, gs.trust);
+  List<ActionEffect> onSuccess = [
     ActionEffect(Param.trust, ((isAlignmentContract ? 2 : 1) * (2 * difficulty / 100)).round()),
     ...getSuccessEffects(difficulty, successEffects, isAlignmentContract, gs.trust)
   ];
-  final List<ActionEffect> onFailure = [
+  List<ActionEffect> onFailure = [
     ActionEffect(Param.trust, (-6 * (difficulty + 100) / 100).round()),
     ...getFailureEffects(difficulty, failureEffects, isAlignmentContract, gs.trust)
   ];
+
+  // Apply contract modifiers from game state
+  onAccept = onAccept.map((e) => applyContractModifiers(gs, e)).toList();
+  onSuccess = onSuccess.map((e) => applyContractModifiers(gs, e)).toList();
+  onFailure = onFailure.map((e) => applyContractModifiers(gs, e)).toList();
 
   // Requirements rise exponentially with difficulty
   final int totalRequirement = pow(((100 + difficulty) / 100), 1.7).round();
@@ -184,4 +190,13 @@ getFailureEffects(int difficulty, int totalEffects, bool isAlignmentContract, in
 
 getEffectsFromPool(int totalEffects, List<WeightedEffect> effectPool) {
   return pickListOfWeighted(totalEffects, effectPool).map((e) => e.effect).toList();
+}
+
+// TODO: Test that this works by setting one of the multiplicative contract mods to a high value
+ActionEffect applyContractModifiers(GameState gs, ActionEffect effect, [bool isForFailure = false]) {
+  // Only multiplier modifiers are enabled for penalty generation
+  final newValue = applyParamModifiers(
+      effect, isForFailure ? {} : gs.contractAddModifiers, gs.contractMultModifiers, isForFailure ? {} : gs.contractFunctionModifiers);
+
+  return ActionEffect(effect.paramEffected, newValue);
 }
