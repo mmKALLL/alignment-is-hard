@@ -74,13 +74,13 @@ class GameState {
   double wagePerHumanPerDay = 1.0;
 
   // Your human resources. Allocate to tasks to generate points in three general areas: capabilities, alignment, fieldbuilding
-  int freeHumans = debug ? 10 : 3; // Each human uses one money / turn.
+  int freeHumans = debug ? 10 : 2; // Each human uses one money / turn.
   double getTeamPerformance() => (30 / (25 + freeHumans)); // Unused. Effectiveness of each person. Having more decreases their efficiency.
   bool canUnassignHumans = false;
 
-  int rp = debug ? 100 : 5; // current research points. Used to improve facets of your AI or unlock upgrades
-  int ep = debug ? 100 : 5; // current engineering points. Used to fulfill contracts
-  int sp = debug ? 100 : 5; // current social points. Used to get better contracts/funds, develop the field, or hire more people
+  int rp = debug ? 100 : 8; // current research points. Used to improve facets of your AI or unlock upgrades
+  int ep = debug ? 100 : 8; // current engineering points. Used to fulfill contracts
+  int sp = debug ? 100 : 8; // current social points. Used to get better contracts/funds, develop the field, or hire more people
 
   int rpWorkers = 1; // Number of people working on RP
   int epWorkers = 1; // Number of people working on EP
