@@ -104,6 +104,7 @@ applyParamUpdate(GameState gs, Param paramEffected, int value) {
       break;
     case Param.trust:
       gs.trust += value;
+      gs.trust = min(250, gs.trust);
       break;
     case Param.alignmentAcceptance:
       gs.alignmentAcceptance += value;
