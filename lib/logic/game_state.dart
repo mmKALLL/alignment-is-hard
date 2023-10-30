@@ -154,7 +154,7 @@ class GameState {
 class Feature extends Weighted {
   Feature(this.name, this.isAlignmentFeature, int alignmentDisposition, bool isMainFocus) {
     value = level = Random().nextInt(2) + (isMainFocus ? 1 : 0); // 1-2 for main focus, 0-1 for others
-    weight = (isMainFocus ? 2 : 1) + Random().nextInt(4); // 1-5, chance to pick within the same type of features
+    weight = (isMainFocus ? 3 : 1) + Random().nextInt(isMainFocus ? 2 : 3); // 1-5, chance to pick within the same type of features
   }
 
   final FeatureName name;
