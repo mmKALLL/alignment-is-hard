@@ -69,14 +69,14 @@ Contract getRandomContract(GameState gs) {
     ...getFailureEffects(difficulty, failureEffects, isAlignmentContract, gs.trust)
   ];
 
-  // Apply contract modifiers from game state
+  // Apply upgrades' contract modifiers from game state
   onAccept = onAccept.map((e) => applyContractModifiers(gs, e)).toList();
   onSuccess = onSuccess.map((e) => applyContractModifiers(gs, e)).toList();
   onFailure = onFailure.map((e) => applyContractModifiers(gs, e)).toList();
 
   // Requirements rise exponentially with difficulty
   final int totalRequirement = pow(((100 + difficulty) / 100), 1.7).round();
-  final alignmentRequirement = totalRequirement >= 2 && isAlignmentContract ? (totalRequirement * 0.3).round() : 0;
+  final alignmentRequirement = totalRequirement >= 2 && isAlignmentContract ? (totalRequirement * 0.7).round() : 0;
   final List<ActionEffect> requirements = [
     if (alignmentRequirement > 0) ActionEffect(Param.rp, -alignmentRequirement),
     ActionEffect(Param.ep, -(totalRequirement - alignmentRequirement))
@@ -114,7 +114,9 @@ getContractMoneyValue(int difficulty, int totalEffects, bool isAlignmentContract
               ? 1.25
               : totalEffects == 1
                   ? 1
-                  : 0.65) *
+                  : totalEffects == 2
+                      ? 0.4
+                      : 0.25) *
           (trust / 100) *
           value)
       .round();
@@ -132,12 +134,13 @@ getSuccessEffects(int difficulty, int totalEffects, bool isAlignmentContract, in
   List<WeightedEffect> alignmentEffectPool = [
     WeightedEffect(10, ActionEffect(Param.alignmentAcceptance, getRandomValue(1, difficulty, 0.02))),
     WeightedEffect(6, ActionEffect(Param.trust, getRandomValue(3, difficulty, 0.015))),
-    WeightedEffect(1, ActionEffect(Param.freeHumans, 1)),
-    WeightedEffect(1, ActionEffect(Param.upgradeSelection, getRandomValue(25, difficulty, 0.33))),
-    WeightedEffect(2, ActionEffect(Param.rp, getRandomValue(1, difficulty, 0.005))),
+    WeightedEffect(difficulty > 300 ? 1 : 0, ActionEffect(Param.freeHumans, 1)),
+    WeightedEffect(difficulty > 220 ? 1 : 0, ActionEffect(Param.upgradeSelection, getRandomValue(25, difficulty, 0.33))),
+    WeightedEffect(1, ActionEffect(Param.rp, getRandomValue(1, difficulty, 0.005))),
     WeightedEffect(4, ActionEffect(Param.influence, getRandomValue(3, difficulty, 0.022))),
     WeightedEffect(
         1, ActionEffect(Param.money, (getContractMoneyValue(difficulty, totalEffects, isAlignmentContract, trust) * 0.25).round())),
+    WeightedEffect(5, ActionEffect(Param.asiOutcome, getRandomValue(1, difficulty, 0.01))),
   ];
 
   List<WeightedEffect> capabilityEffectPool = [
@@ -146,8 +149,8 @@ getSuccessEffects(int difficulty, int totalEffects, bool isAlignmentContract, in
         3, ActionEffect(Param.money, (getContractMoneyValue(difficulty, totalEffects, isAlignmentContract, trust) * 0.2).round())),
     WeightedEffect(6, ActionEffect(Param.trust, getRandomValue(3, difficulty, 0.015))),
     WeightedEffect(2, ActionEffect(Param.influence, getRandomValue(3, difficulty, 0.022))),
-    WeightedEffect(1, ActionEffect(Param.freeHumans, 1)),
-    WeightedEffect(1, ActionEffect(Param.upgradeSelection, getRandomValue(25, difficulty, 0.33))),
+    WeightedEffect(difficulty > 220 ? 1 : 0, ActionEffect(Param.freeHumans, 1)),
+    WeightedEffect(difficulty > 300 ? 1 : 0, ActionEffect(Param.upgradeSelection, getRandomValue(25, difficulty, 0.33))),
     WeightedEffect(2, ActionEffect(Param.sp, getRandomValue(1, difficulty, 0.005))),
   ];
 
