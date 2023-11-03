@@ -176,6 +176,7 @@ List<Upgrade> initialUpgrades = [
     'Research Advisor',
     (l) => 'RP generation is ${l * 20}% faster',
     alwaysAppear: true,
+    // TODO: Because progress is an integer, this won't have any effect before you have 5+ humans on RP/EP/SP
     modifiers: [Modifier(Param.rpProgress, ModifierType.multiply, (value, l) => value >= 0 ? value * (1 + 0.2 * l) : value)],
   ),
   Upgrade(
