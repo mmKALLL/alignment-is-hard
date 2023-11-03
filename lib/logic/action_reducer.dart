@@ -75,7 +75,7 @@ int applyParamModifiers(ActionEffect effect, Map<Param, List<CurriedModifier>> a
   return truncatedValue;
 }
 
-applyParamUpdate(GameState gs, Param paramEffected, int value) {
+void applyParamUpdate(GameState gs, Param paramEffected, int value) {
   switch (paramEffected) {
     case Param.currentScreen:
       gs.currentScreen = value;
@@ -168,11 +168,19 @@ applyParamUpdate(GameState gs, Param paramEffected, int value) {
 
     case Param.contractClaimed:
       final contract = gs.contracts[value];
-      if (!(contract.succeeded || contract.failed)) break;
+      if (!(contract.succeeded || contract.failed)) return;
       if (contract.succeeded) {
-        // Remove the resources promised by the contract before getting the rewards
+        // Remove the resources required by the contract before getting the rewards
         gs.finishedAlignmentContracts += contract.isAlignmentContract ? 1 : 0;
         reduceActionEffects(gs, contract.requirements, EventId.internalStateChange);
+      }
+      if (contract.failed) {
+        // Ensure that the player can afford paying the failure penalties
+        for (var effect in contract.onFailure) {
+          if (!validateActionResourceSufficiency(gs, effect)) {
+            return;
+          }
+        }
       }
       final action = contract.succeeded ? contract.onSuccess : contract.onFailure;
       final eventId = contract.succeeded ? EventId.contractSuccess : EventId.contractFailure;
@@ -185,6 +193,8 @@ applyParamUpdate(GameState gs, Param paramEffected, int value) {
       gs.organizations[value].alignmentDisposition += Constants.organizationAlignmentDispositionGain;
       break;
   }
+
+  // ASSUMPTION: no code follows the switch expression; some parts inside return instead of breaking
 }
 
 incrementParam(GameState gs, Param param, [int value = 1, EventId event = EventId.internalStateChange]) {

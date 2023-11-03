@@ -3,7 +3,7 @@ import 'package:alignment_is_hard/logic/game_state.dart';
 import 'package:alignment_is_hard/logic/upgrade.dart';
 import 'package:alignment_is_hard/main.dart';
 
-validateActionResourceSufficiency(GameState gs, ActionEffect effect) {
+bool validateActionResourceSufficiency(GameState gs, ActionEffect effect) {
 // First check things that don't target a specific resource
   final value = effect.value;
   switch (effect.paramEffected) {
