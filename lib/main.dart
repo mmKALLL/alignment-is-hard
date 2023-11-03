@@ -189,6 +189,8 @@ class _MainComponentState extends State<MainComponent> {
                 const Text(
                     'Unfortunately, you failed to prevent \na superintelligent AI from taking over. \n\nThere are no retries in real life, \nbut here you can learn and try again. \n\nFinal status:'),
                 const SizedBox(height: 32),
+                Text('Days taken: ${gs.turn}'),
+                const SizedBox(height: 4),
                 ResourceDisplay(
                   gs: gs,
                 ),
@@ -202,6 +204,8 @@ class _MainComponentState extends State<MainComponent> {
                     const Text(
                         'Congratulations, you managed to overcome the odds and \ndevelop aligned superintelligence! \n\nFinal status:'),
                     const SizedBox(height: 32),
+                    Text('Days taken: ${gs.turn}'),
+                    const SizedBox(height: 4),
                     ResourceDisplay(gs: gs),
                     const SizedBox(height: 32),
                     ActionButton(gs, handleAction, actions.resetGame, Icons.arrow_back_sharp)
