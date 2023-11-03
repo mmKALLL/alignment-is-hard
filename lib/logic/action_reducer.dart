@@ -10,8 +10,16 @@ import 'package:alignment_is_hard/logic/weighted.dart';
 import 'package:alignment_is_hard/main.dart';
 
 reduceActionEffects(GameState gs, List<ActionEffect> effects, [EventId eventId = EventId.internalStateChange]) {
-  // Don't allow the action to go through if any effects have insufficient resources
-  if (effects.any((effect) => !validateActionResourceSufficiency(gs, effect))) {
+  // Don't allow the action to go through if the action was user-initiated and any effects have insufficient resources
+  if (!([
+        EventId.internalStateChange,
+        EventId.dayChange,
+        EventId.changeSpeed,
+        EventId.pauseGame,
+        EventId.resetGame,
+        EventId.refreshContracts
+      ].contains(eventId)) &&
+      effects.any((effect) => !validateActionResourceSufficiency(gs, effect))) {
     return;
   }
 
