@@ -193,6 +193,6 @@ class ActionEffect {
 
   @override
   String toString() {
-    return '${paramToLabel(paramEffected)} ${value > 0 ? '+${value.round()}' : '${value.round()}'}';
+    return '${paramToLabel(paramEffected)} ${value > 0 ? '+${value.round()}' : '${value.round()}'}${paramEffected == Param.money ? 'k' : paramEffected == Param.gameSpeed ? 'x' : ''}';
   }
 }
