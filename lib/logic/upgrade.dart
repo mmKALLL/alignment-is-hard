@@ -238,9 +238,8 @@ List<Upgrade> initialUpgrades = [
   Upgrade(
     UpgradeId.StrategicAlignment,
     'Strategic Alignment',
-    (l) => 'Alignment acceptance rewards on contracts are increased by ${l * 2}',
-    alwaysAppear: true,
-    contractModifiers: [Modifier(Param.alignmentAcceptance, ModifierType.add, (value, l) => value + l * 2)],
+    (l) => 'Alignment acceptance rewards on contracts are increased by ${l * 1}',
+    contractModifiers: [Modifier(Param.alignmentAcceptance, ModifierType.add, (value, l) => value + l * 1)],
   ),
   Upgrade(
     UpgradeId.FakeNews,
@@ -253,7 +252,7 @@ List<Upgrade> initialUpgrades = [
     UpgradeId.MoneyLaundering,
     'Money Laundering',
     (l) => 'Gain ${2 * l}k money per day, but lose 20 trust',
-    maxLevel: 2,
+    maxLevel: 1,
     onLevelUp: (gs, l) => reduceActionEffects(gs, [ActionEffect(Param.trust, -20)]),
     eventHandlers: [
       ActionEventHandler(EventId.dayChange, (gs, effectStack, eventId, l) {
