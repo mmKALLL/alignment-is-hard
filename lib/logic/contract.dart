@@ -76,7 +76,7 @@ Contract getRandomContract(GameState gs) {
 
   // Requirements rise exponentially with difficulty
   final int totalRequirement = pow(((100 + difficulty) / 100), 1.7).round();
-  final int alignmentRequirement = totalRequirement >= 2 && isAlignmentContract ? (totalRequirement * 0.7).round() : 0;
+  final int alignmentRequirement = totalRequirement >= 2 && isAlignmentContract ? (totalRequirement * 0.64).round() : 0;
   final List<ActionEffect> requirements = [
     if (alignmentRequirement > 0) ActionEffect(Param.rp, -alignmentRequirement.toDouble()),
     ActionEffect(Param.ep, -(totalRequirement - alignmentRequirement).toDouble())
