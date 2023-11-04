@@ -277,8 +277,7 @@ void resetUpgrades() {
   }
 }
 
-// FIXME: Remove hardcoded effects of upgrades, can check usage of this function. Needs a bit of consideration on how to e.g. show the decreased price of SP effects...
-Upgrade getUpgrade(UpgradeId id) => staticUpgrades.firstWhere((upgrade) => upgrade.id == id);
+// Upgrade getUpgrade(UpgradeId id) => staticUpgrades.firstWhere((upgrade) => upgrade.id == id); // Was only needed for hardcoded effects defined elsewhere, kept for future use
 
 List<Upgrade> nextUpgrades = shuffleNextUpgrades();
 

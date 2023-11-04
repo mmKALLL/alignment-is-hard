@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:alignment_is_hard/logic/game_state.dart';
-import 'package:alignment_is_hard/logic/upgrade.dart';
 import 'package:alignment_is_hard/main.dart';
 
 class Action {
