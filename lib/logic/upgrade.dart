@@ -112,55 +112,58 @@ enum UpgradeId {
 
 // NOTE: Event handlers are allowed to push effects on the stack, but NOT call reduceActionEffects directly. Calling it directly would bypass the symmetric event trigger infinite recursion prevention (i.e. actionEventHandlerCounts and maxCallStack).
 List<Upgrade> initialUpgrades = [
-  Upgrade(UpgradeId.RewardHacking, 'Reward Hacking', (l) => '${l * 6}% chance to get an extra point when receiving RP/EP/SP',
+  Upgrade(UpgradeId.RewardHacking, 'Reward Hacking', (l) => '${l * 8}% chance to get an extra point when receiving RP/EP/SP',
       maxLevel: 5,
       paramEventHandlers: [
         // NOTE: This allows the RP/EP/SP param handlers to be self-recursive. Thus with 20%+ chance it's common to see 3 or 4 points being gained at once.
         ParamEventHandler(Param.rp, (gs, effectStack, param, value, level) {
-          if (Random().nextDouble() <= 0.06 * level) effectStack.push(ActionEffect(Param.rp, 1));
+          if (Random().nextDouble() <= 0.08 * level) effectStack.push(ActionEffect(Param.rp, 1));
         }),
         ParamEventHandler(Param.ep, (gs, effectStack, param, value, level) {
-          if (Random().nextDouble() <= 0.06 * level) effectStack.push(ActionEffect(Param.ep, 1));
+          if (Random().nextDouble() <= 0.08 * level) effectStack.push(ActionEffect(Param.ep, 1));
         }),
         ParamEventHandler(Param.sp, (gs, effectStack, param, value, level) {
-          if (Random().nextDouble() <= 0.06 * level) effectStack.push(ActionEffect(Param.sp, 1));
+          if (Random().nextDouble() <= 0.08 * level) effectStack.push(ActionEffect(Param.sp, 1));
         }),
       ]),
   Upgrade(
     UpgradeId.Duplicator,
     'Duplicator',
-    (l) => 'Whenever you gain an EP, 40% chance to gain an RP',
-    maxLevel: 1,
+    (l) => 'Whenever you gain an EP, 25% chance to gain an RP',
+    maxLevel: 2,
     paramEventHandlers: [
-      ParamEventHandler(Param.ep, (gs, effectStack, param, value, level) {
-        if (Random().nextDouble() < 0.4) effectStack.push(ActionEffect(Param.rp, 1));
+      ParamEventHandler(Param.ep, (gs, effectStack, param, value, l) {
+        if (Random().nextDouble() < 0.25 * l) effectStack.push(ActionEffect(Param.rp, 1));
       })
     ],
   ),
-  Upgrade(UpgradeId.SocialHacking, 'Social Hacking', (l) => 'Whenever you gain an SP, 40% chance to gain an EP',
-      maxLevel: 1,
+  Upgrade(UpgradeId.SocialHacking, 'Social Hacking', (l) => 'Whenever you gain an SP, 25% chance to gain an EP',
+      maxLevel: 2,
       paramEventHandlers: [
-        ParamEventHandler(Param.sp, (gs, effectStack, param, value, level) {
-          if (Random().nextDouble() < 0.4) effectStack.push(ActionEffect(Param.ep, 1));
+        ParamEventHandler(Param.sp, (gs, effectStack, param, value, l) {
+          if (Random().nextDouble() < 0.25 * l) effectStack.push(ActionEffect(Param.ep, 1));
         })
       ]),
-  Upgrade(UpgradeId.DebateCourse, 'Debate Course', (l) => 'Whenever you gain an RP, 40% chance to gain an SP',
-      maxLevel: 1,
+  Upgrade(UpgradeId.DebateCourse, 'Debate Course', (l) => 'Whenever you gain an RP, 25% chance to gain an SP',
+      maxLevel: 2,
       paramEventHandlers: [
-        ParamEventHandler(Param.rp, (gs, effectStack, param, value, level) {
-          if (Random().nextDouble() < 0.4) effectStack.push(ActionEffect(Param.sp, 1));
+        ParamEventHandler(Param.rp, (gs, effectStack, param, value, l) {
+          if (Random().nextDouble() < 0.25 * l) effectStack.push(ActionEffect(Param.sp, 1));
         })
       ]),
-  Upgrade(UpgradeId.LethalityList, 'List of Lethalities', (l) => 'Alignment contracts provide ${l * 25}% more money', contractModifiers: [
-    Modifier(Param.money, ModifierType.multiply, (value, level) => value * (1 + 0.25 * level)),
-  ]),
+  Upgrade(UpgradeId.LethalityList, 'List of Lethalities', (l) => 'Alignment contracts provide ${l * 25}% more money',
+      alwaysAppear: true,
+      contractModifiers: [
+        Modifier(Param.money, ModifierType.multiply, (value, level) => value * (1 + 0.25 * level)),
+      ]),
   Upgrade(
     UpgradeId.PoetryGenerator,
     'Poetry Generator',
     (l) => 'SP actions are ${l * 20}% cheaper',
     alwaysAppear: true,
     modifiers: [
-      Modifier(Param.sp, ModifierType.multiply, (value, level) => value >= 0 ? value : value * (1 - 0.2 * level)),
+      Modifier(Param.sp, ModifierType.function,
+          (value, level) => value >= 0 ? value : (value * (1 - 0.2 * level))), // FIXME, something is very badly wrong with this
     ],
   ),
   Upgrade(UpgradeId.CognitiveEmulation, 'Cognitive Emulation', (l) => 'Cost of humans assigned to RP is reduced by ${l * 50}%',

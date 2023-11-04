@@ -75,7 +75,11 @@ class Actions {
         'Influence public opinion',
         [
           ActionEffect(Param.alignmentAcceptance, gs.influence / 10),
-          ActionEffect(Param.sp, -(10 - getUpgrade(UpgradeId.PoetryGenerator).level * 2)),
+          ActionEffect(
+              Param.sp,
+              -(10 -
+                  getUpgrade(UpgradeId.PoetryGenerator).level *
+                      2)), // FIXME: Need to remove hardcoded effect from poetry generator, while updating the action button text for SP action costs
         ],
         EventId.influenceAlignmentAcceptance,
       );
@@ -111,7 +115,7 @@ class Actions {
         'Hire a new human',
         [
           ActionEffect(Param.freeHumans, 1),
-          ActionEffect(Param.sp, -(gs.getTotalHumans() * (1 - getUpgrade(UpgradeId.PoetryGenerator).level * 0.2)).roundToDouble()),
+          ActionEffect(Param.sp, -gs.getTotalHumans()),
         ],
         EventId.hireHuman,
       );
