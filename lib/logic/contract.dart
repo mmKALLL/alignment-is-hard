@@ -195,7 +195,6 @@ getEffectsFromPool(int totalEffects, List<WeightedEffect> effectPool) {
   return pickListOfWeighted(totalEffects, effectPool).map((e) => e.effect).toList();
 }
 
-// TODO: Test that this works by setting one of the multiplicative contract mods to a high value
 ActionEffect applyContractModifiers(GameState gs, ActionEffect effect, [bool isForFailure = false]) {
   // Only multiplier modifiers are enabled for penalty generation
   final newValue = applyParamModifiers(

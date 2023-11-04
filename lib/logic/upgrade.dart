@@ -56,7 +56,7 @@ class Modifier {
   final Param param;
   final ModifierType type;
   final ModifierFunction apply;
-  final bool Function() filter;
+  final bool Function() filter; // TODO: Unimplemented
 }
 
 typedef ActionEventHandlerFunction = void Function(GameState gs, StackList<ActionEffect> effectStack, EventId eventId, int level);
@@ -151,17 +151,21 @@ List<Upgrade> initialUpgrades = [
           if (Random().nextDouble() < 0.25 * l) effectStack.push(ActionEffect(Param.sp, 1));
         })
       ]),
-  Upgrade(UpgradeId.LethalityList, 'List of Lethalities', (l) => 'Alignment contracts provide ${l * 25}% more money',
-      alwaysAppear: true,
-      contractModifiers: [
-        Modifier(Param.money, ModifierType.multiply, (value, level) => value * (1 + 0.25 * level)),
-      ]),
+  // TODO: Originally this was only for alignment contracts, but filtering is not yet implemented
+  // TODO: This affects all sources of money gain on contracts, but should only impact the onAccept effects
+  Upgrade(UpgradeId.LethalityList, 'List of Lethalities', (l) => 'Contracts provide ${l * 10}k more money', contractModifiers: [
+    Modifier(
+      Param.money,
+      ModifierType.add,
+      (value, level) => value > 0 ? value + (10 * level) : value,
+    ),
+  ]),
   Upgrade(
     UpgradeId.PoetryGenerator,
     'Poetry Generator',
     (l) => 'SP actions are ${l * 20}% cheaper',
     modifiers: [
-      // TODO: should use onLevelUp instead to modify the price of SP actions in game state. This also affects e.g. contract failures
+      // TODO: should use onLevelUp instead to modify the price of SP actions in game state. The current effect unintentedly affects e.g. contract failures
       Modifier(Param.sp, ModifierType.multiply, (value, level) => value >= 0 ? value : (value * (1 - 0.2 * level))),
     ],
   ),
@@ -176,21 +180,18 @@ List<Upgrade> initialUpgrades = [
     UpgradeId.ResearchAdvisor,
     'Research Advisor',
     (l) => 'RP generation is ${l * 20}% faster',
-    alwaysAppear: true,
     modifiers: [Modifier(Param.rpProgress, ModifierType.multiply, (value, l) => value >= 0 ? value * (1 + 0.2 * l) : value)],
   ),
   Upgrade(
     UpgradeId.EngineeringAdvisor,
     'Engineering Advisor',
     (l) => 'EP generation is ${l * 20}% faster',
-    alwaysAppear: true,
     modifiers: [Modifier(Param.epProgress, ModifierType.multiply, (value, l) => value >= 0 ? value * (1 + 0.2 * l) : value)],
   ),
   Upgrade(
     UpgradeId.SocialAdvisor,
     'Social Advisor',
     (l) => 'SP generation is ${l * 20}% faster',
-    alwaysAppear: true,
     modifiers: [Modifier(Param.spProgress, ModifierType.multiply, (value, l) => value >= 0 ? value * (1 + 0.2 * l) : value)],
   ),
   Upgrade(
