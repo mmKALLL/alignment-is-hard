@@ -167,8 +167,7 @@ List<Upgrade> initialUpgrades = [
       maxLevel: 1,
       eventHandlers: [
         ActionEventHandler(EventId.dayChange, (gs, effectStack, eventId, level) {
-          // TODO: Because of this floor the calculation kinda sucks - there's no reduction for just a single RP human... Should represent money as an integer instead of 1 = 1k...
-          effectStack.push(ActionEffect(Param.money, (gs.rpWorkers * gs.wagePerHumanPerDay * 0.5 * level).floor()));
+          effectStack.push(ActionEffect(Param.money, (gs.rpWorkers * gs.wagePerHumanPerDay * 0.5 * level)));
         }),
       ]),
   Upgrade(
@@ -176,7 +175,6 @@ List<Upgrade> initialUpgrades = [
     'Research Advisor',
     (l) => 'RP generation is ${l * 20}% faster',
     alwaysAppear: true,
-    // TODO: Because progress is an integer, this won't have any effect before you have 5+ humans on RP/EP/SP
     modifiers: [Modifier(Param.rpProgress, ModifierType.multiply, (value, l) => value >= 0 ? value * (1 + 0.2 * l) : value)],
   ),
   Upgrade(
