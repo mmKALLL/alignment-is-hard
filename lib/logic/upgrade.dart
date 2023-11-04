@@ -212,14 +212,12 @@ List<Upgrade> initialUpgrades = [
     UpgradeId.TrustedAdvisor,
     'Trusted Advisor',
     (l) => 'Gain ${l * 3} more trust from completing contracts',
-    alwaysAppear: true,
     contractModifiers: [Modifier(Param.trust, ModifierType.add, (value, l) => value + l * 3)],
   ),
   Upgrade(
     UpgradeId.PassiveIncome,
     'Passive Income',
-    (l) => 'Gain ${l * 1000} money per day',
-    alwaysAppear: true,
+    (l) => 'Gain ${1 * l}k money per day',
     eventHandlers: [
       ActionEventHandler(EventId.dayChange, (gs, effectStack, eventId, l) {
         effectStack.push(ActionEffect(Param.money, 1 * l));
@@ -247,9 +245,9 @@ List<Upgrade> initialUpgrades = [
   Upgrade(
     UpgradeId.MoneyLaundering,
     'Money Laundering',
-    (l) => 'Gain 2000 money per day, but lose 20 trust',
+    (l) => 'Gain ${2 * l}k money per day, but lose 20 trust',
     alwaysAppear: true,
-    onLevelUp: (gs, l) => reduceActionEffects(gs, [ActionEffect(Param.money, 1), ActionEffect(Param.trust, -20)]),
+    onLevelUp: (gs, l) => reduceActionEffects(gs, [ActionEffect(Param.trust, -20)]),
     eventHandlers: [
       ActionEventHandler(EventId.dayChange, (gs, effectStack, eventId, l) {
         effectStack.push(ActionEffect(Param.money, 2 * l));
