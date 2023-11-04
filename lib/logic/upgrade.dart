@@ -160,10 +160,9 @@ List<Upgrade> initialUpgrades = [
     UpgradeId.PoetryGenerator,
     'Poetry Generator',
     (l) => 'SP actions are ${l * 20}% cheaper',
-    alwaysAppear: true,
     modifiers: [
-      Modifier(Param.sp, ModifierType.function,
-          (value, level) => value >= 0 ? value : (value * (1 - 0.2 * level))), // FIXME, something is very badly wrong with this
+      // TODO: should use onLevelUp instead to modify the price of SP actions in game state. This also affects e.g. contract failures
+      Modifier(Param.sp, ModifierType.multiply, (value, level) => value >= 0 ? value : (value * (1 - 0.2 * level))),
     ],
   ),
   Upgrade(UpgradeId.CognitiveEmulation, 'Cognitive Emulation', (l) => 'Cost of humans assigned to RP is reduced by ${l * 50}%',

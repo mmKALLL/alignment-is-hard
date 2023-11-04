@@ -73,21 +73,14 @@ class Actions {
 
   Action influenceAlignmentAcceptance() => Action(
         'Influence public opinion',
-        [
-          ActionEffect(Param.alignmentAcceptance, gs.influence / 10),
-          ActionEffect(
-              Param.sp,
-              -(10 -
-                  getUpgrade(UpgradeId.PoetryGenerator).level *
-                      2)), // FIXME: Need to remove hardcoded effect from poetry generator, while updating the action button text for SP action costs
-        ],
+        [ActionEffect(Param.alignmentAcceptance, gs.influence / 10), ActionEffect(Param.sp, -10)],
         EventId.influenceAlignmentAcceptance,
       );
   Action increaseInfluence() => Action(
         'Increase influence',
         [
           ActionEffect(Param.influence, 10),
-          ActionEffect(Param.sp, -(5 - getUpgrade(UpgradeId.PoetryGenerator).level)),
+          ActionEffect(Param.sp, -5),
         ],
         EventId.increaseInfluence,
       );
