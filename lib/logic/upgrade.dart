@@ -286,7 +286,7 @@ int totalUpgradeLevel() => staticUpgrades.fold(0, (total, upgrade) => total + up
 List<Upgrade> shuffleNextUpgrades() {
   final List<Upgrade> availableUpgrades = staticUpgrades
       .where((upgrade) =>
-          // TODO: Should consider whether upgrade level-ups should be included or not; !upgrade.owned &&
+          // Upgrade level-ups are currently included; can disable by prepending !upgrade.owned &&
           upgrade.level < upgrade.maxLevel)
       .toList();
   final List<Upgrade> alwaysAppearUpgrades = Constants.isDebug ? availableUpgrades.where((upgrade) => upgrade.alwaysAppear).toList() : [];

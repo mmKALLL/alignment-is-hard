@@ -11,7 +11,7 @@ PreferredSize buildTopBar(BuildContext context, GameState gs) {
       Text('Alignment acceptance: ${gs.alignmentAcceptance.toInt()}'),
     ],
     [Text('ASI outcome: ${gs.asiOutcome.toInt()}'), TimeDisplay(gs.turn, gs.getYear()), Text('Game speed: ${gs.gameSpeed}x')]
-  ]; // TODO: Add icons and numbers to main app bar
+  ];
 
   return PreferredSize(
       preferredSize: appbarSize,
