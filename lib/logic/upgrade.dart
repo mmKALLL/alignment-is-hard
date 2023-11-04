@@ -199,7 +199,6 @@ List<Upgrade> initialUpgrades = [
     'Open Letter',
     (l) => 'Gain 10 influence',
     maxLevel: 2,
-    alwaysAppear: true,
     onLevelUp: (gs, level) => reduceActionEffects(gs, [ActionEffect(Param.influence, 10)]),
   ),
   Upgrade(
@@ -207,7 +206,6 @@ List<Upgrade> initialUpgrades = [
     'Interpretability Model',
     (l) => 'Contract trust gain/loss is increased by ${l * 50}%',
     maxLevel: 2,
-    alwaysAppear: true,
     contractModifiers: [Modifier(Param.trust, ModifierType.multiply, (value, l) => value * (1 + 0.5 * l))],
   ),
   Upgrade(
@@ -215,7 +213,7 @@ List<Upgrade> initialUpgrades = [
     'Trusted Advisor',
     (l) => 'Gain ${l * 3} more trust from completing contracts',
     alwaysAppear: true,
-    contractModifiers: [Modifier(Param.trust, ModifierType.add, (value, l) => l * 3)],
+    contractModifiers: [Modifier(Param.trust, ModifierType.add, (value, l) => value + l * 3)],
   ),
   Upgrade(
     UpgradeId.PassiveIncome,
@@ -237,7 +235,7 @@ List<Upgrade> initialUpgrades = [
     'Social Engineering',
     (l) => 'Contracts provide ${l * 2} more influence',
     alwaysAppear: true,
-    contractModifiers: [Modifier(Param.influence, ModifierType.add, (value, l) => l * 2)],
+    contractModifiers: [Modifier(Param.influence, ModifierType.add, (value, l) => value + l * 2)],
   ),
   Upgrade(
     UpgradeId.FakeNews,
@@ -263,7 +261,7 @@ List<Upgrade> initialUpgrades = [
     'Strategic Alignment',
     (l) => 'Gain ${l * 2} more alignment acceptance from finishing alignment contracts',
     alwaysAppear: true,
-    contractModifiers: [Modifier(Param.alignmentAcceptance, ModifierType.add, (value, l) => l * 2)],
+    contractModifiers: [Modifier(Param.alignmentAcceptance, ModifierType.add, (value, l) => value + l * 2)],
   ),
 ];
 
