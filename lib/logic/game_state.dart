@@ -37,12 +37,37 @@ enum Param {
 }
 
 // Utility used to show human-readable versions of the parameters
-paramToLabel(Param param) {
+paramToLabel(Param param, [bool startWithCapital = false]) {
   switch (param) {
     case Param.rp:
       return 'RP';
+    case Param.ep:
+      return 'EP';
+    case Param.sp:
+      return 'SP';
+    case Param.rpWorkers:
+      return 'RP workers';
+    case Param.epWorkers:
+      return 'EP workers';
+    case Param.spWorkers:
+      return 'SP workers';
+    case Param.freeHumans:
+      return 'free humans';
+    case Param.rpProgress:
+      return 'RP progress';
+    case Param.epProgress:
+      return 'EP progress';
+    case Param.spProgress:
+      return 'SP progress';
+    case Param.alignmentAcceptance:
+      return 'alignment acceptance';
+    case Param.asiOutcome:
+      return 'ASI outcome';
+    case Param.upgradeSelection:
+      return 'upgrade';
     default:
-      return param.toString().split('.').last;
+      final name = param.toString().split('.').last; // The stringified name of an enum is "EnumType.valueName"
+      return startWithCapital ? capitalize(name) : name;
   }
 }
 
