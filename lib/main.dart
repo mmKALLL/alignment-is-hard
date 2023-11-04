@@ -71,7 +71,7 @@ const debug = false;
 class Constants {
   static bool get isDebug => debug;
   static int organizationAlignmentDispositionGain = 20;
-  static int organizationAlignmentDispositionRpUse = 5;
+  static int organizationAlignmentDispositionSpUse = 5;
 
   static final roundedTextButtonStyle = TextButton.styleFrom(
       foregroundColor: Colors.black,

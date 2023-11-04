@@ -4,22 +4,24 @@ import 'package:alignment_is_hard/logic/upgrade.dart';
 import 'package:alignment_is_hard/main.dart';
 
 bool validateActionResourceSufficiency(GameState gs, ActionEffect effect) {
-// First check things that don't target a specific resource
   final value = effect.value;
+  final valueInt = value.toInt(); // Needed for indexed array access
+
+// First check things that don't target a specific resource
   switch (effect.paramEffected) {
     case Param.contractAccept:
-      return gs.contracts[value].started == false;
+      return gs.contracts[valueInt].started == false;
     case Param.contractSuccess:
-      return gs.contracts[value].started == true && gs.contracts[value].succeeded == false;
+      return gs.contracts[valueInt].started == true && gs.contracts[valueInt].succeeded == false;
     case Param.contractFailure:
-      return gs.contracts[value].started == true && gs.contracts[value].failed == false;
+      return gs.contracts[valueInt].started == true && gs.contracts[valueInt].failed == false;
     case Param.refreshContracts:
       return gs.contracts.any((c) => !c.started);
     case Param.contractClaimed:
-      return gs.contracts[value].started == true && (gs.contracts[value].succeeded || gs.contracts[value].failed);
+      return gs.contracts[valueInt].started == true && (gs.contracts[valueInt].succeeded || gs.contracts[valueInt].failed);
     case Param.organizationAlignmentDisposition:
-      return gs.organizations[value].active &&
-          gs.organizations[value].alignmentDisposition < 60 - Constants.organizationAlignmentDispositionGain;
+      return gs.organizations[valueInt].active &&
+          gs.organizations[valueInt].alignmentDisposition < 60 - Constants.organizationAlignmentDispositionGain;
     case Param.upgradeSelection:
       return canUpgrade();
     default:

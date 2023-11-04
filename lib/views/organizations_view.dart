@@ -22,7 +22,7 @@ class OrganizationsView extends StatelessWidget {
       children: [
         Text('Organizations - next in ${gs.organizationCycle - (gs.turn % gs.organizationCycle)} days'),
         Text(
-            'Tap to change attitude by ${Constants.organizationAlignmentDispositionGain} for ${Constants.organizationAlignmentDispositionRpUse} RP'),
+            'Tap to change attitude by ${Constants.organizationAlignmentDispositionGain} for ${Constants.organizationAlignmentDispositionSpUse} SP'),
         ...organizationWidgets,
       ],
     ));
@@ -42,7 +42,7 @@ class OrganizationWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final actions = Actions(gs);
-    final int ad = organization.alignmentDisposition;
+    final int ad = organization.alignmentDisposition.toInt();
     return Container(
         padding: const EdgeInsets.all(4),
         width: MediaQuery.of(context).size.width - 8,
@@ -63,7 +63,7 @@ class OrganizationWidget extends StatelessWidget {
                     padding: const EdgeInsets.all(8),
                     child: Column(mainAxisSize: MainAxisSize.min, children: [
                       Text(
-                          '${organization.name} (ASI attitude ${organization.alignmentDisposition}, ${organization.turnsSinceLastBreakthrough}/${organization.breakthroughInterval} days to breakthrough)'),
+                          '${organization.name} (ASI attitude $ad, ${organization.turnsSinceLastBreakthrough}/${organization.breakthroughInterval} days to breakthrough)'),
                       const SizedBox(height: 8),
                       Wrap(
                           alignment: WrapAlignment.center,

@@ -8,9 +8,9 @@ PreferredSize buildTopBar(BuildContext context, GameState gs) {
   final List<List<Widget>> childRows = [
     [
       getMoneyDisplay(gs),
-      Text('Alignment acceptance: ${gs.alignmentAcceptance}'),
+      Text('Alignment acceptance: ${gs.alignmentAcceptance.toInt()}'),
     ],
-    [Text('ASI outcome: ${gs.asiOutcome}'), TimeDisplay(gs.turn, gs.getYear()), Text('Game speed: ${gs.gameSpeed}x')]
+    [Text('ASI outcome: ${gs.asiOutcome.toInt()}'), TimeDisplay(gs.turn, gs.getYear()), Text('Game speed: ${gs.gameSpeed}x')]
   ]; // TODO: Add icons and numbers to main app bar
 
   return PreferredSize(
@@ -40,5 +40,5 @@ PreferredSize buildTopBar(BuildContext context, GameState gs) {
 }
 
 getMoneyDisplay(GameState gs) {
-  return Text('Money: \$${NumberFormat.decimalPattern().format((gs.money * 1000).round()).toString()}');
+  return Text('Money: \$${NumberFormat.decimalPattern().format((gs.money * 1000).toInt()).toString()}');
 }

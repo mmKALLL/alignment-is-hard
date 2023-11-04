@@ -74,7 +74,7 @@ class Actions {
   Action influenceAlignmentAcceptance() => Action(
         'Influence public opinion',
         [
-          ActionEffect(Param.alignmentAcceptance, (gs.influence / 10).round()),
+          ActionEffect(Param.alignmentAcceptance, gs.influence / 10),
           ActionEffect(Param.sp, -(10 - getUpgrade(UpgradeId.PoetryGenerator).level * 2)),
         ],
         EventId.influenceAlignmentAcceptance,
@@ -87,7 +87,7 @@ class Actions {
         ],
         EventId.increaseInfluence,
       );
-  static int nextResearchQuality = 100 + Random().nextInt(20);
+  static double nextResearchQuality = 100.0 + Random().nextInt(20);
   Action researchUpgrade() => Action(
         'Research an upgrade',
         [
@@ -102,7 +102,7 @@ class Actions {
         'Influence organization alignment disposition',
         [
           ActionEffect(Param.organizationAlignmentDisposition, (orgIndex)),
-          ActionEffect(Param.rp, -Constants.organizationAlignmentDispositionRpUse),
+          ActionEffect(Param.sp, -Constants.organizationAlignmentDispositionSpUse),
         ],
         EventId.influenceOrganizationAlignmentDisposition,
       );
@@ -111,7 +111,7 @@ class Actions {
         'Hire a new human',
         [
           ActionEffect(Param.freeHumans, 1),
-          ActionEffect(Param.sp, -(gs.getTotalHumans() * (1 - getUpgrade(UpgradeId.PoetryGenerator).level * 0.2)).round()),
+          ActionEffect(Param.sp, -(gs.getTotalHumans() * (1 - getUpgrade(UpgradeId.PoetryGenerator).level * 0.2)).roundToDouble()),
         ],
         EventId.hireHuman,
       );
@@ -168,8 +168,7 @@ class Actions {
   Action gotoScreen(int screen, String name) => Action('Go to $name', [ActionEffect(Param.currentScreen, screen)], EventId.gotoScreen);
   final Action gotoHumanAllocationScreen =
       Action('Allocate humans', [ActionEffect(Param.currentScreen, Screen.humanAllocation)], EventId.gotoHumanAllocationScreen);
-  final Action gotoGameScreen =
-      Action('Return', [ActionEffect(Param.currentScreen, Screen.ingame), ActionEffect(Param.gameSpeed, 1)], EventId.gotoGameScreen);
+  final Action gotoGameScreen = Action('Return', [ActionEffect(Param.currentScreen, Screen.ingame)], EventId.gotoGameScreen);
   final Action gotoGameOver = Action('Lose the game (debug)',
       [ActionEffect(Param.currentScreen, Screen.gameOver), ActionEffect(Param.gameSpeed, 0)], EventId.gotoGameOver);
   final Action gotoGameWin = Action(
@@ -188,7 +187,7 @@ class Actions {
 class ActionEffect {
   ActionEffect(this.paramEffected, this.value, [this.description]);
   final Param paramEffected;
-  final int value;
+  final num value;
   final String? description;
 
   @override

@@ -59,7 +59,7 @@ class ResourceMeter extends StatelessWidget {
   const ResourceMeter(this.label, this.value, this.color, [this.isPercentage = false, key]) : super(key: key);
 
   final String label;
-  final int value;
+  final num value;
   final Color color;
   final bool isPercentage;
 
@@ -72,7 +72,7 @@ class ResourceMeter extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Text(
-          '$label: $value${isPercentage ? '%' : ''}',
+          '$label: ${value.toInt()}${isPercentage ? '%' : ''}',
           style: style,
         ),
       ),

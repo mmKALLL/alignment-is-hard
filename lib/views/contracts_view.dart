@@ -19,7 +19,7 @@ class ContractsView extends StatelessWidget {
     return Center(
         child: Column(
       children: [
-        Text('Trust: ${gs.trust}%, ${(gs.turn % gs.contractCycle)}/${gs.contractCycle} days until new contracts.'),
+        Text('Trust: ${gs.trust.toInt()}%, ${(gs.turn % gs.contractCycle)}/${gs.contractCycle} days until new contracts.'),
         Text('Alignment contract win condition: ${gs.finishedAlignmentContracts}/${gs.alignmentContractsNeededToWin}'),
         Row(
           children: contractWidgets,
@@ -69,7 +69,8 @@ class ContractWidget extends StatelessWidget {
                     child: Column(children: [
                       Text(
                           '${contract.name} (${contract.isAlignmentContract ? 'A' : 'C'}, ${contract.deadline - contract.daysSinceStarting} days)'),
-                      Text('Req: ${contract.requirementDescription}'),
+                      const Padding(padding: EdgeInsets.all(2)),
+                      Text('Requires: ${contract.requirementDescription}'),
                       paddedGameScreenDivider,
                       Text('On accept: ${contract.acceptDescription}'),
                       paddedGameScreenDivider,

@@ -62,7 +62,7 @@ reduceActionEffects(GameState gs, List<ActionEffect> effects, [EventId eventId =
   checkWinConditions(gs);
 }
 
-int applyParamModifiers(ActionEffect effect, Map<Param, List<CurriedModifier>> addModifiers,
+double applyParamModifiers(ActionEffect effect, Map<Param, List<CurriedModifier>> addModifiers,
     Map<Param, List<CurriedModifier>> multModifiers, Map<Param, List<CurriedModifier>> functionModifiers) {
   double value = effect.value.toDouble();
 
@@ -79,14 +79,15 @@ int applyParamModifiers(ActionEffect effect, Map<Param, List<CurriedModifier>> a
     value = modifier(value);
   }
 
-  int truncatedValue = value.toInt();
-  return truncatedValue;
+  return value;
 }
 
-void applyParamUpdate(GameState gs, Param paramEffected, int value) {
+void applyParamUpdate(GameState gs, Param paramEffected, double value) {
+  final valueInt = value.round(); // Needed for indexed array access
+
   switch (paramEffected) {
     case Param.currentScreen:
-      gs.currentScreen = value;
+      gs.currentScreen = valueInt;
       if (value != Screen.ingame) gs.gameSpeed = 0;
       if (value == Screen.ingame) gs.gameSpeed = gs.lastSelectedGameSpeed;
       break;
@@ -97,14 +98,14 @@ void applyParamUpdate(GameState gs, Param paramEffected, int value) {
       gs.gameSpeed = 0;
       gs.currentScreen = Screen.upgradeSelection;
       gs.upgradesToSelect = getUpgradeSelectionOptions();
-      Actions.nextResearchQuality = 100 + Random().nextInt(gs.upgrades.length * 15 + 20);
+      Actions.nextResearchQuality = 100.0 + Random().nextInt(gs.upgrades.length * 15 + 20);
       break;
     case Param.gameSpeed:
-      gs.gameSpeed = value;
-      if (value != 0) gs.lastSelectedGameSpeed = value;
+      gs.gameSpeed = valueInt;
+      if (value != 0) gs.lastSelectedGameSpeed = valueInt;
       break;
     case Param.day:
-      gs.turn += value;
+      gs.turn += valueInt;
       break;
 
     case Param.money:
@@ -124,16 +125,16 @@ void applyParamUpdate(GameState gs, Param paramEffected, int value) {
       gs.influence += value;
       break;
     case Param.freeHumans:
-      gs.freeHumans += value;
+      gs.freeHumans += valueInt;
       break;
     case Param.rpWorkers:
-      gs.rpWorkers += value;
+      gs.rpWorkers += valueInt;
       break;
     case Param.epWorkers:
-      gs.epWorkers += value;
+      gs.epWorkers += valueInt;
       break;
     case Param.spWorkers:
-      gs.spWorkers += value;
+      gs.spWorkers += valueInt;
       break;
     case Param.rpProgress:
       gs.rpProgress += value;
@@ -159,23 +160,23 @@ void applyParamUpdate(GameState gs, Param paramEffected, int value) {
 
     // Upgrades, contracts, etc
     case Param.contractAccept:
-      gs.contracts[value].started = true;
-      gs.contracts[value].daysSinceStarting = 0;
+      gs.contracts[valueInt].started = true;
+      gs.contracts[valueInt].daysSinceStarting = 0;
       gs.contracts = updateContractStatus(gs, 0);
-      reduceActionEffects(gs, gs.contracts[value].onAccept, EventId.contractAccept);
+      reduceActionEffects(gs, gs.contracts[valueInt].onAccept, EventId.contractAccept);
       break;
     case Param.contractSuccess:
-      gs.contracts[value].succeeded = true;
+      gs.contracts[valueInt].succeeded = true;
       break;
     case Param.contractFailure:
-      gs.contracts[value].failed = true;
+      gs.contracts[valueInt].failed = true;
       break;
     case Param.refreshContracts:
       gs.contracts = gs.contracts.map((Contract c) => c.started ? c : getRandomContract(gs)).toList();
       break;
 
     case Param.contractClaimed:
-      final contract = gs.contracts[value];
+      final contract = gs.contracts[valueInt];
       if (!(contract.succeeded || contract.failed)) return;
       if (contract.succeeded) {
         // Remove the resources required by the contract before getting the rewards
@@ -193,12 +194,12 @@ void applyParamUpdate(GameState gs, Param paramEffected, int value) {
       final action = contract.succeeded ? contract.onSuccess : contract.onFailure;
       final eventId = contract.succeeded ? EventId.contractSuccess : EventId.contractFailure;
       reduceActionEffects(gs, action, eventId);
-      gs.contracts[value] = getRandomContract(gs);
+      gs.contracts[valueInt] = getRandomContract(gs);
       gs.contracts = updateContractStatus(gs, 0);
       break;
 
     case Param.organizationAlignmentDisposition:
-      gs.organizations[value].alignmentDisposition += Constants.organizationAlignmentDispositionGain;
+      gs.organizations[valueInt].alignmentDisposition += Constants.organizationAlignmentDispositionGain;
       break;
   }
 
@@ -217,7 +218,7 @@ reduceTimeStep(GameState gs) {
       [
         ActionEffect(Param.day, 1),
         ActionEffect(Param.money, gs.passiveMoneyGain),
-        ActionEffect(Param.money, (-gs.getTotalWorkers() * gs.wagePerHumanPerDay).round()),
+        ActionEffect(Param.money, (-gs.getTotalWorkers() * gs.wagePerHumanPerDay)),
         ActionEffect(Param.rpProgress, gs.rpWorkers),
         ActionEffect(Param.epProgress, gs.epWorkers),
         ActionEffect(Param.spProgress, gs.spWorkers),
@@ -276,9 +277,9 @@ List<Organization> updateOrganizationStatus(GameState gs, int timeUsed) {
 
 void handleBreakthrough(GameState gs, Organization o) {
   o.turnsSinceLastBreakthrough -= o.breakthroughInterval;
-  int alignmentBreakthroughChance = gs.alignmentAcceptance + o.alignmentDisposition;
+  double alignmentBreakthroughChance = gs.alignmentAcceptance + o.alignmentDisposition;
   bool isAlignmentBreakthrough = Random().nextInt(100) < alignmentBreakthroughChance;
-  int sign = isAlignmentBreakthrough ? 1 : -1;
+  double sign = isAlignmentBreakthrough ? 1 : -1;
 
   List<Feature> eligibleFeatures =
       o.features.where((f) => f.isAlignmentFeature == isAlignmentBreakthrough && f.level < featureMaxLevel).toList();
@@ -298,7 +299,7 @@ void handleBreakthrough(GameState gs, Organization o) {
   }
 
   // Update game state based on the feature level
-  final alignmentAcceptanceChange = feature.level <= 1
+  final double alignmentAcceptanceChange = feature.level <= 1
       ? 0
       : isAlignmentBreakthrough
           ? 1

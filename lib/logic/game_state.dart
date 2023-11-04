@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:alignment_is_hard/components/resource_display.dart';
 import 'package:alignment_is_hard/logic/actions.dart';
 import 'package:alignment_is_hard/logic/contract.dart';
 import 'package:alignment_is_hard/logic/upgrade.dart';
@@ -82,20 +83,20 @@ class GameState {
   int lastSelectedGameSpeed = 1; // Used to restore game speed after pausing
 
   // 0-100. Public view of alignment. One of the win/loss conditions, influences what rate of org breakthroughs lead to alignment improvements. Second-order effect on asiOutcome.
-  int alignmentAcceptance = 20;
+  double alignmentAcceptance = 20;
 
   // 0-100. Shifted whenever breakthroughs are made, by the level of the feature receiving the breakthrough. 0 = capabilities win; misaligned ASI. 100 = aligned ASI.
-  int asiOutcome = 50;
+  double asiOutcome = 50;
 
   // 0-200. Trust towards your organization. Gain or lose depending on how your fund/contract money is handled. If you have high trust you'll get better contracts
-  int trust = 100;
+  double trust = 100;
 
   // 0-200. Influence is a percentage multiplier to the effect of your social actions (like increasing alignment acceptance)
-  int influence = 100;
+  double influence = 100;
 
   // The various turn-based actions have an passive and active component - passive is gained each turn, active when a turn is used to take that action
   double money = debug ? 500000 : 1000; // 1 = 1k USD. Needed to hire researchers, engineers, and staff. No loans.
-  int passiveMoneyGain = 0;
+  double passiveMoneyGain = 0;
   double wagePerHumanPerDay = 1.0;
 
   // Your human resources. Allocate to tasks to generate points in three general areas: capabilities, alignment, fieldbuilding
@@ -103,29 +104,29 @@ class GameState {
   double getTeamPerformance() => (30 / (25 + freeHumans)); // Unused. Effectiveness of each person. Having more decreases their efficiency.
   bool canUnassignHumans = false;
 
-  int rp = debug ? 100 : 8; // current research points. Used to improve facets of your AI or unlock upgrades
-  int ep = debug ? 100 : 8; // current engineering points. Used to fulfill contracts
-  int sp = debug ? 100 : 8; // current social points. Used to get better contracts/funds, develop the field, or hire more people
+  double rp = debug ? 100 : 8; // current research points. Used to improve facets of your AI or unlock upgrades
+  double ep = debug ? 100 : 8; // current engineering points. Used to fulfill contracts
+  double sp = debug ? 100 : 8; // current social points. Used to get better contracts/funds, develop the field, or hire more people
 
   int rpWorkers = 1; // Number of people working on RP
   int epWorkers = 1; // Number of people working on EP
   int spWorkers = 1; // Number of people working on SP
-  // int getFreeHumans() => unassignedHumans - rpWorkers - epWorkers - spWorkers;
+  // double getFreeHumans() => unassignedHumans - rpWorkers - epWorkers - spWorkers;
   int getTotalHumans() => freeHumans + rpWorkers + epWorkers + spWorkers;
   int getTotalWorkers() => rpWorkers + epWorkers + spWorkers;
 
   // Variables to track gain of RP/EP/SP
-  int totalRp = 1;
-  int totalEp = 1;
-  int totalSp = 1;
-  int rpProgress = 0;
-  int epProgress = 0;
-  int spProgress = 0;
-  int progressPerLevel = 100;
+  double totalRp = 1;
+  double totalEp = 1;
+  double totalSp = 1;
+  double rpProgress = 0;
+  double epProgress = 0;
+  double spProgress = 0;
+  double progressPerLevel = 100;
 
-  int toNextRP() => progressPerLevel - rpProgress;
-  int toNextEP() => progressPerLevel - epProgress;
-  int toNextSP() => progressPerLevel - spProgress;
+  double toNextRP() => progressPerLevel - rpProgress;
+  double toNextEP() => progressPerLevel - epProgress;
+  double toNextSP() => progressPerLevel - spProgress;
 
   List<String> recentActions = [];
   List<GameState> recentGS = [];
@@ -134,7 +135,7 @@ class GameState {
   List<Upgrade>? upgradesToSelect;
 
   int contractCycle = 360; // Number of days between contract auto-refreshes
-  int organizationCycle = 720; // Number of days between new organizations appearing
+  int organizationCycle = 360; // Number of days between new organizations appearing
   late List<Contract> contracts;
 
   // Organization playerOrganization = Organization('Meta AI', -30, FeatureName.automation);
@@ -177,7 +178,7 @@ class GameState {
 }
 
 class Feature extends Weighted {
-  Feature(this.name, this.isAlignmentFeature, int alignmentDisposition, bool isMainFocus) {
+  Feature(this.name, this.isAlignmentFeature, double alignmentDisposition, bool isMainFocus) {
     value = level = Random().nextInt(2) + (isMainFocus ? 1 : 0); // 1-2 for main focus, 0-1 for others
     weight = (isMainFocus ? 3 : 1) + Random().nextInt(isMainFocus ? 2 : 3); // 1-5, chance to pick within the same type of features
   }
@@ -185,7 +186,7 @@ class Feature extends Weighted {
   final FeatureName name;
   final bool isAlignmentFeature;
 
-  late int level; // Levels range from 0-5
+  late double level; // Levels range from 0-5
 }
 
 /*
@@ -226,7 +227,7 @@ String getShortFeatureName(FeatureName name) {
 
 const int featureMaxLevel = 5;
 
-List<Feature> createFeatures(int alignmentDisposition, FeatureName mainFocus) {
+List<Feature> createFeatures(double alignmentDisposition, FeatureName mainFocus) {
   Feature createFeature(FeatureName name, bool isAlignmentFeature) {
     return Feature(name, isAlignmentFeature, alignmentDisposition, name == mainFocus);
   }
@@ -247,7 +248,7 @@ class Organization {
   }
 
   final String name;
-  int alignmentDisposition; // -50 to +50, added to alignmentAcceptance when determining how likely the org is to make breakthroughs
+  double alignmentDisposition; // -50 to +50, added to alignmentAcceptance when determining how likely the org is to make breakthroughs
   late int breakthroughInterval;
   int turnsSinceLastBreakthrough = 0;
   bool active = true; // Organizations become inactive once all their features in one category are maxed out

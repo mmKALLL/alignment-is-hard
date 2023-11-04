@@ -47,8 +47,8 @@ class Contract {
 
 Contract getRandomContract(GameState gs) {
   // Setup the base parameters that control complexity
-  int difficulty = Random().nextInt(gs.getYear() * 50 + 75) + 50;
   bool isAlignmentContract = Random().nextBool();
+  int difficulty = 50 + Random().nextInt(gs.getYear() * 50 + 75);
   int deadline = 5 + Random().nextInt(200) + max(200 - difficulty, 0);
   difficulty += max((100 - deadline), 0);
 
@@ -61,11 +61,11 @@ Contract getRandomContract(GameState gs) {
   // Generate action effects
   List<ActionEffect> onAccept = getAcceptEffects(difficulty, acceptEffects, isAlignmentContract, gs.trust);
   List<ActionEffect> onSuccess = [
-    ActionEffect(Param.trust, ((isAlignmentContract ? 2 : 1) * (2 * difficulty / 100)).round()),
+    ActionEffect(Param.trust, ((isAlignmentContract ? 2 : 1) * (2 * difficulty / 100)).roundToDouble()),
     ...getSuccessEffects(difficulty, successEffects, isAlignmentContract, gs.trust)
   ];
   List<ActionEffect> onFailure = [
-    ActionEffect(Param.trust, (-6 * (difficulty + 100) / 100).round()),
+    ActionEffect(Param.trust, (-6 * (difficulty + 100) / 100).roundToDouble()),
     ...getFailureEffects(difficulty, failureEffects, isAlignmentContract, gs.trust)
   ];
 
@@ -76,10 +76,10 @@ Contract getRandomContract(GameState gs) {
 
   // Requirements rise exponentially with difficulty
   final int totalRequirement = pow(((100 + difficulty) / 100), 1.7).round();
-  final alignmentRequirement = totalRequirement >= 2 && isAlignmentContract ? (totalRequirement * 0.7).round() : 0;
+  final int alignmentRequirement = totalRequirement >= 2 && isAlignmentContract ? (totalRequirement * 0.7).round() : 0;
   final List<ActionEffect> requirements = [
-    if (alignmentRequirement > 0) ActionEffect(Param.rp, -alignmentRequirement),
-    ActionEffect(Param.ep, -(totalRequirement - alignmentRequirement))
+    if (alignmentRequirement > 0) ActionEffect(Param.rp, -alignmentRequirement.toDouble()),
+    ActionEffect(Param.ep, -(totalRequirement - alignmentRequirement).toDouble())
   ];
 
   final acceptDescription = effectListToString(onAccept);
@@ -101,14 +101,14 @@ class WeightedEffect extends Weighted {
   final ActionEffect effect;
 }
 
-getRandomValue(int base, int difficulty, [double difficultyFactor = 1]) {
-  return base + ((difficulty * 0.85 + Random().nextInt((difficulty / 3).round())) * difficultyFactor).floor();
+double getRandomValue(int base, int difficulty, [double difficultyFactor = 1]) {
+  return base + ((difficulty * 0.85 + Random().nextInt((difficulty / 3).round())) * difficultyFactor).floorToDouble();
 }
 
-getContractMoneyValue(int difficulty, int totalEffects, bool isAlignmentContract, int trust) {
+getContractMoneyValue(int difficulty, int totalEffects, bool isAlignmentContract, double trust) {
   // 50 / RP; 50 => 100, 100 => 200, ...
   // In general alignment contracts pay 70-110% of the cost of solving them, while capability contracts pay 150-220%
-  int value = getRandomValue(40, difficulty, 1.5);
+  double value = getRandomValue(40, difficulty, 1.5);
   return ((isAlignmentContract ? 0.9 : 2.05) *
           (totalEffects == 0
               ? 1.25
@@ -122,11 +122,11 @@ getContractMoneyValue(int difficulty, int totalEffects, bool isAlignmentContract
       .round();
 }
 
-getAcceptEffects(int difficulty, int totalEffects, bool isAlignmentContract, int trust) {
+getAcceptEffects(int difficulty, int totalEffects, bool isAlignmentContract, double trust) {
   return [ActionEffect(Param.money, getContractMoneyValue(difficulty, totalEffects, isAlignmentContract, trust))];
 }
 
-getSuccessEffects(int difficulty, int totalEffects, bool isAlignmentContract, int trust) {
+getSuccessEffects(int difficulty, int totalEffects, bool isAlignmentContract, double trust) {
   if (totalEffects == 0) {
     return [];
   }
@@ -159,7 +159,7 @@ getSuccessEffects(int difficulty, int totalEffects, bool isAlignmentContract, in
   return getEffectsFromPool(totalEffects, effectPool);
 }
 
-getFailureEffects(int difficulty, int totalEffects, bool isAlignmentContract, int trust) {
+getFailureEffects(int difficulty, int totalEffects, bool isAlignmentContract, double trust) {
   if (totalEffects == 0) {
     return [];
   }

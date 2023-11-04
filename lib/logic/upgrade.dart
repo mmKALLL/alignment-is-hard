@@ -72,10 +72,10 @@ typedef ParamEventHandlerFunction = void Function(
   GameState gs,
   StackList<ActionEffect> effectStack,
   Param param,
-  int value,
+  double value,
   int level,
 );
-typedef CurriedParamEventHandler = void Function(GameState gs, StackList<ActionEffect> effectStack, Param param, int value);
+typedef CurriedParamEventHandler = void Function(GameState gs, StackList<ActionEffect> effectStack, Param param, double value);
 
 class ParamEventHandler {
   ParamEventHandler(this.trigger, this.apply);
@@ -253,7 +253,7 @@ List<Upgrade> initialUpgrades = [
     onLevelUp: (gs, l) => reduceActionEffects(gs, [ActionEffect(Param.money, 1), ActionEffect(Param.trust, -20)]),
     eventHandlers: [
       ActionEventHandler(EventId.dayChange, (gs, effectStack, eventId, l) {
-        effectStack.push(ActionEffect(Param.money, 2000 * l));
+        effectStack.push(ActionEffect(Param.money, 2 * l));
       })
     ],
   ),
@@ -380,7 +380,7 @@ void addParamEventHandlerToGameState(Map<Param, List<CurriedParamEventHandler>> 
   if (handlerMap[handler.trigger] == null) {
     handlerMap[handler.trigger] = [];
   }
-  handlerMap[handler.trigger]!.add((GameState gs, StackList<ActionEffect> effectStack, Param param, int value) {
+  handlerMap[handler.trigger]!.add((GameState gs, StackList<ActionEffect> effectStack, Param param, double value) {
     final level = upgrade.getLevel();
     return handler.apply(gs, effectStack, param, value, level);
   });
