@@ -308,7 +308,9 @@ void selectUpgrade(GameState gs, Upgrade upgrade) {
   upgrade.level += 1;
   upgrade.description = upgrade._getDescription(upgrade.level + 1); // This is the "preview" of the next level
 
-  pushUpgradeModifiersToGameState(gs, upgrade);
+  if (upgrade.level == 1) {
+    pushUpgradeModifiersToGameState(gs, upgrade);
+  }
 
   upgrade.onLevelUp?.call(gs, upgrade.level);
   nextUpgrades = shuffleNextUpgrades();
