@@ -224,42 +224,42 @@ List<Upgrade> initialUpgrades = [
       })
     ],
   ),
-  Upgrade(UpgradeId.DataScraping, 'Data Scraping', (l) => 'Contract auto-refresh time is reduced by ${l * 30}%',
-      alwaysAppear: true, onLevelUp: (gs, l) => gs.contractCycle = (gs.contractCycle * 0.7).round(), maxLevel: 2),
+  Upgrade(UpgradeId.DataScraping, 'Data Scraping', (l) => 'Contract auto-refresh time is reduced by 36%',
+      onLevelUp: (gs, l) => gs.contractCycle = (gs.contractCycle * 0.6324).round(),
+      maxLevel: 2), // Two levels: 40% of original length (= 144 days)
   Upgrade(UpgradeId.WarningSigns, 'Warning Signs', (l) => 'Organizations take ${l * 18}% longer to appear',
       onLevelUp: (gs, l) => gs.organizationCycle *= (gs.organizationCycle * 1.18).round()),
   Upgrade(
     UpgradeId.SocialEngineering,
     'Social Engineering',
-    (l) => 'Contracts provide ${l * 2} more influence',
+    (l) => 'Influence rewards on contracts are increased by ${l * 6}',
+    contractModifiers: [Modifier(Param.influence, ModifierType.add, (value, l) => value + l * 6)],
+  ),
+  Upgrade(
+    UpgradeId.StrategicAlignment,
+    'Strategic Alignment',
+    (l) => 'Alignment acceptance rewards on contracts are increased by ${l * 2}',
     alwaysAppear: true,
-    contractModifiers: [Modifier(Param.influence, ModifierType.add, (value, l) => value + l * 2)],
+    contractModifiers: [Modifier(Param.alignmentAcceptance, ModifierType.add, (value, l) => value + l * 2)],
   ),
   Upgrade(
     UpgradeId.FakeNews,
     'Fake News',
     (l) => 'Gain 20 influence, but lose 20 trust',
-    alwaysAppear: true,
+    maxLevel: 2,
     onLevelUp: (gs, l) => reduceActionEffects(gs, [ActionEffect(Param.influence, 20), ActionEffect(Param.trust, -20)]),
   ),
   Upgrade(
     UpgradeId.MoneyLaundering,
     'Money Laundering',
     (l) => 'Gain ${2 * l}k money per day, but lose 20 trust',
-    alwaysAppear: true,
+    maxLevel: 2,
     onLevelUp: (gs, l) => reduceActionEffects(gs, [ActionEffect(Param.trust, -20)]),
     eventHandlers: [
       ActionEventHandler(EventId.dayChange, (gs, effectStack, eventId, l) {
         effectStack.push(ActionEffect(Param.money, 2 * l));
       })
     ],
-  ),
-  Upgrade(
-    UpgradeId.StrategicAlignment,
-    'Strategic Alignment',
-    (l) => 'Gain ${l * 2} more alignment acceptance from finishing alignment contracts',
-    alwaysAppear: true,
-    contractModifiers: [Modifier(Param.alignmentAcceptance, ModifierType.add, (value, l) => value + l * 2)],
   ),
 ];
 
