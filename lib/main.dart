@@ -66,7 +66,7 @@ class MainComponent extends StatefulWidget {
   State<MainComponent> createState() => _MainComponentState();
 }
 
-const debug = true;
+const debug = false;
 
 class Constants {
   static bool get isDebug => debug;

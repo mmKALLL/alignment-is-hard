@@ -63,7 +63,7 @@ class OrganizationWidget extends StatelessWidget {
                     padding: const EdgeInsets.all(8),
                     child: Column(mainAxisSize: MainAxisSize.min, children: [
                       Text(
-                          '${organization.name} (ASI attitude $ad, ${organization.turnsSinceLastBreakthrough}/${organization.breakthroughInterval} days to breakthrough)'),
+                          '${organization.name} (attitude $ad, ${organization.turnsSinceLastBreakthrough}/${organization.breakthroughInterval}d to breakthrough)'),
                       const SizedBox(height: 8),
                       Wrap(
                           alignment: WrapAlignment.center,
@@ -97,7 +97,7 @@ class FeatureDisplay extends StatelessWidget {
       ...List.generate(
           featureMaxLevel,
           (index) => Container(
-                width: 8,
+                width: 8, // Can try squeezing the app onto smaller screens by making these smaller and removing margin
                 height: 8,
                 margin: const EdgeInsets.only(right: 1),
                 decoration: BoxDecoration(
