@@ -204,14 +204,15 @@ List<Upgrade> initialUpgrades = [
   Upgrade(
     UpgradeId.InterpretabilityModel,
     'Interpretability Model',
-    (l) => 'Contract trust gain/loss is increased by ${l * 50}%',
+    (l) => 'Trust rewards/penalties on contracts are increased by ${l * 50}%',
     maxLevel: 2,
     contractModifiers: [Modifier(Param.trust, ModifierType.multiply, (value, l) => value * (1 + 0.5 * l))],
   ),
   Upgrade(
     UpgradeId.TrustedAdvisor,
     'Trusted Advisor',
-    (l) => 'Gain ${l * 3} more trust from completing contracts',
+    (l) => 'Trust rewards on contracts are increased by ${l * 3}',
+    // TODO: Could be reworded by using contract finish event handler; "whenever you complete a contract, gain 2 trust"
     contractModifiers: [Modifier(Param.trust, ModifierType.add, (value, l) => value + l * 3)],
   ),
   Upgrade(
