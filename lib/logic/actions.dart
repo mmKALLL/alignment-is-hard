@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:alignment_is_hard/logic/game_state.dart';
+import 'package:alignment_is_hard/logic/util.dart';
 import 'package:alignment_is_hard/main.dart';
 
 class Action {
@@ -188,6 +189,6 @@ class ActionEffect {
 
   @override
   String toString() {
-    return '${paramToLabel(paramEffected)} ${value > 0 ? '+${value.round()}' : '${value.round()}'}${paramEffected == Param.money ? 'k' : paramEffected == Param.gameSpeed ? 'x' : ''}';
+    return '${paramToLabel(paramEffected)} ${withPlusSign(value.round())}${paramEffected == Param.money ? 'k' : paramEffected == Param.gameSpeed ? 'x' : ''}';
   }
 }
