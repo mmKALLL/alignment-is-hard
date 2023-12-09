@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:alignment_is_hard/logic/actions.dart';
 import 'package:alignment_is_hard/logic/game_state.dart';
+import 'package:alignment_is_hard/logic/util.dart';
 import 'package:alignment_is_hard/main.dart';
 import 'package:flutter/material.dart' hide Action, Actions;
 
@@ -46,7 +47,7 @@ class OrganizationWidget extends StatelessWidget {
     return Container(
         padding: const EdgeInsets.all(4),
         width: MediaQuery.of(context).size.width - 8,
-        height: 100,
+        height: 88,
         child: Card(
             // clipBehavior is necessary because, without it, the InkWell's animation
             // will extend beyond the rounded edges of the [Card] (see https://github.com/flutter/flutter/issues/109776)
@@ -63,7 +64,7 @@ class OrganizationWidget extends StatelessWidget {
                     padding: const EdgeInsets.all(8),
                     child: Column(mainAxisSize: MainAxisSize.min, children: [
                       Text(
-                          '${organization.name} (attitude $ad, ${organization.turnsSinceLastBreakthrough}/${organization.breakthroughInterval}d to breakthrough)'),
+                          '${organization.name} (attitude ${withPlusSign(ad)}, ${organization.turnsSinceLastBreakthrough}/${organization.breakthroughInterval}d to breakthrough)'),
                       const SizedBox(height: 8),
                       Wrap(
                           alignment: WrapAlignment.center,
@@ -72,6 +73,17 @@ class OrganizationWidget extends StatelessWidget {
                           spacing: 10,
                           runSpacing: 8,
                           children: organization.features
+                              .sublist(0, 4)
+                              .map((feature) => FeatureDisplay(feature, organization.mainFocus == feature.name))
+                              .toList()),
+                      Wrap(
+                          alignment: WrapAlignment.center,
+                          runAlignment: WrapAlignment.center,
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          spacing: 10,
+                          runSpacing: 8,
+                          children: organization.features
+                              .sublist(4, 8)
                               .map((feature) => FeatureDisplay(feature, organization.mainFocus == feature.name))
                               .toList()),
                     ])))));
@@ -89,16 +101,17 @@ class FeatureDisplay extends StatelessWidget {
     return IntrinsicWidth(
         child: Row(children: [
       Container(
-          width: 40,
+          width: 35,
           height: 16,
-          margin: const EdgeInsets.only(right: 4),
+          margin: const EdgeInsets.only(right: 2),
           color: isMainFocus ? const Color.fromARGB(48, 94, 99, 255) : null,
-          child: Text(getShortFeatureName(feature.name))),
+          child: Text(getShortFeatureName(feature.name), style: const TextStyle(fontSize: 12))),
+      // Boxes to indicate the level of each feature
       ...List.generate(
           featureMaxLevel,
           (index) => Container(
-                width: 8, // Can try squeezing the app onto smaller screens by making these smaller and removing margin
-                height: 8,
+                width: 6, // Can try squeezing the app onto smaller screens by making these smaller and removing margin
+                height: 10,
                 margin: const EdgeInsets.only(right: 1),
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.black),
