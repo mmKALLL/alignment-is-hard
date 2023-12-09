@@ -227,8 +227,8 @@ class _MainComponentState extends State<MainComponent> {
     return Center(
       child: ClipRect(
         child: SizedBox(
-            width: 440,
-            height: 800,
+            width: 410,
+            // height: 730, // Allow expansion of the viewport to fill the entire horizontal space
             child: Scaffold(
                 appBar: buildTopBar(context, gs),
                 body: Padding(
