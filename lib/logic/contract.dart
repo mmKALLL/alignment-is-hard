@@ -72,7 +72,7 @@ Contract getRandomContract(GameState gs) {
   // Apply upgrades' contract modifiers from game state
   onAccept = onAccept.map((e) => applyContractModifiers(gs, e)).toList();
   onSuccess = onSuccess.map((e) => applyContractModifiers(gs, e)).toList();
-  onFailure = onFailure.map((e) => applyContractModifiers(gs, e)).toList();
+  onFailure = onFailure.map((e) => applyContractModifiers(gs, e, true)).toList();
 
   // Requirements rise exponentially with difficulty
   final int totalRequirement = pow(((100 + difficulty) / 100), 1.7).round();

@@ -158,13 +158,13 @@ class GameState {
       {}; // handlers that can perform additional reductions when actions are taken
 
   // mods that affect contract generation
-  // FIXME: Make these affect contract gen
+  // FIXME: Should these mods affect accept rewards too, or only success? Should failure be affected by multipliers? Need filtering for the modifier functions?
   Map<Param, List<CurriedModifier>> contractAddModifiers = {};
   Map<Param, List<CurriedModifier>> contractMultModifiers = {};
   Map<Param, List<CurriedModifier>> contractFunctionModifiers = {};
 
   // mods that affect organization generation
-  // TODO: Make these affect organization gen
+  // FIXME: Make these affect organization gen
   Map<Param, List<CurriedModifier>> organizationAddModifiers = {};
   Map<Param, List<CurriedModifier>> organizationMultModifiers = {};
   Map<Param, List<CurriedModifier>> organizationFunctionModifiers = {};
