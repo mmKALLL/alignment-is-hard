@@ -93,7 +93,6 @@ enum UpgradeId {
   SocialHacking,
   DebateCourse,
 
-  // TODO: Untested upgrades below
   ResearchAdvisor,
   EngineeringAdvisor,
   SocialAdvisor,
@@ -212,7 +211,6 @@ List<Upgrade> initialUpgrades = [
     UpgradeId.TrustedAdvisor,
     'Trusted Advisor',
     (l) => 'Trust rewards on contracts are increased by ${l * 3}',
-    // TODO: Could be reworded by using contract finish event handler; "whenever you complete a contract, gain 2 trust"
     contractModifiers: [Modifier(Param.trust, ModifierType.add, (value, l) => value + l * 3)],
   ),
   Upgrade(
