@@ -52,7 +52,7 @@ class UpgradeWidget extends StatelessWidget {
     final actions = Actions(gs);
     return Container(
         padding: const EdgeInsets.all(4),
-        width: 200,
+        width: 196,
         height: 300,
         child: Card(
             clipBehavior: Clip.hardEdge,
