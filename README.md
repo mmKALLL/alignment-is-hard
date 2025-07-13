@@ -1,5 +1,9 @@
 # Alignment is Hard
 
+## Note: Newer version available at https://github.com/mmKALLL/the-final-decade
+
+The Final Decade is the latest evolution of this project. The Alignment is Hard repo is retained only for historical reference.
+
 Alignment is Hard is a high-stakes resource management strategy game about making interesting and meaningful input-random decisions. It addresses a bone I have with mobile strategy games: they tend to be consistently clearable with simple heuristics.
 
 This game on the other hand is designed to hone into the core of what makes strategic decisions interesting: they should affect things without being obvious, be asymmetric to prevent heuristics, input-random to prevent memorization, simple enough to understand at a glance, yet layered enough to make first-order optimization obviously bad.
